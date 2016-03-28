@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288701CA7F2F2009C5B16 /* MainTextField.swift */; };
-		690288731CA7F7F9009C5B16 /* MainButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288721CA7F7F9009C5B16 /* MainButton.swift */; };
+		690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288721CA7F7F9009C5B16 /* SubmitButton.swift */; };
+		690288751CA87F48009C5B16 /* MainLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288741CA87F48009C5B16 /* MainLabel.swift */; };
 		69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */; };
 		69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */; };
 		69DE74F01CA7CC0600AA35D2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69DE74EE1CA7CC0600AA35D2 /* Main.storyboard */; };
@@ -46,7 +47,8 @@
 		1678EB67F260EA0DA52B7796 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		54F889C4A320D404C6808342 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		690288701CA7F2F2009C5B16 /* MainTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTextField.swift; sourceTree = "<group>"; };
-		690288721CA7F7F9009C5B16 /* MainButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainButton.swift; sourceTree = "<group>"; };
+		690288721CA7F7F9009C5B16 /* SubmitButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitButton.swift; sourceTree = "<group>"; };
+		690288741CA87F48009C5B16 /* MainLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainLabel.swift; sourceTree = "<group>"; };
 		69DE74E71CA7CC0600AA35D2 /* Metsterios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metsterios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -66,7 +68,6 @@
 		69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
 		69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
-		69DE75581CA7E8ED00AA35D2 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSDKCoreKit.framework; path = "../../Downloads/FacebookSDKs-iOS-20160316 2/FBSDKCoreKit.framework"; sourceTree = "<group>"; };
 		A6B8EAB71597986F6E7FBD9D /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -134,7 +135,8 @@
 				69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */,
 				69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */,
 				690288701CA7F2F2009C5B16 /* MainTextField.swift */,
-				690288721CA7F7F9009C5B16 /* MainButton.swift */,
+				690288721CA7F7F9009C5B16 /* SubmitButton.swift */,
+				690288741CA87F48009C5B16 /* MainLabel.swift */,
 			);
 			path = Metsterios;
 			sourceTree = "<group>";
@@ -160,7 +162,6 @@
 		6A6CCCC94734D0FCCDA4753A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				69DE75581CA7E8ED00AA35D2 /* FBSDKCoreKit.framework */,
 				54F889C4A320D404C6808342 /* Pods.framework */,
 			);
 			name = Frameworks;
@@ -358,10 +359,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */,
+				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
 				69DE75231CA7CF7800AA35D2 /* ChatViewController.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,
-				690288731CA7F7F9009C5B16 /* MainButton.swift in Sources */,
+				690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */,
 				69DE751D1CA7CF4200AA35D2 /* ProfileViewController.swift in Sources */,
 				69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */,
 				690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */,
@@ -517,6 +519,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Firebase",
+					"$(PROJECT_DIR)/Pods/FBSDKCoreKit",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.chelseagreen.Metsterios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -534,6 +537,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Pods/Firebase",
+					"$(PROJECT_DIR)/Pods/FBSDKCoreKit",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.chelseagreen.Metsterios;
 				PRODUCT_NAME = "$(TARGET_NAME)";

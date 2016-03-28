@@ -20,7 +20,7 @@ class TabBarViewController: UITabBarController {
         super.viewDidLoad()
     
         view.backgroundColor = UIColor.whiteColor()
-        
+    
         profileVC = ProfileViewController()
         preferencesVC = PreferencesViewController()
         addEventVC = AddEventViewController()
@@ -55,5 +55,4 @@ class TabBarViewController: UITabBarController {
         textField.resignFirstResponder()
         return true
     }
-
 }

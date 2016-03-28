@@ -1,5 +1,5 @@
 //
-//  MainButton.swift
+//  MainLabel.swift
 //  Metsterios
 //
 //  Created by Chelsea Green on 3/27/16.
@@ -8,13 +8,12 @@
 
 import UIKit
 
-class MainButton: UIButton {
+class MainLabel: UILabel {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        super.backgroundColor = UIColor.blackColor()
-        super.layer.cornerRadius = 4
-        super.setTitleColor(UIColor.whiteColor(), forState: .Normal)
+        super.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.2)
+        super.layer.cornerRadius = 5
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -84,8 +84,16 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "Pods-Metsterios/Bolts.framework"
+  install_framework "Pods-Metsterios/FBSDKCoreKit.framework"
+  install_framework "Pods-Metsterios/FBSDKLoginKit.framework"
+  install_framework "Pods-Metsterios/FBSDKShareKit.framework"
   install_framework "Pods-Metsterios/Firebase.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "Pods-Metsterios/Bolts.framework"
+  install_framework "Pods-Metsterios/FBSDKCoreKit.framework"
+  install_framework "Pods-Metsterios/FBSDKLoginKit.framework"
+  install_framework "Pods-Metsterios/FBSDKShareKit.framework"
   install_framework "Pods-Metsterios/Firebase.framework"
 fi
