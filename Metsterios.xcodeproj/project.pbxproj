@@ -10,6 +10,7 @@
 		690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288701CA7F2F2009C5B16 /* MainTextField.swift */; };
 		690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288721CA7F7F9009C5B16 /* SubmitButton.swift */; };
 		690288751CA87F48009C5B16 /* MainLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288741CA87F48009C5B16 /* MainLabel.swift */; };
+		691DEE961CAA5B60004263F8 /* UserVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691DEE951CAA5B60004263F8 /* UserVariables.swift */; };
 		69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */; };
 		69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */; };
 		69DE74F01CA7CC0600AA35D2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69DE74EE1CA7CC0600AA35D2 /* Main.storyboard */; };
@@ -49,6 +50,7 @@
 		690288701CA7F2F2009C5B16 /* MainTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTextField.swift; sourceTree = "<group>"; };
 		690288721CA7F7F9009C5B16 /* SubmitButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitButton.swift; sourceTree = "<group>"; };
 		690288741CA87F48009C5B16 /* MainLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainLabel.swift; sourceTree = "<group>"; };
+		691DEE951CAA5B60004263F8 /* UserVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVariables.swift; sourceTree = "<group>"; };
 		69DE74E71CA7CC0600AA35D2 /* Metsterios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metsterios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +99,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		691DEE981CAA5DAB004263F8 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */,
+				69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */,
+				69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */,
+				69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */,
+				69DE751A1CA7CF2900AA35D2 /* PreferencesViewController.swift */,
+				69DE75181CA7CDC700AA35D2 /* TabBarViewController.swift */,
+				69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		691DEE991CAA5DE4004263F8 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				690288701CA7F2F2009C5B16 /* MainTextField.swift */,
+				690288721CA7F7F9009C5B16 /* SubmitButton.swift */,
+				690288741CA87F48009C5B16 /* MainLabel.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
 		69DE74DE1CA7CC0600AA35D2 = {
 			isa = PBXGroup;
 			children = (
@@ -122,21 +148,14 @@
 		69DE74E91CA7CC0600AA35D2 /* Metsterios */ = {
 			isa = PBXGroup;
 			children = (
+				691DEE981CAA5DAB004263F8 /* Controller */,
 				69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */,
-				69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */,
 				69DE74EE1CA7CC0600AA35D2 /* Main.storyboard */,
 				69DE74F11CA7CC0600AA35D2 /* Assets.xcassets */,
 				69DE74F31CA7CC0600AA35D2 /* LaunchScreen.storyboard */,
 				69DE74F61CA7CC0600AA35D2 /* Info.plist */,
-				69DE75181CA7CDC700AA35D2 /* TabBarViewController.swift */,
-				69DE751A1CA7CF2900AA35D2 /* PreferencesViewController.swift */,
-				69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */,
-				69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */,
-				69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */,
-				69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */,
-				690288701CA7F2F2009C5B16 /* MainTextField.swift */,
-				690288721CA7F7F9009C5B16 /* SubmitButton.swift */,
-				690288741CA87F48009C5B16 /* MainLabel.swift */,
+				691DEE991CAA5DE4004263F8 /* View */,
+				691DEE951CAA5B60004263F8 /* UserVariables.swift */,
 			);
 			path = Metsterios;
 			sourceTree = "<group>";
@@ -360,6 +379,7 @@
 			files = (
 				69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */,
 				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
+				691DEE961CAA5B60004263F8 /* UserVariables.swift in Sources */,
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
 				69DE75231CA7CF7800AA35D2 /* ChatViewController.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,

@@ -15,7 +15,8 @@ class TabBarViewController: UITabBarController {
     var addEventVC : AddEventViewController?
     var calendarVC : CalendarViewController?
     var chatVC : ChatViewController?
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -34,6 +35,8 @@ class TabBarViewController: UITabBarController {
         let add = UITabBarItem(title: "Add", image: nil, tag: 2)
         let cal = UITabBarItem(title: "Cal", image: nil, tag: 3)
         let chat = UITabBarItem(title: "Chat", image: nil, tag: 4)
+        
+        self.selectedIndex = 3
        
         profileVC?.tabBarItem = profile
         preferencesVC?.tabBarItem = pref
@@ -47,12 +50,6 @@ class TabBarViewController: UITabBarController {
     }
     
     override func shouldAutorotate() -> Bool {
-        return true
-    }
-    
-    //MARK: Text field delegate
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
         return true
     }
 }

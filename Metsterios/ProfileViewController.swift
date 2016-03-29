@@ -7,29 +7,61 @@
 //
 
 import UIKit
+import FBSDKCoreKit
+import FBSDKLoginKit
+import Firebase
 
 class ProfileViewController: UIViewController {
-
+    
+    var logoutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height-100, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    
+    var aboutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + UIScreen.mainScreen().bounds.height/15 + 10, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var notifyButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/15)*2 + 20, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var publishButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/15)*3 + 30, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var addressButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    
+    var nameLabel = UILabel(frame: CGRectMake(20, UIScreen.mainScreen().bounds.height/2.5, UIScreen.mainScreen().bounds.width-40, 40))
+    
+    let ref = Firebase(url: "https://mets.firebaseio.com")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        nameLabel.textAlignment = NSTextAlignment.Center
+        nameLabel.text = UserVariables.userName
+        nameLabel.font = UIFont(name: "HelveticaNeue-", size: 30)
+        nameLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.nameLabel)
+        
+        aboutButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        aboutButton.setTitle("About", forState: .Normal)
+        aboutButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        self.view.addSubview(aboutButton)
+        
+        notifyButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        notifyButton.setTitle("Notifications", forState: .Normal)
+        notifyButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        self.view.addSubview(notifyButton)
+        
+        publishButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        publishButton.setTitle("Publish Activity", forState: .Normal)
+        publishButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        self.view.addSubview(publishButton)
+        
+        addressButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        addressButton.setTitle("Address", forState: .Normal)
+        addressButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
+        self.view.addSubview(addressButton)
+        
+        logoutButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        logoutButton.setTitle("Logout", forState: .Normal)
+        logoutButton.addTarget(self, action: "logoutClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(logoutButton)
+        
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func logoutClicked() {
+        ref.unauth()
+        self.dismissViewControllerAnimated(true, completion: nil)
     }
-    */
-
 }

@@ -23,20 +23,22 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
     var typeLabel = MainLabel(frame: CGRectMake(20, 260, (UIScreen.mainScreen().bounds.width)-40, 50))
     var typeButton = UIButton(frame: CGRectMake(20, 260, (UIScreen.mainScreen().bounds.width)-40, 50))
     
-    var typePicker = UIPickerView(frame: CGRectMake(0, 400, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-400))
+    var typePicker = UIPickerView(frame: CGRectMake(0, 500, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
     var typePickerData = ["Restaurant", "Movie"]
     
     var dateLabel = MainLabel(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
     var dateButton = UIButton(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
     
-    var datePicker = UIDatePicker(frame: CGRectMake(0, 400, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-400))
+    var datePicker = UIDatePicker(frame: CGRectMake(0, 500, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
 
     var timeLabel = MainLabel(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
     var timeButton = UIButton(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var timePicker = UIDatePicker(frame: CGRectMake(0, 400, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-400))
+    var timePicker = UIDatePicker(frame: CGRectMake(0, 500, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
  
-    var notesTextField = MainTextField(frame: CGRectMake(20, 440, (UIScreen.mainScreen().bounds.width)-40, 100))
+    var notesTextField = MainTextField(frame: CGRectMake(20, 440, (UIScreen.mainScreen().bounds.width)-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, 555, (UIScreen.mainScreen().bounds.width)-160, 40))
+    
+    var whiteButton = UIButton(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-(UIScreen.mainScreen().bounds.height-500)))
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,7 +79,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         typeButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(typeButton)
         
-        typePicker.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(1.0)
         typePicker.dataSource = self
         typePicker.delegate = self
         self.view.addSubview(typePicker)
@@ -92,7 +93,6 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         dateButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(dateButton)
         
-        datePicker.backgroundColor = UIColor.whiteColor()
         datePicker.bringSubviewToFront(datePicker)
         let currentDate = NSDate()
         datePicker.minimumDate = currentDate
@@ -111,12 +111,18 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         
         timePicker.addTarget(self, action: "timePickerValueChanged", forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(timePicker)
+        timePicker.bringSubviewToFront(timePicker)
         timePicker.hidden = true
         
         let notes=NSAttributedString(string: "Notes", attributes:    [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
         notesTextField.attributedPlaceholder=notes
         notesTextField.delegate = self
         self.view.addSubview(notesTextField)
+        
+        whiteButton.backgroundColor = UIColor.clearColor()
+        whiteButton.addTarget(self, action: "removePicker", forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(whiteButton)
+        whiteButton.hidden = true
         
         submitButton.addTarget(self, action: "submitPressed", forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
@@ -185,20 +191,41 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
     //MARK: Actions
     
     func selectType() {
+        datePicker.hidden = true
+        timePicker.hidden = true
         typePicker.hidden = false
+        
+        submitButton.hidden = true
+        whiteButton.hidden = false
     }
     
     func selectDate() {
+        typePicker.hidden = true
+        timePicker.hidden = true
         datePicker.hidden = false
-        datePicker.becomeFirstResponder()
+        
         datePicker.datePickerMode = UIDatePickerMode.Date
+        submitButton.hidden = true
+        whiteButton.hidden = false
     }
     
     func selectTime() {
         datePicker.hidden = true
+        typePicker.hidden = true
         timePicker.hidden = false
-        timePicker.becomeFirstResponder()
+        
         timePicker.datePickerMode = UIDatePickerMode.Time
+        submitButton.hidden = true
+        whiteButton.hidden = false
+    }
+    
+    func removePicker() {
+        datePicker.hidden = true
+        timePicker.hidden = true
+        typePicker.hidden = true
+        
+        submitButton.hidden = false
+        whiteButton.hidden = true
     }
     
     func submitPressed() {
