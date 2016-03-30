@@ -13,10 +13,10 @@ import Firebase
 
 class ProfileViewController: UIViewController {
     
-    var logoutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height-100, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var logoutButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height)-(UIScreen.mainScreen().bounds.height/15)-50, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
     
-    var aboutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + UIScreen.mainScreen().bounds.height/15 + 10, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
-    var notifyButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/15)*2 + 20, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var aboutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + UIScreen.mainScreen().bounds.height/16 + 10, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var notifyButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/16)*2 + 20, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
     var publishButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/15)*3 + 30, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
     var addressButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
     

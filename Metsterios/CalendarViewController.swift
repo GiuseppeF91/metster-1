@@ -11,8 +11,6 @@ import MapKit
 
 class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
     
-    var nextButton : UIBarButtonItem!
-    var backButton : UIBarButtonItem!
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
     var yesEventsButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
@@ -31,12 +29,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        
-        
-        
+   
         let confPin = MKPointAnnotation()
         confPin.coordinate = CLLocationCoordinate2DMake(40.730872, -74.003066)
         annotationsConfirmed.append(confPin)
@@ -52,13 +45,8 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         
         navBar.backgroundColor = UIColor.whiteColor()
         navBar.tintColor = UIColor.blackColor()
-        
-        backButton = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: "backClicked")
-        
-        nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: "nextClicked")
-        
-        navigationItem.rightBarButtonItem = nextButton
-        navigationItem.leftBarButtonItem = backButton
+      
+        navigationItem.title = "Events"
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
@@ -79,6 +67,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.view.addSubview(pendingEventsButton)
         
         mapView.delegate = self
+        var span = MKCoordinateSpanMake(10, 10)
+        var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
+        mapView.setRegion(region, animated: true)
         self.view.addSubview(mapView)
         
         tableView.dataSource = self
@@ -101,14 +92,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         } else {
             mapView.addAnnotations(annotationsConfirmed)
         }
-    }
-    
-    func backClicked() {
-        
-    }
-    
-    func nextClicked() {
-        
     }
     
     func pendingEventsClicked() {

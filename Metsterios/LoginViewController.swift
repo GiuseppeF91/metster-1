@@ -14,7 +14,7 @@ import CoreLocation
 
 class LoginViewController: UIViewController, UITextFieldDelegate, CLLocationManagerDelegate {
     
-    var loginButton = UIButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
+    var loginButton = SubmitButton(frame: CGRectMake(10, 100, UIScreen.mainScreen().bounds.width-20, (UIScreen.mainScreen().bounds.height)/12))
     var locManager = CLLocationManager()
     
     let ref = Firebase(url: "https://mets.firebaseio.com")
@@ -34,7 +34,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate, CLLocationMana
         }
 
         loginButton.center = self.view.center
-        loginButton.backgroundColor = UIColor.blackColor()
         loginButton.setTitle("Login with Facebook", forState: .Normal)
         loginButton.addTarget(self, action: "loginNow", forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(loginButton)
