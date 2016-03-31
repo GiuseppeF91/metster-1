@@ -97,7 +97,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         let currentDate = NSDate()
         datePicker.minimumDate = currentDate
         datePicker.date = currentDate
-        datePicker.addTarget(self, action: "datePickerValueChanged", forControlEvents: UIControlEvents.ValueChanged)
+        datePicker.addTarget(self, action: #selector(AddEventViewController.datePickerValueChanged), forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(datePicker)
         datePicker.hidden = true
 
@@ -120,11 +120,11 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         self.view.addSubview(notesTextField)
         
         whiteButton.backgroundColor = UIColor.clearColor()
-        whiteButton.addTarget(self, action: "removePicker", forControlEvents: UIControlEvents.TouchUpInside)
+        whiteButton.addTarget(self, action: #selector(self.removePicker), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(whiteButton)
         whiteButton.hidden = true
         
-        submitButton.addTarget(self, action: "submitPressed", forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: #selector(self.submitPressed), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         

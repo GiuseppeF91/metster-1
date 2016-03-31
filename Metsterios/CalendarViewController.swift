@@ -19,10 +19,8 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     
     var tableView : UITableView = UITableView()
     
-    
     var confirmedArray = ["Yes", "Japanese"]
     var pendingArray = ["No", "Comedy", "No", "Yes"]
-
     
     var annotationsConfirmed = [MKPointAnnotation]()
     var annotationsPending = [MKPointAnnotation]()
@@ -38,11 +36,11 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.view.addSubview(navBar)
         
         yesEventsButton.addTarget(self, action: "yesEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
-        yesEventsButton.setTitle("Confirmed Events", forState: .Normal)
+        yesEventsButton.setTitle("Confirmed", forState: .Normal)
         self.view.addSubview(yesEventsButton)
         
         pendingEventsButton.addTarget(self, action: "pendingEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
-        pendingEventsButton.setTitle("Pending Events", forState: .Normal)
+        pendingEventsButton.setTitle("Pending", forState: .Normal)
         pendingEventsButton.selected = true
         self.view.addSubview(pendingEventsButton)
         
@@ -145,6 +143,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         delete.backgroundColor = UIColor.grayColor()
         
         loadMap()
+        
         if yesEventsButton.selected == true {
             return [delete]
         } else {

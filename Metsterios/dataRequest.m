@@ -11,6 +11,8 @@
 
 @implementation dataRequest
 
+@synthesize returnedInfo = _returnedInfo;
+
 NSString *key = @"22";
 NSString *email;
 NSString *rid;
@@ -50,16 +52,18 @@ NSString *rid;
         NSString *content = [NSString stringWithUTF8String:[returnData bytes]];
         NSError *e = nil;
         NSData *jData = [content dataUsingEncoding:NSUTF8StringEncoding];
-        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData:jData options: NSJSONReadingMutableContainers error: &e];
+        NSDictionary *JSON = [NSJSONSerialization JSONObjectWithData: jData options: NSJSONReadingMutableContainers error: &e];
         
         id<NSObject> value = JSON[@"response"];
         
         NSLog(@"responseData: %@", JSON);
         
         NSLog(@"payData: %@", value);
-        
-        NSString* responseString = [[NSString alloc] initWithData:returnData encoding:NSNonLossyASCIIStringEncoding];
-        
+
+    NSString* responseString = [[NSString alloc] initWithData:returnData encoding:NSNonLossyASCIIStringEncoding];
+    
+        _returnedInfo = responseString;
+    
         if ([content isEqualToString:responseString])
             
         {

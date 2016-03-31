@@ -8,6 +8,11 @@
 #import <Foundation/Foundation.h>
 
 @interface dataRequest : NSObject
+{
+    NSString *_returnedInfo;
+}
+
+@property (strong, nonatomic) NSString *returnedInfo;
 
 @property (strong, nonatomic) NSString* oper;
 @property (strong, nonatomic) NSString* emailAddress;

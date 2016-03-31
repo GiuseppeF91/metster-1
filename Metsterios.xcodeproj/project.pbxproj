@@ -12,6 +12,7 @@
 		690288751CA87F48009C5B16 /* MainLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288741CA87F48009C5B16 /* MainLabel.swift */; };
 		691DEE961CAA5B60004263F8 /* UserVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691DEE951CAA5B60004263F8 /* UserVariables.swift */; };
 		6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6929DB5F1CAC6ECB00867BE3 /* SelectionButton.swift */; };
+		6929DB631CACA43300867BE3 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6929DB621CACA43300867BE3 /* Event.swift */; };
 		696F7B671CABCF2E0048A89A /* dataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 696F7B661CABCF2E0048A89A /* dataRequest.m */; };
 		69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */; };
 		69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */; };
@@ -55,6 +56,7 @@
 		691DEE951CAA5B60004263F8 /* UserVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVariables.swift; sourceTree = "<group>"; };
 		6929DB5F1CAC6ECB00867BE3 /* SelectionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionButton.swift; sourceTree = "<group>"; };
 		6929DB611CAC7ED300867BE3 /* dataRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataRequest.h; sourceTree = "<group>"; };
+		6929DB621CACA43300867BE3 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		696F7B651CABCF2E0048A89A /* Metsterios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Metsterios-Bridging-Header.h"; sourceTree = "<group>"; };
 		696F7B661CABCF2E0048A89A /* dataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dataRequest.m; sourceTree = "<group>"; };
 		69DE74E71CA7CC0600AA35D2 /* Metsterios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metsterios.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,6 +168,7 @@
 				69DE74F61CA7CC0600AA35D2 /* Info.plist */,
 				691DEE991CAA5DE4004263F8 /* View */,
 				691DEE951CAA5B60004263F8 /* UserVariables.swift */,
+				6929DB621CACA43300867BE3 /* Event.swift */,
 			);
 			path = Metsterios;
 			sourceTree = "<group>";
@@ -397,6 +400,7 @@
 				69DE751D1CA7CF4200AA35D2 /* ProfileViewController.swift in Sources */,
 				69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */,
 				690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */,
+				6929DB631CACA43300867BE3 /* Event.swift in Sources */,
 				6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */,
 				69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */,
 				696F7B671CABCF2E0048A89A /* dataRequest.m in Sources */,
