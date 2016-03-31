@@ -11,8 +11,8 @@
 		690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288721CA7F7F9009C5B16 /* SubmitButton.swift */; };
 		690288751CA87F48009C5B16 /* MainLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288741CA87F48009C5B16 /* MainLabel.swift */; };
 		691DEE961CAA5B60004263F8 /* UserVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 691DEE951CAA5B60004263F8 /* UserVariables.swift */; };
-		696F7B611CABA53B0048A89A /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696F7B601CABA53B0048A89A /* DataSource.swift */; };
-		696F7B671CABCF2E0048A89A /* example.m in Sources */ = {isa = PBXBuildFile; fileRef = 696F7B661CABCF2E0048A89A /* example.m */; };
+		6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6929DB5F1CAC6ECB00867BE3 /* SelectionButton.swift */; };
+		696F7B671CABCF2E0048A89A /* dataRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 696F7B661CABCF2E0048A89A /* dataRequest.m */; };
 		69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */; };
 		69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */; };
 		69DE74F01CA7CC0600AA35D2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 69DE74EE1CA7CC0600AA35D2 /* Main.storyboard */; };
@@ -53,9 +53,10 @@
 		690288721CA7F7F9009C5B16 /* SubmitButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitButton.swift; sourceTree = "<group>"; };
 		690288741CA87F48009C5B16 /* MainLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainLabel.swift; sourceTree = "<group>"; };
 		691DEE951CAA5B60004263F8 /* UserVariables.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserVariables.swift; sourceTree = "<group>"; };
-		696F7B601CABA53B0048A89A /* DataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
+		6929DB5F1CAC6ECB00867BE3 /* SelectionButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectionButton.swift; sourceTree = "<group>"; };
+		6929DB611CAC7ED300867BE3 /* dataRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataRequest.h; sourceTree = "<group>"; };
 		696F7B651CABCF2E0048A89A /* Metsterios-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Metsterios-Bridging-Header.h"; sourceTree = "<group>"; };
-		696F7B661CABCF2E0048A89A /* example.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = example.m; sourceTree = "<group>"; };
+		696F7B661CABCF2E0048A89A /* dataRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = dataRequest.m; sourceTree = "<group>"; };
 		69DE74E71CA7CC0600AA35D2 /* Metsterios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metsterios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -114,9 +115,9 @@
 				69DE751A1CA7CF2900AA35D2 /* PreferencesViewController.swift */,
 				69DE75181CA7CDC700AA35D2 /* TabBarViewController.swift */,
 				69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */,
-				696F7B601CABA53B0048A89A /* DataSource.swift */,
-				696F7B661CABCF2E0048A89A /* example.m */,
+				696F7B661CABCF2E0048A89A /* dataRequest.m */,
 				696F7B651CABCF2E0048A89A /* Metsterios-Bridging-Header.h */,
+				6929DB611CAC7ED300867BE3 /* dataRequest.h */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -125,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				690288701CA7F2F2009C5B16 /* MainTextField.swift */,
+				6929DB5F1CAC6ECB00867BE3 /* SelectionButton.swift */,
 				690288721CA7F7F9009C5B16 /* SubmitButton.swift */,
 				690288741CA87F48009C5B16 /* MainLabel.swift */,
 			);
@@ -388,7 +390,6 @@
 				69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */,
 				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
 				691DEE961CAA5B60004263F8 /* UserVariables.swift in Sources */,
-				696F7B611CABA53B0048A89A /* DataSource.swift in Sources */,
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
 				69DE75231CA7CF7800AA35D2 /* ChatViewController.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,
@@ -396,8 +397,9 @@
 				69DE751D1CA7CF4200AA35D2 /* ProfileViewController.swift in Sources */,
 				69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */,
 				690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */,
+				6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */,
 				69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */,
-				696F7B671CABCF2E0048A89A /* example.m in Sources */,
+				696F7B671CABCF2E0048A89A /* dataRequest.m in Sources */,
 				69DE751B1CA7CF2900AA35D2 /* PreferencesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

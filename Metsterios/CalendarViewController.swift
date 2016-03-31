@@ -12,9 +12,9 @@ import MapKit
 class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
     
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
-    var yesEventsButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
+    var yesEventsButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
-    var pendingEventsButton = UIButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
+    var pendingEventsButton = SelectionButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     var mapView = MKMapView(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/6)+25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/2))
     
     var tableView : UITableView = UITableView()
@@ -29,19 +29,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
 
     override func viewDidLoad() {
         super.viewDidLoad()
-   
-        let confPin = MKPointAnnotation()
-        confPin.coordinate = CLLocationCoordinate2DMake(40.730872, -74.003066)
-        annotationsConfirmed.append(confPin)
-        
-        
-        let qPin = MKPointAnnotation()
-        qPin.coordinate = CLLocationCoordinate2DMake(47, -122)
-        annotationsPending.append(qPin)
-        
-
-        
-        
         
         navBar.backgroundColor = UIColor.whiteColor()
         navBar.tintColor = UIColor.blackColor()
@@ -52,18 +39,11 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         
         yesEventsButton.addTarget(self, action: "yesEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
         yesEventsButton.setTitle("Confirmed Events", forState: .Normal)
-        yesEventsButton.setTitleColor(UIColor.blackColor(), forState: .Selected)
-        yesEventsButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        yesEventsButton.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(yesEventsButton)
         
         pendingEventsButton.addTarget(self, action: "pendingEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
         pendingEventsButton.setTitle("Pending Events", forState: .Normal)
         pendingEventsButton.selected = true
-        pendingEventsButton.setTitleColor(UIColor.blackColor(), forState: .Selected)
-        pendingEventsButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        pendingEventsButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        pendingEventsButton.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(pendingEventsButton)
         
         mapView.delegate = self
@@ -78,6 +58,13 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.view.addSubview(self.tableView)
         
         loadMap()
+        
+        //requests account hosted / invites 
+        var newReq : dataRequest = dataRequest()
+        newReq.oper = "111002"
+        newReq.emailAddress = "navimn1991@gmail.com"
+        
+        newReq.post_req()
     }
     
     override func viewDidLayoutSubviews() {

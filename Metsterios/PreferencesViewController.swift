@@ -12,15 +12,15 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
     
     var saveButton : UIBarButtonItem!
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
-    var restaurantButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
+    var restaurantButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
-    var moviesButton = UIButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
+    var moviesButton = SelectionButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     var usernameLabel = UILabel(frame: CGRectMake(10, 360, (UIScreen.mainScreen().bounds.width)-20, 40))
     
     var tableView : UITableView = UITableView()
     
-    var foodArray = ["Chinese", "Japanese", "Mexican", "Italian", "French", "Indian"]
-    var moviesArray = ["Horror", "Comedy", "Drama", "Romance", "Kids"]
+    var foodArray = ["Chinese", "French", "Indian", "Italian", "Japanese", "Mexican"]
+    var moviesArray = ["Horror", "Comedy", "Drama", "Romance"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,22 +31,17 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
         saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "saveClicked")
         
         navigationItem.rightBarButtonItem = saveButton
+        navigationItem.title = "Preferences"
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
         restaurantButton.addTarget(self, action: "restaurantClicked", forControlEvents: UIControlEvents.TouchUpInside)
         restaurantButton.setTitle("Restaurants", forState: .Normal)
-        restaurantButton.setTitleColor(UIColor.blackColor(), forState: .Selected)
-        restaurantButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        restaurantButton.backgroundColor = UIColor.whiteColor()
         restaurantButton.selected = true
         self.view.addSubview(restaurantButton)
         
         moviesButton.addTarget(self, action: "moviesClicked", forControlEvents: UIControlEvents.TouchUpInside)
         moviesButton.setTitle("Movies", forState: .Normal)
-        moviesButton.setTitleColor(UIColor.blackColor(), forState: .Selected)
-        moviesButton.setTitleColor(UIColor.grayColor(), forState: .Normal)
-        moviesButton.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(moviesButton)
         
         tableView.dataSource = self
@@ -78,29 +73,24 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
         return cell
     }
     
-    // Determine whether a given row is eligible for reordering or not.
-    func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool
-    {
-        return true
-    }
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
     }
     
-    // Process the row move. This means updating the data model to correct the item indices.
-    func tableView(tableView: UITableView, moveRowAtIndexPath sourceIndexPath: NSIndexPath, toIndexPath destinationIndexPath: NSIndexPath)
-    {
-        if restaurantButton.selected == true {
-        let item : String = foodArray[sourceIndexPath.row]
-        foodArray.removeAtIndex(sourceIndexPath.row);
-        foodArray.insert(item, atIndex: destinationIndexPath.row)
-        } else {
-            let item : String = moviesArray[sourceIndexPath.row]
-            moviesArray.removeAtIndex(sourceIndexPath.row);
-            moviesArray.insert(item, atIndex: destinationIndexPath.row)
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        // show check on left side, select name, show in the inviteToList
+        
+        let cell = tableView.cellForRowAtIndexPath(indexPath)
+        if cell?.accessoryType == . Checkmark {
+            cell?.accessoryType = .None
         }
+        else {
+            cell?.accessoryType = .Checkmark
+        }
+        
     }
 
     func saveClicked() {
