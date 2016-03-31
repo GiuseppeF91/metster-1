@@ -19,7 +19,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     
     var tableView : UITableView = UITableView()
     
-    var confirmedArray = ["Yes", "Japanese"]
+    var hostedEvents = []
     var pendingArray = ["No", "Comedy", "No", "Yes"]
     
     var annotationsConfirmed = [MKPointAnnotation]()
@@ -52,21 +52,47 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 50
+        tableView.rowHeight = 70
         self.view.addSubview(self.tableView)
         
         loadMap()
-        
-        //requests account hosted / invites 
-        var newReq : dataRequest = dataRequest()
-        newReq.oper = "111002"
-        newReq.emailAddress = "navimn1991@gmail.com"
-        
-        newReq.post_req()
+        loadEvents()
     }
     
+    
     override func viewDidLayoutSubviews() {
-        tableView.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height/1.5, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/1.5)
+        tableView.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/2-50)
+    }
+    
+    func loadEvents() {
+        let newReq : dataRequest = dataRequest()
+        newReq.oper = "111002"
+        newReq.emailAddress = "navimn1991@gmail.com"
+        newReq.post_req()
+        print("meow")
+        let jsonStringAsArray = newReq.returnedInfo
+        let data: NSData = jsonStringAsArray.dataUsingEncoding(NSUTF8StringEncoding)!
+        var error: NSError!
+        
+        do {
+            let anyObj = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+
+            let secondPart = anyObj["response"] as! String
+            
+            let secondPartArray = secondPart.componentsSeparatedByString(":")
+            print(secondPartArray)
+            print("shut")
+            let hosted = secondPartArray[10]
+            hosted.componentsSeparatedByString("', u'")
+            
+            // Split based on characters.
+            hostedEvents = hosted.componentsSeparatedByString("', u'")
+            print(hostedEvents)
+            tableView.reloadData()
+            
+        } catch {
+            print(error)
+        }
     }
     
     func loadMap() {
@@ -98,7 +124,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if pendingEventsButton.selected == true {
             return pendingArray.count
         } else {
-        return confirmedArray.count
+        return hostedEvents.count
         }
     }
     
@@ -107,7 +133,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if pendingEventsButton.selected == true {
             cell.textLabel!.text = pendingArray[indexPath.row]
         } else {
-            cell.textLabel!.text = confirmedArray[indexPath.row]
+            cell.textLabel!.text = hostedEvents[indexPath.row] as! String
         }
         return cell
     }
@@ -136,7 +162,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
                 self.pendingArray.removeAtIndex(indexPath.row)
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
             } else {
-                self.confirmedArray.removeAtIndex(indexPath.row)
+                
+                // TODO : delete event from data source
+               // self.hostedEvents.removeAtIndex(indexPath.row)
                 tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
             }
         }
