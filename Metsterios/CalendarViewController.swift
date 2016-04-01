@@ -35,7 +35,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
-        yesEventsButton.addTarget(self, action: "yesEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        yesEventsButton.addTarget(self, action: #selector(CalendarViewController.yesEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
         yesEventsButton.setTitle("Confirmed", forState: .Normal)
         self.view.addSubview(yesEventsButton)
         
@@ -45,18 +45,19 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.view.addSubview(pendingEventsButton)
         
         mapView.delegate = self
-        var span = MKCoordinateSpanMake(10, 10)
-        var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
+        let span = MKCoordinateSpanMake(10, 10)
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
         mapView.setRegion(region, animated: true)
         self.view.addSubview(mapView)
         
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 70
+        tableView.rowHeight = 50
         self.view.addSubview(self.tableView)
         
         loadMap()
         loadEvents()
+    
     }
     
     
@@ -64,35 +65,42 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         tableView.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/2-50)
     }
     
+    
     func loadEvents() {
-        let newReq : dataRequest = dataRequest()
-        newReq.oper = "111002"
-        newReq.emailAddress = "navimn1991@gmail.com"
-        newReq.post_req()
+        UserVariables.email = "navimn1991@gmail.com"
+        RequestInfo.sharedInstance().postReq("111002")
+        
         print("meow")
-        let jsonStringAsArray = newReq.returnedInfo
-        let data: NSData = jsonStringAsArray.dataUsingEncoding(NSUTF8StringEncoding)!
+        //let jsonStringAsArray = newReq.returnedInfo
+        //let data: NSData = jsonStringAsArray.dataUsingEncoding(NSUTF8StringEncoding)!
         var error: NSError!
         
-        do {
-            let anyObj = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+        //do {
+            //let anyObj = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
 
-            let secondPart = anyObj["response"] as! String
+            //let secondPart = anyObj["response"] as! String
             
-            let secondPartArray = secondPart.componentsSeparatedByString(":")
-            print(secondPartArray)
-            print("shut")
-            let hosted = secondPartArray[10]
-            hosted.componentsSeparatedByString("', u'")
-            
+            //let secondPartArray = secondPart.componentsSeparatedByString(":")
+            //print(secondPartArray)
+        
+            //let hosted = secondPartArray[10]
+            //hosted.componentsSeparatedByString("', u'")
+        
             // Split based on characters.
-            hostedEvents = hosted.componentsSeparatedByString("', u'")
-            print(hostedEvents)
-            tableView.reloadData()
+            //hostedEvents = hosted.componentsSeparatedByString("', u'")
+            //print(hostedEvents)
+            //tableView.reloadData()
             
-        } catch {
-            print(error)
-        }
+        //} catch {
+           // print(error)
+        //}
+    }
+    
+    func findFood() {
+        UserVariables.event_id = "10103884620845432--event--6"
+        UserVariables.query = "sushi"
+        RequestInfo.sharedInstance().postReq("999000")
+        print("meow")
     }
     
     func loadMap() {
@@ -133,7 +141,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if pendingEventsButton.selected == true {
             cell.textLabel!.text = pendingArray[indexPath.row]
         } else {
-            cell.textLabel!.text = hostedEvents[indexPath.row] as! String
+            cell.textLabel!.text = hostedEvents[indexPath.row] as? String
         }
         return cell
     }

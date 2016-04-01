@@ -46,8 +46,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         navBar.backgroundColor = UIColor.whiteColor()
         navBar.tintColor = UIColor.blackColor()
         
-        cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: "cancelClicked")
-        nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: "nextPressed")
+        cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(self.cancelClicked))
+        nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: #selector(AddEventViewController.nextPressed))
         
         friendsTableView.dataSource = self
         friendsTableView.delegate = self
@@ -75,7 +75,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         typeLabel.text = "Type"
         self.view.addSubview(typeLabel)
 
-        typeButton.addTarget(self, action: "selectType", forControlEvents: UIControlEvents.TouchUpInside)
+        typeButton.addTarget(self, action: #selector(self.selectType), forControlEvents: UIControlEvents.TouchUpInside)
         typeButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(typeButton)
         
@@ -89,7 +89,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         dateLabel.text = "Date"
         self.view.addSubview(dateLabel)
         
-        dateButton.addTarget(self, action: "selectDate", forControlEvents: UIControlEvents.TouchUpInside)
+        dateButton.addTarget(self, action: #selector(self.selectDate), forControlEvents: UIControlEvents.TouchUpInside)
         dateButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(dateButton)
         
@@ -105,11 +105,11 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         timeLabel.text = "Time"
         self.view.addSubview(timeLabel)
         
-        timeButton.addTarget(self, action: "selectTime", forControlEvents: UIControlEvents.TouchUpInside)
+        timeButton.addTarget(self, action: #selector(AddEventViewController.selectTime), forControlEvents: UIControlEvents.TouchUpInside)
         timeButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(timeButton)
         
-        timePicker.addTarget(self, action: "timePickerValueChanged", forControlEvents: UIControlEvents.ValueChanged)
+        timePicker.addTarget(self, action: #selector(AddEventViewController.timePickerValueChanged), forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(timePicker)
         timePicker.bringSubviewToFront(timePicker)
         timePicker.hidden = true

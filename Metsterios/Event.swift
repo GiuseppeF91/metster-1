@@ -12,15 +12,19 @@ var events:[Event] = [Event]()
 
 struct Event
 {
-    var name:String = ""
+    var eventName = ""
+    var query = ""
+    var event_id = ""
+    var event_date = ""
+    var event_time = ""
+    var event_notes = ""
+    var event_members = []
 
     init(data:NSDictionary)
     {
         
-        if let add = data["colorName"] as? String
-        {
-            self.name = add
-        }
-        
     }
 }
+
+
+

@@ -28,19 +28,19 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
         navBar.backgroundColor = UIColor.whiteColor()
         navBar.tintColor = UIColor.blackColor()
         
-        saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: "saveClicked")
+        saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: #selector(PreferencesViewController.saveClicked))
         
         navigationItem.rightBarButtonItem = saveButton
         navigationItem.title = "Preferences"
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
-        restaurantButton.addTarget(self, action: "restaurantClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        restaurantButton.addTarget(self, action: #selector(PreferencesViewController.restaurantClicked), forControlEvents: UIControlEvents.TouchUpInside)
         restaurantButton.setTitle("Restaurants", forState: .Normal)
         restaurantButton.selected = true
         self.view.addSubview(restaurantButton)
         
-        moviesButton.addTarget(self, action: "moviesClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        moviesButton.addTarget(self, action: #selector(PreferencesViewController.moviesClicked), forControlEvents: UIControlEvents.TouchUpInside)
         moviesButton.setTitle("Movies", forState: .Normal)
         self.view.addSubview(moviesButton)
         

@@ -28,7 +28,7 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         nameLabel.textAlignment = NSTextAlignment.Center
-        nameLabel.text = UserVariables.userName
+        nameLabel.text = UserVariables.name
         nameLabel.font = UIFont(name: "HelveticaNeue-", size: 30)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)
@@ -55,7 +55,7 @@ class ProfileViewController: UIViewController {
         
         logoutButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
         logoutButton.setTitle("Logout", forState: .Normal)
-        logoutButton.addTarget(self, action: "logoutClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        logoutButton.addTarget(self, action: #selector(ProfileViewController.logoutClicked), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
         
     }
