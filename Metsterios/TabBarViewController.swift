@@ -16,7 +16,6 @@ class TabBarViewController: UITabBarController {
     var calendarVC : CalendarViewController?
     var chatVC : ChatViewController?
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     
@@ -43,13 +42,5 @@ class TabBarViewController: UITabBarController {
         addEventVC?.tabBarItem = add
         calendarVC?.tabBarItem = cal
         chatVC?.tabBarItem = chat
-    }
-
-    override func supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
-        return UIInterfaceOrientationMask.Portrait
-    }
-    
-    override func shouldAutorotate() -> Bool {
-        return true
     }
 }

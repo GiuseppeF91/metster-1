@@ -11,7 +11,7 @@ import FBSDKCoreKit
 import FBSDKLoginKit
 import Firebase
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: BaseVC {
     
     var logoutButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height)-(UIScreen.mainScreen().bounds.height/15)-50, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
     
@@ -28,7 +28,8 @@ class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         nameLabel.textAlignment = NSTextAlignment.Center
-        nameLabel.text = UserVariables.name
+        nameLabel.text = Users.sharedInstance().name as? String
+        print(Users.sharedInstance().name) 
         nameLabel.font = UIFont(name: "HelveticaNeue-", size: 30)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)

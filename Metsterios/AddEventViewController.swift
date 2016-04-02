@@ -8,9 +8,7 @@
 
 import UIKit
 
-//TO DO: fix date and time picker views/ resign on tap outside
-
-class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDataSource, UIPickerViewDelegate {
+class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDataSource, UIPickerViewDelegate {
 
     var cancelButton : UIBarButtonItem!
     var nextButton : UIBarButtonItem!
@@ -39,6 +37,8 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
     var submitButton = SubmitButton(frame: CGRectMake(80, 555, (UIScreen.mainScreen().bounds.width)-160, 40))
     
     var whiteButton = UIButton(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-(UIScreen.mainScreen().bounds.height-500)))
+    
+    var invitedFriends : NSMutableArray!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,7 +124,7 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         self.view.addSubview(whiteButton)
         whiteButton.hidden = true
         
-        submitButton.addTarget(self, action: #selector(self.submitPressed), forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: #selector(self.newEvent), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         
@@ -157,12 +157,20 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         // show check on left side, select name, show in the inviteToList
         
+        
+        //SHOW EMAILS in second line
         let cell = friendsTableView.cellForRowAtIndexPath(indexPath)
         if cell?.accessoryType == . Checkmark {
             cell?.accessoryType = .None
+            invitedFriends.removeObject(cell!)
         }
         else {
             cell?.accessoryType = .Checkmark
+            if cell?.textLabel?.text != nil {
+                print(cell?.textLabel?.text)
+                invitedFriends.addObject
+                //invitedFriends.addObject((cell?.textLabel?.text)!)
+            }
         }
     }
     
@@ -228,12 +236,47 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         whiteButton.hidden = true
     }
     
-    func submitPressed() {
-        // submits event
+    func newEvent() {
         
-        alertMessage("Congratuations", message: "You've successfully created an event")
+        Users.sharedInstance().eventName = ""
+        Users.sharedInstance().event_date = dateLabel.text
+        Users.sharedInstance().event_time = timeLabel.text
+        Users.sharedInstance().event_notes = notesTextField.text
+        Users.sharedInstance().invited_members = invitedFriends
+      
+        RequestInfo.sharedInstance().postReq("121000")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Unable to make the event")
+                    self.alertMessage("Error", message: "Unable to connect.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucessssss")
+                
+                //TODO: get new event id!!!! 
+                Users.sharedInstance().event_id = ""
+                
+                RequestInfo.sharedInstance().postReq("998001")
+                { (success, errorString) -> Void in
+                    guard success else {
+                        dispatch_async(dispatch_get_main_queue(), {
+                            print("Unable to save preference")
+                            self.alertMessage("Error", message: "Unable to connect.")
+                        })
+                        return
+                    }
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("suucssssss")
+                        self.alertMessage("Event Created!", message: "")
+                    })
+                }
+            })
+        }
     }
-    
+
     func nextPressed() {
         // goes to second screen of creating event
         inviteToList.hidden = true
@@ -251,14 +294,13 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
         cancelButton.tintColor = UIColor.clearColor()
         nextButton.enabled = false
         nextButton.tintColor = UIColor.clearColor()
-        backButton = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: "backPressed")
+        backButton = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(AddEventViewController.backPressed))
         navigationItem.leftBarButtonItem = backButton
         navBar.items = [navigationItem]
     }
     
     func cancelClicked() {
         // resets invites - removes everyone from the list.
-        
         resetChecks()
     }
     
@@ -308,12 +350,5 @@ class AddEventViewController: UIViewController, UITextFieldDelegate, UINavigatio
                 }
             }
         }
-    }
-    
-    func alertMessage(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
-        alert.addAction(action)
-        presentViewController(alert, animated: true, completion: nil)
     }
 }

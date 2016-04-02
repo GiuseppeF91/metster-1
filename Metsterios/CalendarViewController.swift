@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class CalendarViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
+class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
     
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
     var yesEventsButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
@@ -19,7 +19,6 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     
     var tableView : UITableView = UITableView()
     
-    var hostedEvents = []
     var pendingArray = ["No", "Comedy", "No", "Yes"]
     
     var annotationsConfirmed = [MKPointAnnotation]()
@@ -56,51 +55,62 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         self.view.addSubview(self.tableView)
         
         loadMap()
+        //findFood()
         loadEvents()
-    
     }
-    
     
     override func viewDidLayoutSubviews() {
         tableView.frame = CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/2-50)
     }
     
-    
     func loadEvents() {
-        UserVariables.email = "navimn1991@gmail.com"
+        Users.sharedInstance().email = "navimn1991@gmail.com"
         RequestInfo.sharedInstance().postReq("111002")
-        
-        print("meow")
-        //let jsonStringAsArray = newReq.returnedInfo
-        //let data: NSData = jsonStringAsArray.dataUsingEncoding(NSUTF8StringEncoding)!
-        var error: NSError!
-        
-        //do {
-            //let anyObj = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-
-            //let secondPart = anyObj["response"] as! String
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("couldn't load")
+                })
+                return
+            }
             
-            //let secondPartArray = secondPart.componentsSeparatedByString(":")
-            //print(secondPartArray)
-        
-            //let hosted = secondPartArray[10]
-            //hosted.componentsSeparatedByString("', u'")
-        
-            // Split based on characters.
-            //hostedEvents = hosted.componentsSeparatedByString("', u'")
-            //print(hostedEvents)
-            //tableView.reloadData()
-            
-        //} catch {
-           // print(error)
-        //}
+            dispatch_async(dispatch_get_main_queue(), {
+                print("hosted")
+                print(Users.sharedInstance().email)
+                
+                //TODO : Make one array out of accepted and hosted
+                //TODO : for each event, find restaurant based on go_with_group
+                //TODO : list each event in table view
+                
+                
+                //let okhosted = Users.sharedInstance().hosted as! NSArray
+                //for item in okhosted {
+                print("ok")
+                //print(item)
+                // UserVariables.event_id = item as! String
+                Users.sharedInstance().query = "sushi"
+                self.findFood()
+                // }
+            })
+        }
     }
-    
+
     func findFood() {
-        UserVariables.event_id = "10103884620845432--event--6"
-        UserVariables.query = "sushi"
+        Users.sharedInstance().event_id = "10103884620845432--event--20"
+        Users.sharedInstance().query = "sushi"
         RequestInfo.sharedInstance().postReq("999000")
-        print("meow")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed at getting foodz")
+                })
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucssssss")
+            })
+        }
     }
     
     func loadMap() {
@@ -132,7 +142,7 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if pendingEventsButton.selected == true {
             return pendingArray.count
         } else {
-        return hostedEvents.count
+        return Users.sharedInstance().hosted!.count
         }
     }
     
@@ -141,7 +151,9 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
         if pendingEventsButton.selected == true {
             cell.textLabel!.text = pendingArray[indexPath.row]
         } else {
-            cell.textLabel!.text = hostedEvents[indexPath.row] as? String
+            
+
+            cell.textLabel!.text = Users.sharedInstance().hosted![indexPath.row] as? String
         }
         return cell
     }
@@ -156,29 +168,90 @@ class CalendarViewController: UIViewController, UITableViewDelegate, UITableView
     }
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        
+        Users.sharedInstance().event_id = indexPath
+        
         let save = UITableViewRowAction(style: .Normal, title: "Save to Events") { action, index in
             print("save button tapped")
-            let newEvent = indexPath.row
-            self.pendingArray.removeAtIndex(newEvent)
+
+            //SAVE TO CONFIRMED EVENTSSSSSS
+            
+            RequestInfo.sharedInstance().postReq("998000")
+            { (success, errorString) -> Void in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("Failed at getting foodz")
+                        self.alertMessage("Error", message: "Unable to connect.")
+                    })
+                    return
+                }
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("suucssssss")
+                    self.alertMessage("Success!", message: "Event Confirmed")
+                })
+            }
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
         }
         save.backgroundColor = UIColor.greenColor()
         
         let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             print("delete button tapped")
+            
             if self.pendingEventsButton.selected == true {
-                self.pendingArray.removeAtIndex(indexPath.row)
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
-            } else {
+                //REJECT Invite
+                let alert = UIAlertController(title: "Reject Invitation", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { (action: UIAlertAction!) in
+                    Users.sharedInstance().event_id = indexPath
+                    
+                    RequestInfo.sharedInstance().postReq("998002")
+                    { (success, errorString) -> Void in
+                        guard success else {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                self.alertMessage("Error", message: "Unable to connect.")
+                            })
+                            return
+                        }
+                        dispatch_async(dispatch_get_main_queue(), {
+                            print("suucssssss")
+                            self.alertMessage("Success!", message: "Event Removed")
+                            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                        })
+                    }
+                }))
                 
-                // TODO : delete event from data source
-               // self.hostedEvents.removeAtIndex(indexPath.row)
-                tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
+    
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
+            } else {
+                //DELETE Confirmed Event 
+                let alert = UIAlertController(title: "Delete Event", message: "Are you sure?", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { (action: UIAlertAction!) in
+                    Users.sharedInstance().event_id = indexPath
+                    
+                    RequestInfo.sharedInstance().postReq("121001")
+                    { (success, errorString) -> Void in
+                        guard success else {
+                            dispatch_async(dispatch_get_main_queue(), {
+                                self.alertMessage("Error", message: "Unable to connect.")
+                            })
+                            return
+                        }
+                        dispatch_async(dispatch_get_main_queue(), {
+                            print("suucssssss")
+                            self.alertMessage("Success", message: "Event Deleted")
+                            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+                        })
+                    }
+                }))
+                
+                alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
+                    
+                }))
+                self.presentViewController(alert, animated: true, completion: nil)
             }
         }
         delete.backgroundColor = UIColor.grayColor()
-        
-        loadMap()
         
         if yesEventsButton.selected == true {
             return [delete]

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PreferencesViewController: UIViewController, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
+class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     var saveButton : UIBarButtonItem!
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
@@ -67,34 +67,60 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
         let cell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         if restaurantButton.selected == true {
         cell.textLabel!.text = foodArray[indexPath.row]
+            if foodArray[indexPath.row] == Users.sharedInstance().food_pref as? String {
+                cell.accessoryType = .Checkmark
+            }
         } else {
             cell.textLabel!.text = moviesArray[indexPath.row]
+            if moviesArray[indexPath.row] == Users.sharedInstance().movie_pref as! String {
+                cell.accessoryType = .Checkmark
+            }
         }
         return cell
     }
-    
     
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         // the cells you would like the actions to appear needs to be editable
         return true
     }
     
-    
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         // show check on left side, select name, show in the inviteToList
         
         let cell = tableView.cellForRowAtIndexPath(indexPath)
-        if cell?.accessoryType == . Checkmark {
-            cell?.accessoryType = .None
+        
+        for deselectCell in tableView.visibleCells {
+            deselectCell.accessoryType = .None
+        }
+        if cell?.accessoryType == .None {
+            
+            cell?.accessoryType = .Checkmark
         }
         else {
             cell?.accessoryType = .Checkmark
         }
-        
     }
 
     func saveClicked() {
-        alertMessage("Preference Saved!", message: "")
+        
+        Users.sharedInstance().what = "food_pref"
+        Users.sharedInstance().food_pref = "selected"
+        
+            
+        RequestInfo.sharedInstance().postReq("111003")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Unable to save preference")
+                    self.alertMessage("Error", message: "Unable to connect.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucssssss")
+                self.alertMessage("Preference Saved!", message: "")
+            })
+        }
     }
     
     func restaurantClicked() {
@@ -108,12 +134,4 @@ class PreferencesViewController: UIViewController, UINavigationControllerDelegat
         restaurantButton.selected = false
         tableView.reloadData()
     }
-    
-    func alertMessage(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.Alert)
-        let action = UIAlertAction(title: "Ok", style: .Default, handler: nil)
-        alert.addAction(action)
-        presentViewController(alert, animated: true, completion: nil)
-    }
-
 }

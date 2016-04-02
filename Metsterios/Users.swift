@@ -10,23 +10,34 @@ import Foundation
 
 class Users: NSObject {
     
-    var name : String?
-    var email : String?
-    var fbid : String?
-    var lat : String?
-    var long : String?
-    var food_pref : String?
-    var movie_pref : String?
-    var what : String?
+    var name : AnyObject?
+    var email : AnyObject?
+    var fbid : AnyObject?
+    var lat : AnyObject?
+    var long : AnyObject?
+    var food_pref : AnyObject?
+    var movie_pref : AnyObject?
+    var what : AnyObject?
     
-    var eventName : String?
-    var query : String?
-    var event_id : String?
-    var event_date : String?
-    var event_time : String?
-    var event_notes : String?
-    var event_members = []
+    var eventName : AnyObject?
+    var query : AnyObject?
+    var event_id : AnyObject?
+    var event_date : AnyObject?
+    var event_time : AnyObject?
+    var event_notes : AnyObject?
+    var invited_members : AnyObject?
+    var event_members : AnyObject?
+    var eventModel: [EventModel]
+    
+    var hosted : AnyObject?
 
+    var joined : AnyObject?
+    var pending : AnyObject?
+    
+    override init() {
+        eventModel = [EventModel]()
+    }
+    
     class func sharedInstance() -> Users {
         struct Singleton {
             static var sharedInstance = Users()
@@ -34,3 +45,5 @@ class Users: NSObject {
         return Singleton.sharedInstance
     }
 }
+
+
