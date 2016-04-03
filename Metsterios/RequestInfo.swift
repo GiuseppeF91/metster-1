@@ -25,7 +25,7 @@ class RequestInfo {
     
     var event_time = Users.sharedInstance().event_time
     var event_notes = Users.sharedInstance().event_notes
-    var invited_members = Users.sharedInstance().event_members
+    var invited_members = Users.sharedInstance().invited_members
     var event_members = Users.sharedInstance().event_members
     
     var what = Users.sharedInstance().what
@@ -106,7 +106,7 @@ class RequestInfo {
             }
             
         if oper == "121000" { //insert to events
-            dictionary = ["host_email": email!, "event_name": event_name!, "event_date": event_date!, "event_time": event_time!, "event_notes": event_notes!, "event_members": event_members!]
+            dictionary = ["host_email": email!, "event_name": event_name!, "event_date": event_date!, "event_time": event_time!, "event_notes": event_notes!, "event_members": invited_members!]
             }
             
         if oper == "998000" { //accept invite

@@ -12,7 +12,7 @@ import FBSDKLoginKit
 import CoreLocation
 import Firebase
 
-class LoginViewController: BaseVC, CLLocationManagerDelegate {
+class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDelegate {
     
     var loginButton = SubmitButton(frame: CGRectMake(10, 100, UIScreen.mainScreen().bounds.width-20, (UIScreen.mainScreen().bounds.height)/12))
     
@@ -22,38 +22,104 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate {
     var currentLong = ""
     var error : NSError?
     
-    let ref = Firebase(url: "https://mets.firebaseio.com")
+    let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         locManager.delegate = self
-        }
-    
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(true)
         
-        if (FBSDKAccessToken.currentAccessToken() == nil){
-            print ("not logged in to fb")
-            loginButton.center = self.view.center
-            loginButton.setTitle("Login with Facebook", forState: .Normal)
-            loginButton.addTarget(self, action: #selector(LoginViewController.loginNow), forControlEvents: UIControlEvents.TouchUpInside)
-            self.view.addSubview(loginButton)
+        let loginView : FBSDKLoginButton = FBSDKLoginButton()
+        self.view.addSubview(loginView)
+        loginView.center = self.view.center
+        loginView.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_photos"]
+        loginView.delegate = self
+        
+        if (FBSDKAccessToken.currentAccessToken() != nil) {
+                self.returnUserData()
             
+                self.returnUserFriends()
         } else {
+            print("not logged in")
+        }
+    }
+    
+    // Facebook Delegate Methods
+    func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
+        print("User Logged In")
+        
+        if ((error) != nil)
+        {
+            print(ErrorType)
+        }
+        if result.isCancelled {
+            // Handle cancellations
+            print(ErrorType)
+        }
+        else {
+            self.activityIndicator.startAnimating()
+            //Start Location Auth
+            self.locManager.requestAlwaysAuthorization()
+            self.locManager.startUpdatingLocation()
+            
             dispatch_async(dispatch_get_main_queue(), {
-            print ("logged in to fb")
-            self.gotoApp()
+                self.returnUserData()
+                Users.sharedInstance().lat = ""
+                Users.sharedInstance().long = ""
+                
+                //Req to 11002 (find in account) by email. IF success present VC. IF fail, Req to 111000, present VC.
+                
+                self.findAccount(Users.sharedInstance().email as! String)
+                self.activityIndicator.startAnimating()
             })
         }
     }
     
-    func gotoApp() {
-        presentViewController(TabBarViewController(), animated: true, completion: nil)
-        //self.dismissViewControllerAnimated(true, completion: nil)
+    func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
+        print("User Logged Out")
     }
     
+    func returnUserFriends() {
+        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me/taggable_friends", parameters: ["fields": "name, email"])
+        graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
+            //TO DO: THIS NEEDS TO BE IMPLEMENTED TO RETURN ONLY AUTHORIZED APP USERS. Also needs to return the EMAILS of each listed user.
+            if error == nil {
+                print("Friends are : \(result)")
+                print("OKOKOKOKOKOKOK")
+                let data = result.valueForKey("data")
+                print(data?.valueForKey("email"))
+                Users.sharedInstance().user_friends = data?.valueForKey("name")
+            } else {
+                print("Error Getting Friends \(error)");
+            }
+        })
+    }
+    
+    func returnUserData() {
+        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "email, name"])
+        graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
+            
+            if ((error) != nil)
+            {
+                // Process error
+                print("Error: \(error)")
+            }
+            else
+            {
+                print("fetched user: \(result)")
+                Users.sharedInstance().name = result.valueForKey("name") as! NSString
+                print("User Name is: \(Users.sharedInstance().name)")
+                Users.sharedInstance().email = result.valueForKey("email") as! NSString
+                
+                Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
+                
+                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+                
+            }
+        })
+    }
+
     func createAccount() {
         RequestInfo.sharedInstance().postReq("111000")
         { (success, errorString) -> Void in
@@ -67,8 +133,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate {
             
             dispatch_async(dispatch_get_main_queue(), {
                 print("account is hereeeee")
-                self.gotoApp()
-
+                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
             })
         }
     }
@@ -86,58 +151,17 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate {
             
             dispatch_async(dispatch_get_main_queue(), {
                 print("This user exists")
-                self.gotoApp()
+                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
             })
         }
     }
     
-    func loginNow() {
-        facebookLogin.logInWithReadPermissions(["email", "public_profile", "user_friends", "user_location", "user_photos"], fromViewController: self, handler: {
-            (facebookResult, facebookError) -> Void in
-            if facebookError != nil {
-                print("Facebook login failed. Error \(facebookError)")
-            } else if facebookResult.isCancelled {
-                print("Facebook login was cancelled.")
-            } else {
-                //firebase auth for user info
-                dispatch_async(dispatch_get_main_queue(), {
-                let accessToken = FBSDKAccessToken.currentAccessToken().tokenString
-                self.ref.authWithOAuthProvider("facebook", token: accessToken,
-                    withCompletionBlock: { error, authData in
-                        if error != nil {
-                            print("Login failed. \(error)")
-                        } else {
-                            print("Logged in! \(authData)")
-                            print("Logged in firebase ! \(authData)")
-                            
-                            // Authentication just completed successfully
-                            // The logged in user's unique identifier
-                
-                            Users.sharedInstance().name = authData.providerData["displayName"] as! String
-                            Users.sharedInstance().fbid = authData.uid
-                            Users.sharedInstance().email = authData.providerData["email"] as! String
-                            Users.sharedInstance().lat = ""
-                            Users.sharedInstance().long = ""
-                            //Req to 11002 (find in account) by email. IF success present VC. IF fail, Req to 111000, present VC.
-                            
-                            self.findAccount(Users.sharedInstance().email as! String)
-                            //Start Location Auth
-                            self.locManager.requestAlwaysAuthorization()
-                            self.locManager.startUpdatingLocation()
-                        }
-                })
-                })
-            }
-        })
-    }
-    
     func locRequest() {
         
-        if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedWhenInUse) || (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedAlways)
-        {
+        if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedWhenInUse) || (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedAlways) {
             currentLocation = locManager.location
-        }
-        else {
+            
+        } else {
             print("no")
         }
     }
