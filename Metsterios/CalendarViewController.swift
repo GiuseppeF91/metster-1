@@ -11,7 +11,6 @@ import MapKit
 
 class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
     
-    var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
     var yesEventsButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
     var pendingEventsButton = SelectionButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
@@ -27,9 +26,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navBar.backgroundColor = UIColor.whiteColor()
-        navBar.tintColor = UIColor.blackColor()
-      
         navigationItem.title = "Events"
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
@@ -38,7 +34,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         yesEventsButton.setTitle("Confirmed", forState: .Normal)
         self.view.addSubview(yesEventsButton)
         
-        pendingEventsButton.addTarget(self, action: "pendingEventsClicked", forControlEvents: UIControlEvents.TouchUpInside)
+        pendingEventsButton.addTarget(self, action: #selector(CalendarViewController.pendingEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
         pendingEventsButton.setTitle("Pending", forState: .Normal)
         pendingEventsButton.selected = true
         self.view.addSubview(pendingEventsButton)
@@ -64,12 +60,13 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     func loadEvents() {
-        Users.sharedInstance().email = "navimn1991@gmail.com"
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
+            self.activityIndicator.startAnimating()
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
                     print("couldn't load")
+                    //self.activityIndicator.stopAnimating()
                 })
                 return
             }
@@ -77,6 +74,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             dispatch_async(dispatch_get_main_queue(), {
                 print("hosted")
                 print(Users.sharedInstance().email)
+                self.activityIndicator.stopAnimating()
                 
                 //TODO : Make one array out of accepted and hosted
                 //TODO : for each event, find restaurant based on go_with_group
@@ -152,7 +150,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.textLabel!.text = pendingArray[indexPath.row]
         } else {
             
-
             cell.textLabel!.text = Users.sharedInstance().hosted![indexPath.row] as? String
         }
         return cell

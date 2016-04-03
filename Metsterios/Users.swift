@@ -29,6 +29,8 @@ class Users: NSObject {
     var event_members : AnyObject?
     var eventModel: [EventModel]
     
+    var user_friends: AnyObject?
+    
     var hosted : AnyObject?
 
     var joined : AnyObject?

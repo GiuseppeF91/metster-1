@@ -22,7 +22,7 @@ class ProfileViewController: BaseVC {
     
     var nameLabel = UILabel(frame: CGRectMake(20, UIScreen.mainScreen().bounds.height/2.5, UIScreen.mainScreen().bounds.width-40, 40))
     
-    let ref = Firebase(url: "https://mets.firebaseio.com")
+    let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,7 +62,6 @@ class ProfileViewController: BaseVC {
     }
     
     func logoutClicked() {
-        ref.unauth()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
 }

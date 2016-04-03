@@ -11,7 +11,6 @@ import UIKit
 class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     var saveButton : UIBarButtonItem!
-    var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
     var restaurantButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
     var moviesButton = SelectionButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
@@ -24,9 +23,6 @@ class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        navBar.backgroundColor = UIColor.whiteColor()
-        navBar.tintColor = UIColor.blackColor()
         
         saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: #selector(PreferencesViewController.saveClicked))
         
