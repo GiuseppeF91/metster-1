@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITableViewDataSource, UITableViewDelegate {
+class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDelegate {
     
     var saveButton : UIBarButtonItem!
     var restaurantButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
@@ -20,6 +20,8 @@ class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITable
     
     var foodArray = ["Chinese", "French", "Indian", "Italian", "Japanese", "Mexican"]
     var moviesArray = ["Horror", "Comedy", "Drama", "Romance"]
+    var new_food_pref : String?
+    var new_movie_pref : String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,7 +70,7 @@ class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITable
             }
         } else {
             cell.textLabel!.text = moviesArray[indexPath.row]
-            if moviesArray[indexPath.row] == Users.sharedInstance().movie_pref as! String {
+            if moviesArray[indexPath.row] == Users.sharedInstance().movie_pref as? String {
                 cell.accessoryType = .Checkmark
             }
         }
@@ -91,24 +93,44 @@ class PreferencesViewController: BaseVC, UINavigationControllerDelegate, UITable
         if cell?.accessoryType == .None {
             
             cell?.accessoryType = .Checkmark
+            if restaurantButton.selected == true {
+                new_food_pref = cell?.textLabel?.text
+                print(new_food_pref)
+            } else {
+                new_movie_pref = cell?.textLabel?.text
+                print(new_movie_pref)
+            }
         }
         else {
             cell?.accessoryType = .Checkmark
+            if restaurantButton.selected == true {
+                new_food_pref = cell?.textLabel?.text
+                print(new_food_pref)
+            } else {
+                new_movie_pref = cell?.textLabel?.text
+                print(new_movie_pref)
+            }
         }
     }
 
     func saveClicked() {
+        if restaurantButton.selected == true {
+            Users.sharedInstance().food_pref = new_food_pref
+            Users.sharedInstance().what = "food_pref"
+            print(Users.sharedInstance().food_pref)
+        }
+      
+        if moviesButton.selected == true {
+            Users.sharedInstance().movie_pref = new_movie_pref
+            Users.sharedInstance().what = "moviepref"
+        }
         
-        Users.sharedInstance().what = "food_pref"
-        Users.sharedInstance().food_pref = "selected"
-        
-            
         RequestInfo.sharedInstance().postReq("111003")
         { (success, errorString) -> Void in
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
                     print("Unable to save preference")
-                    self.alertMessage("Error", message: "Unable to connect.")
+                    self.alertMessage("Error", message: "Unable to update.")
                 })
                 return
             }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDataSource, UIPickerViewDelegate {
+class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource {
 
     var cancelButton : UIBarButtonItem!
     var nextButton : UIBarButtonItem!
@@ -17,27 +17,69 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var friendsTableView : UITableView = UITableView()
     var eventNameTextField = MainTextField(frame: CGRectMake(20, 200, (UIScreen.mainScreen().bounds.width)-40, 50))
     
-    var typeLabel = MainLabel(frame: CGRectMake(20, 260, (UIScreen.mainScreen().bounds.width)-40, 50))
-    var typeButton = UIButton(frame: CGRectMake(20, 260, (UIScreen.mainScreen().bounds.width)-40, 50))
-    
-    var typePicker = UIPickerView(frame: CGRectMake(0, 450, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
-    var typePickerData = ["Restaurant", "Movie"]
+    var moviesButton = SelectionButton(frame: CGRectMake(20, 260, ((UIScreen.mainScreen().bounds.width)/2)-30, 50))
+    var restaurantButton = SelectionButton(frame: CGRectMake(((UIScreen.mainScreen().bounds.width)/2)+10, 260, ((UIScreen.mainScreen().bounds.width)/2)-30, 50))
     
     var dateLabel = MainLabel(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
     var dateButton = UIButton(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
-    
-    var datePicker = UIDatePicker(frame: CGRectMake(0, 500, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
+    var datePicker = UIDatePicker(frame: CGRectMake(20, 370, UIScreen.mainScreen().bounds.width-40, 150))
 
     var timeLabel = MainLabel(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
     var timeButton = UIButton(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var timePicker = UIDatePicker(frame: CGRectMake(0, 500, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-500))
+    var timePicker = UIDatePicker(frame: CGRectMake(20, 430, UIScreen.mainScreen().bounds.width-40, 150))
  
     var notesTextField = MainTextField(frame: CGRectMake(20, 440, (UIScreen.mainScreen().bounds.width)-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, 555, (UIScreen.mainScreen().bounds.width)-160, 40))
     
-    var whiteButton = UIButton(frame: CGRectMake(0, 0, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height-(UIScreen.mainScreen().bounds.height-500)))
-    
     var invitedFriends : NSMutableArray = []
+    
+    
+    var dateBool: Bool = false {
+        didSet {
+            if dateBool == true {
+                timeBool = false
+                notesTextField.hidden = true
+                submitButton.hidden = true
+                datePicker.datePickerMode = UIDatePickerMode.Date
+                datePicker.hidden = false
+                timeButton.hidden = true
+                timeLabel.hidden = true
+            }
+            if dateBool == false {
+                datePicker.hidden = true
+                notesTextField.hidden = false
+                submitButton.hidden = false
+                timeLabel.hidden = false
+                timeButton.hidden = false
+            }
+        }
+    }
+    
+    var timeBool: Bool = false {
+        didSet {
+        if timeBool == true {
+            dateBool = false
+            notesTextField.hidden = true
+            submitButton.hidden = true
+            timePicker.datePickerMode = UIDatePickerMode.Time
+            timePicker.hidden = false
+            timeButton.hidden = false
+            timeLabel.hidden = false
+            
+            }
+            if timeBool == false {
+                timePicker.hidden = true
+            }
+            if (timeBool == false) && (dateBool == false) {
+                datePicker.hidden = true
+                timePicker.hidden = true
+                submitButton.hidden = false
+                notesTextField.hidden = false
+                timeButton.hidden = false
+                timeLabel.hidden = false
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +98,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
-        let inviteTo=NSAttributedString(string: ("To:"), attributes:    [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
         inviteToList.text = "To:"
         //inviteToList.attributedPlaceholder=inviteTo
         //inviteToList.delegate = self
@@ -68,20 +109,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         eventNameTextField.delegate = self
         self.view.addSubview(eventNameTextField)
         
-        typeLabel.textAlignment = NSTextAlignment.Left
-        typeLabel.text = "Type"
-        self.view.addSubview(typeLabel)
-
-        typeButton.addTarget(self, action: #selector(self.selectType), forControlEvents: UIControlEvents.TouchUpInside)
-        typeButton.backgroundColor = UIColor.clearColor()
-        self.view.addSubview(typeButton)
-        
-        typePicker.dataSource = self
-        typePicker.delegate = self
-        self.view.addSubview(typePicker)
-        typePicker.hidden = true
-        typePicker.bringSubviewToFront(typePicker)
-        
         dateLabel.textAlignment = NSTextAlignment.Left
         dateLabel.text = "Date"
         self.view.addSubview(dateLabel)
@@ -89,6 +116,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         dateButton.addTarget(self, action: #selector(self.selectDate), forControlEvents: UIControlEvents.TouchUpInside)
         dateButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(dateButton)
+        dateButton.selected = false
         
         datePicker.bringSubviewToFront(datePicker)
         let currentDate = NSDate()
@@ -105,6 +133,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         timeButton.addTarget(self, action: #selector(AddEventViewController.selectTime), forControlEvents: UIControlEvents.TouchUpInside)
         timeButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(timeButton)
+        timeButton.selected = false
         
         timePicker.addTarget(self, action: #selector(AddEventViewController.timePickerValueChanged), forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(timePicker)
@@ -115,19 +144,30 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         notesTextField.attributedPlaceholder=notes
         notesTextField.delegate = self
         self.view.addSubview(notesTextField)
-        
-        whiteButton.backgroundColor = UIColor.clearColor()
-        whiteButton.addTarget(self, action: #selector(self.removePicker), forControlEvents: UIControlEvents.TouchUpInside)
-        self.view.addSubview(whiteButton)
-        whiteButton.hidden = true
-        
-        submitButton.addTarget(self, action: #selector(self.newEvent), forControlEvents: UIControlEvents.TouchUpInside)
+    
+        submitButton.addTarget(self, action: #selector(self.newEventCreated), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         
+        moviesButton.addTarget(self, action: #selector(self.moviesClicked), forControlEvents: UIControlEvents.TouchUpInside)
+        let selectedMovieFontTitle = NSAttributedString(string: "Movie", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(15)])
+        let deselectedMovieFontTitle = NSAttributedString(string: "Movie", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(15)])
+        moviesButton.setAttributedTitle(selectedMovieFontTitle, forState: .Selected)
+        moviesButton.setAttributedTitle(deselectedMovieFontTitle, forState: .Normal)
+        self.view.addSubview(moviesButton)
+        moviesButton.selected = false
+        
+        restaurantButton.addTarget(self, action: #selector(self.restaurantClicked), forControlEvents: UIControlEvents.TouchUpInside)
+        let selectedFoodFontTitle = NSAttributedString(string: "Restaurant", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(15)])
+        let deselectedFoodFontTitle = NSAttributedString(string: "Restaurant", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(15)])
+        restaurantButton.setAttributedTitle(selectedFoodFontTitle, forState: .Selected)
+        restaurantButton.setAttributedTitle(deselectedFoodFontTitle, forState: .Normal)
+        self.view.addSubview(restaurantButton)
+        restaurantButton.selected = true
+        
         eventNameTextField.hidden = true
-        typeLabel.hidden = true
-        typeButton.hidden = true
+        moviesButton.hidden = true
+        restaurantButton.hidden = true
         dateLabel.hidden = true
         dateButton.hidden = true
         timeLabel.hidden = true
@@ -140,6 +180,16 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     override func viewDidLayoutSubviews() {
         friendsTableView.frame = CGRectMake(0, ((UIScreen.mainScreen().bounds.height*11)/60)+25, UIScreen.mainScreen().bounds.width, 400)
+    }
+    
+    func moviesClicked() {
+        restaurantButton.selected = false
+        moviesButton.selected = true
+    }
+    
+    func restaurantClicked() {
+        moviesButton.selected = false
+        restaurantButton.selected = true
     }
     
     //MARK : Table View delegate & data source methods
@@ -167,76 +217,23 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             invitedFriends.addObject(cell!.textLabel!.text!)
         }
     }
-    
-    //MARK: Picker View Data Source and Delegates
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return typePickerData.count
-    }
-    
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return typePickerData[row]
-    }
-    
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        typeLabel.text = typePickerData[row]
-        typePicker.hidden = true
-    }
-    
-    func pickerView(pickerView: UIPickerView, rowHeightForComponent component: Int) -> CGFloat {
-        return 36.0
-    }
 
     //MARK: Actions
-    
-    func selectType() {
-        datePicker.hidden = true
-        timePicker.hidden = true
-        typePicker.hidden = false
-        
-        submitButton.hidden = true
-        whiteButton.hidden = false
-    }
-    
     func selectDate() {
-        typePicker.hidden = true
-        timePicker.hidden = true
-        datePicker.hidden = false
-        
-        datePicker.datePickerMode = UIDatePickerMode.Date
-        submitButton.hidden = true
-        whiteButton.hidden = false
+        dateBool = !dateBool
     }
     
     func selectTime() {
-        datePicker.hidden = true
-        typePicker.hidden = true
-        timePicker.hidden = false
-        
-        timePicker.datePickerMode = UIDatePickerMode.Time
-        submitButton.hidden = true
-        whiteButton.hidden = false
+        timeBool = !timeBool
     }
     
-    func removePicker() {
-        datePicker.hidden = true
-        timePicker.hidden = true
-        typePicker.hidden = true
-        
-        submitButton.hidden = false
-        whiteButton.hidden = true
-    }
-    
-    func newEvent() {
-        
+    func newEventCreated() {
+        //Inserts Event
         Users.sharedInstance().eventName = eventNameTextField.text
         Users.sharedInstance().event_date = dateLabel.text
         Users.sharedInstance().event_time = timeLabel.text
         Users.sharedInstance().event_notes = notesTextField.text
-        Users.sharedInstance().invited_members = invitedFriends
+        Users.sharedInstance().invited_members = ["green@green.com", "jessi.gui@gmail.com"]
         
         print(Users.sharedInstance().eventName)
         print(Users.sharedInstance().event_date)
@@ -256,11 +253,44 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             }
             dispatch_async(dispatch_get_main_queue(), {
                 print("suucessssss")
-                
-                //TODO: get new event id!!!! 
-                Users.sharedInstance().event_id = ""
-                
-                RequestInfo.sharedInstance().postReq("998001")
+                self.findFood()
+            })
+        }
+    }
+    
+    func findFood() {
+        Users.sharedInstance().query = Users.sharedInstance().food_pref
+        
+        RequestInfo.sharedInstance().postReq("999000")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed at getting foodz")
+                })
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                print("Found restauants!")
+            })
+        }
+    }
+    
+    func chooseEventLocation() {
+        // 999000 find food... the first location is saved and 997000 pushes to firebase
+        RequestInfo.sharedInstance().postReq("998001")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Unable to save preference")
+                    self.alertMessage("Error", message: "Unable to connect.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucssssss")
+                self.alertMessage("Event Created!", message: "")
+                RequestInfo.sharedInstance().postReq("997000")
                 { (success, errorString) -> Void in
                     guard success else {
                         dispatch_async(dispatch_get_main_queue(), {
@@ -271,9 +301,26 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                     }
                     dispatch_async(dispatch_get_main_queue(), {
                         print("suucssssss")
-                        self.alertMessage("Event Created!", message: "")
+                        self.inviteMembers()
                     })
                 }
+            })
+        }
+    }
+    
+    func inviteMembers() { // invites are sent via 998001
+        RequestInfo.sharedInstance().postReq("998001")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Unable to save preference")
+                    self.alertMessage("Error", message: "Unable to connect.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucssssss")
+                self.alertMessage("Success!", message: "Event Created")
             })
         }
     }
@@ -283,8 +330,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         inviteToList.hidden = true
         friendsTableView.hidden = true
         eventNameTextField.hidden = false
-        typeLabel.hidden = false
-        typeButton.hidden = false
+        restaurantButton.hidden = false
+        moviesButton.hidden = false
         dateLabel.hidden = false
         dateButton.hidden = false
         timeLabel.hidden = false
@@ -307,8 +354,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func backPressed() {
         eventNameTextField.hidden = true
-        typeLabel.hidden = true
-        typeButton.hidden = true
+        restaurantButton.hidden = true
+        moviesButton.hidden = true
         dateLabel.hidden = true
         dateButton.hidden = true
         timeLabel.hidden = true

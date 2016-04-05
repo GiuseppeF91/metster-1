@@ -21,6 +21,13 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     var currentLat = ""
     var currentLong = ""
     var error : NSError?
+   
+    var popTime = dispatch_time(DISPATCH_TIME_NOW,
+                                Int64(2.0 * Double(NSEC_PER_SEC)))
+    
+    var GlobalMainQueue: dispatch_queue_t {
+        return dispatch_get_main_queue()
+    }
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
@@ -37,9 +44,15 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         loginView.delegate = self
         
         if (FBSDKAccessToken.currentAccessToken() != nil) {
-                self.returnUserData()
             
+            dispatch_async(dispatch_get_main_queue(), {
+                self.returnUserData()
                 self.returnUserFriends()
+            })
+            
+            dispatch_after(popTime, GlobalMainQueue) {
+                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+            }
         } else {
             print("not logged in")
         }
@@ -49,30 +62,30 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
         print("User Logged In")
         
-        if ((error) != nil)
-        {
+        if ((error) != nil) {
             print(ErrorType)
         }
         if result.isCancelled {
             // Handle cancellations
             print(ErrorType)
-        }
-        else {
-            self.activityIndicator.startAnimating()
+        } else {
             //Start Location Auth
             self.locManager.requestAlwaysAuthorization()
             self.locManager.startUpdatingLocation()
+            print("user data returned")
             
             dispatch_async(dispatch_get_main_queue(), {
                 self.returnUserData()
+                self.returnUserFriends()
+                
                 Users.sharedInstance().lat = ""
                 Users.sharedInstance().long = ""
-                
-                //Req to 11002 (find in account) by email. IF success present VC. IF fail, Req to 111000, present VC.
-                
-                self.findAccount(Users.sharedInstance().email as! String)
-                self.activityIndicator.startAnimating()
             })
+            
+            dispatch_after(popTime, GlobalMainQueue) {
+                self.findAccount()
+                
+            }
         }
     }
     
@@ -100,22 +113,16 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "email, name"])
         graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
             
-            if ((error) != nil)
-            {
+            if ((error) != nil) {
                 // Process error
                 print("Error: \(error)")
-            }
-            else
-            {
+            } else {
                 print("fetched user: \(result)")
                 Users.sharedInstance().name = result.valueForKey("name") as! NSString
                 print("User Name is: \(Users.sharedInstance().name)")
                 Users.sharedInstance().email = result.valueForKey("email") as! NSString
                 
                 Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
-                
-                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
-                
             }
         })
     }
@@ -138,7 +145,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         }
     }
 
-    func findAccount(email: String) {
+    func findAccount() {
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
@@ -148,11 +155,8 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 })
                 return
             }
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                print("This user exists")
-                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
-            })
+            print("This user exists")
+            self.presentViewController(TabBarViewController(), animated: true, completion: nil)
         }
     }
     
