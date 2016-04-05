@@ -14,7 +14,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var yesEventsButton = SelectionButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
     
     var pendingEventsButton = SelectionButton(frame: CGRectMake(UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width/2, (UIScreen.mainScreen().bounds.height)/12))
-    var mapView = MKMapView(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/6)+25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/2))
+    //var mapView = MKMapView(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/6)+25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/2))
     
     var tableView : UITableView = UITableView()
     
@@ -39,20 +39,23 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         pendingEventsButton.selected = true
         self.view.addSubview(pendingEventsButton)
         
-        mapView.delegate = self
-        let span = MKCoordinateSpanMake(10, 10)
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
-        mapView.setRegion(region, animated: true)
-        self.view.addSubview(mapView)
+        //mapView.delegate = self
+        //let span = MKCoordinateSpanMake(10, 10)
+        //let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
+        //mapView.setRegion(region, animated: true)
+        //self.view.addSubview(mapView)
         
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 50
         self.view.addSubview(self.tableView)
         
-        loadMap()
-        //findFood()
+        //loadMap()
         loadEvents()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
     }
     
     override func viewDidLayoutSubviews() {
@@ -87,31 +90,13 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 //print(item)
                 // UserVariables.event_id = item as! String
                 Users.sharedInstance().query = "sushi"
-                self.findFood()
+                //self.findFood()
                 // }
             })
         }
     }
 
-    func findFood() {
-        Users.sharedInstance().event_id = "10103884620845432--event--20"
-        Users.sharedInstance().query = "sushi"
-        RequestInfo.sharedInstance().postReq("999000")
-        { (success, errorString) -> Void in
-            guard success else {
-                dispatch_async(dispatch_get_main_queue(), {
-                    print("Failed at getting foodz")
-                })
-                return
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), {
-                print("suucssssss")
-            })
-        }
-    }
-    
-    func loadMap() {
+   /* func loadMap() {
         mapView.removeAnnotations(annotationsConfirmed)
         mapView.removeAnnotations(annotationsPending)
         if pendingEventsButton.selected == true {
@@ -119,20 +104,20 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         } else {
             mapView.addAnnotations(annotationsConfirmed)
         }
-    }
+    } */
     
     func pendingEventsClicked() {
         pendingEventsButton.selected = true
         yesEventsButton.selected = false
         tableView.reloadData()
-        loadMap()
+        //loadMap()
     }
     
     func yesEventsClicked() {
         yesEventsButton.selected = true
         pendingEventsButton.selected = false
         tableView.reloadData()
-        loadMap()
+        //loadMap()
     }
     
     //MARK : Table View delegate & data source methods

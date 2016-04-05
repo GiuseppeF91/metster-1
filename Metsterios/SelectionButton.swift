@@ -13,6 +13,7 @@ class SelectionButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
         super.layer.borderWidth = 1
+        super.layer.cornerRadius = 2
         super.layer.borderColor = UIColor.grayColor().CGColor
         super.setTitleColor(UIColor.blackColor(), forState: .Selected)
         super.setTitleColor(UIColor.grayColor(), forState: .Normal)

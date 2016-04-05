@@ -73,13 +73,16 @@ class RequestInfo {
             let hosted = useME["hosted"]
             let joined = useME["joined"]
             let invites  = useME["invites"]
+            let food_pref = useME["food_pref"]
+            let movie_pref = useME["movie_pref"]
             print(userName)
             print(email)
             
             Users.sharedInstance().hosted = hosted
             Users.sharedInstance().joined = joined
             Users.sharedInstance().pending = invites
-            Users.sharedInstance().email = email
+            Users.sharedInstance().food_pref = food_pref
+            Users.sharedInstance().movie_pref = movie_pref
             
         } catch {
             print(ErrorType)
@@ -87,26 +90,40 @@ class RequestInfo {
     }
     
     func postReq(oper: String, completionHandler: (success: Bool, errorString: String?) -> Void) {
+        print("req started")
+        print(Users.sharedInstance().email)
+        
+        if oper == "997000" {
+            dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!]
+        }
+        
+        if oper == "111003" { // edit account pref
+            print(email)
+            print(Users.sharedInstance().food_pref)
+            print(Users.sharedInstance().movie_pref)
+            print(Users.sharedInstance().what)
+            
+            dictionary = ["email": email!, "what": Users.sharedInstance().what!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
+        }
         
         if oper == "111002" { //#find in account
             dictionary = ["email": email!]
         }
         
         if oper == "999000" { //Find Fooood
-            dictionary = ["query":query! , "event_id":event_id!]
+            dictionary = ["query": Users.sharedInstance().query! , "event_id": Users.sharedInstance().event_id!]
         }
         
         if oper == "111000" {  //#insert to account
+            print(email)
+            print(fb_id)
+            print(name)
     
-            dictionary = ["dev_id": "12er34", "email": email!, "fb_id": fb_id!, "name": name!, "invites":"none", "hosted":"none", "joined": "none", "latitude": latitude!, "longitude": longitude!, "food_pref": "Chinese", "moviepref": "Horror"]
-            }
-            
-        if oper == "111003" { //update in account
-            dictionary = ["email": email!, "what": what!, "movie_pref": movie_pref!, "food_pref": food_pref!]
+            dictionary = ["dev_id": "12er34", "email": email!, "fb_id": fb_id!, "name": name!, "invites": NSNull(), "hosted": NSNull(), "joined": NSNull(), "latitude": latitude!, "longitude": longitude!, "food_pref": "Chinese", "moviepref": "Horror"]
             }
             
         if oper == "121000" { //insert to events
-            dictionary = ["host_email": email!, "event_name": event_name!, "event_date": event_date!, "event_time": event_time!, "event_notes": event_notes!, "event_members": invited_members!]
+            dictionary = ["host_email": email!, "event_name": Users.sharedInstance().eventName!, "event_date": Users.sharedInstance().event_date!, "event_time": Users.sharedInstance().event_time!, "event_notes": Users.sharedInstance().event_notes!, "event_members": Users.sharedInstance().invited_members!]
             }
             
         if oper == "998000" { //accept invite
@@ -134,7 +151,7 @@ class RequestInfo {
         
         let jsonData = try! NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.init(rawValue: 0))
         guard error == nil else {
-            print(ErrorType)
+            print("can't get data into the right form")
             return
         }
     
@@ -145,23 +162,50 @@ class RequestInfo {
             request.HTTPBody = myRequestData
         let task = session.dataTaskWithRequest(request, completionHandler: { (data, response, error) -> Void in
             guard error == nil else {
-                print(ErrorType)
+                print("unable to reach server")
                 return
             }
             let content = String(data: data!, encoding: NSUTF8StringEncoding)
             let data: NSData = (content!.dataUsingEncoding(NSUTF8StringEncoding))!
+            
+            print(content)
         
             do {
                 let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
                 print(responseData)
+                let status = responseData.valueForKey("status") as! String
+                let responseStat = responseData.valueForKey("response") as! String
+                
+                print(status)
+                
+                if status == "fail" {
+                    completionHandler(success: false, errorString: "that info does not exist")
+                }
+                
+                if responseStat == "update failed" {
+                    completionHandler(success: false, errorString: "Unable to update")
+                }
+    
+                if status == "success" {
+                    completionHandler(success: true, errorString: "info found")
+                    if oper == "121000" {
+                        Users.sharedInstance().event_id = responseData.valueForKey("response")
+                        print(Users.sharedInstance().event_id)
+                    }
                     if oper == "111002" {
-                       self.parseAccountInfo(responseData)
+                        self.parseAccountInfo(responseData)
                     }
                     if oper == "999000" {
-                        //self.parseFoodRequest(responseData)
+                        
+                        
+                        //TODO : find out real place id AND parse correctly
+                        self.parseFoodRequest(responseData)
+                        Users.sharedInstance().place_id = responseData.valueForKey("response")
                     }
-                }catch {
-                    print(ErrorType)
+                }
+                
+            }catch {
+                print("there was an error")
             }
         })
         task.resume()
