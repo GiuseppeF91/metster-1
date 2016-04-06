@@ -13,23 +13,23 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var cancelButton : UIBarButtonItem!
     var nextButton : UIBarButtonItem!
     var backButton : UIBarButtonItem!
-    var inviteToList = MainLabel(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/12)+25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/15))
+    var inviteToList = MainLabel(frame: CGRectMake(0, (screenHeight/12)+25, screenWidth, screenHeight/15))
     var friendsTableView : UITableView = UITableView()
-    var eventNameTextField = MainTextField(frame: CGRectMake(20, 200, (UIScreen.mainScreen().bounds.width)-40, 50))
+    var eventNameTextField = MainTextField(frame: CGRectMake(20, 150, screenWidth-40, 50))
     
-    var moviesButton = SelectionButton(frame: CGRectMake(20, 260, ((UIScreen.mainScreen().bounds.width)/2)-30, 50))
-    var restaurantButton = SelectionButton(frame: CGRectMake(((UIScreen.mainScreen().bounds.width)/2)+10, 260, ((UIScreen.mainScreen().bounds.width)/2)-30, 50))
+    var moviesButton = SelectionButton(frame: CGRectMake(20, 210, ((screenWidth)/2)-30, 50))
+    var restaurantButton = SelectionButton(frame: CGRectMake((screenWidth/2)+10, 210, (screenWidth/2)-30, 50))
     
-    var dateLabel = MainLabel(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var dateButton = UIButton(frame: CGRectMake(20, 320, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var datePicker = UIDatePicker(frame: CGRectMake(20, 370, UIScreen.mainScreen().bounds.width-40, 150))
+    var dateLabel = MainLabel(frame: CGRectMake(20, 270, screenWidth-150, 50))
+    var dateButton = UIButton(frame: CGRectMake(20, 270, screenWidth-150, 50))
+    var datePicker = UIDatePicker(frame: CGRectMake(20, 320, screenWidth-40, 150))
 
-    var timeLabel = MainLabel(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var timeButton = UIButton(frame: CGRectMake(20, 380, (UIScreen.mainScreen().bounds.width)-150, 50))
-    var timePicker = UIDatePicker(frame: CGRectMake(20, 430, UIScreen.mainScreen().bounds.width-40, 150))
+    var timeLabel = MainLabel(frame: CGRectMake(20, 330, screenWidth-150, 50))
+    var timeButton = UIButton(frame: CGRectMake(20, 330, screenWidth-150, 50))
+    var timePicker = UIDatePicker(frame: CGRectMake(20, 380, screenWidth-40, 150))
  
-    var notesTextField = MainTextField(frame: CGRectMake(20, 440, (UIScreen.mainScreen().bounds.width)-40, 50))
-    var submitButton = SubmitButton(frame: CGRectMake(80, 555, (UIScreen.mainScreen().bounds.width)-160, 40))
+    var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
+    var submitButton = SubmitButton(frame: CGRectMake(80, 460, screenWidth-160, 40))
     
     var invitedFriends : NSMutableArray = ["green@green.com", "jessi.gui@gmail.com"]
     
@@ -174,13 +174,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         notesTextField.hidden = true
         submitButton.hidden = true
         
-        print(Users.sharedInstance().email)
     }
     
     override func viewDidLayoutSubviews() {
         friendsTableView.frame = CGRectMake(0, ((UIScreen.mainScreen().bounds.height*11)/60)+25, UIScreen.mainScreen().bounds.width, 400)
     }
-    
+
     func moviesClicked() {
         restaurantButton.selected = false
         moviesButton.selected = true
@@ -232,15 +231,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         Users.sharedInstance().event_date = dateLabel.text
         Users.sharedInstance().event_time = timeLabel.text
         Users.sharedInstance().event_notes = notesTextField.text
-        
         Users.sharedInstance().invited_members = invitedFriends
-        
-        print(Users.sharedInstance().eventName)
-        print(Users.sharedInstance().event_date)
-        print(Users.sharedInstance().event_time)
-        print(Users.sharedInstance().event_notes)
-        print(Users.sharedInstance().invited_members)
-        print(Users.sharedInstance().email)
 
         RequestInfo.sharedInstance().postReq("121000")
         { (success, errorString) -> Void in

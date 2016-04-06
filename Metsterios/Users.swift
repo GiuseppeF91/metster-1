@@ -33,11 +33,10 @@ class Users: NSObject {
     var place_name : AnyObject?
     var place_info : AnyObject?
     
-    var user_friends: AnyObject?
-    
-    var hosted : AnyObject?
-    var joined : AnyObject?
-    var pending : AnyObject?
+    var user_friends: NSArray?
+    var hosted : NSArray?
+    var joined : NSArray?
+    var pending : NSArray?
     
     override init() {
         eventModel = [EventModel]()

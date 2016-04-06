@@ -32,7 +32,7 @@ class TabBarViewController: UITabBarController {
         let add = UITabBarItem(title: "Add", image: nil, tag: 2)
         let cal = UITabBarItem(title: "Events", image: nil, tag: 3)
         
-        self.selectedIndex = 0
+        self.selectedIndex = 3
        
         profileVC?.tabBarItem = profile
         preferencesVC?.tabBarItem = pref

@@ -37,10 +37,13 @@ class RequestInfo {
             let invites  = useME["invites"]
             let food_pref = useME["food_pref"]
             let movie_pref = useME["movie_pref"]
-            
-            Users.sharedInstance().hosted = hosted
-            Users.sharedInstance().joined = joined
-            Users.sharedInstance().pending = invites
+            //let email = useME["email"]
+            //let name = useME["name"]
+            //Users.sharedInstance().email = email
+            //Users.sharedInstance().name = name
+            Users.sharedInstance().hosted = hosted as! NSArray
+            Users.sharedInstance().joined = joined as! NSArray
+            Users.sharedInstance().pending = invites as! NSArray
             Users.sharedInstance().food_pref = food_pref
             Users.sharedInstance().movie_pref = movie_pref
             
@@ -173,7 +176,6 @@ class RequestInfo {
                     }
                     
                     if status == "success" {
-                        completionHandler(success: true, errorString: "info found")
                         if oper == "121000" {
                             Users.sharedInstance().event_id = responseData.valueForKey("response")
                             print(Users.sharedInstance().event_id)
@@ -181,6 +183,7 @@ class RequestInfo {
                         if oper == "111002" {
                             self.parseAccountInfo(responseData)
                         }
+                        completionHandler(success: true, errorString: "info found")
                     }
                 }
                 

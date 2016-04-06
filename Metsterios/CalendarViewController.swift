@@ -27,16 +27,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var annotationsConfirmed = [MKPointAnnotation]()
     var annotationsPending = [MKPointAnnotation]()
     
-    var oneTime = dispatch_time(DISPATCH_TIME_NOW,
-                                Int64(2.0 * Double(NSEC_PER_SEC)))
-    
-    var twoTime = dispatch_time(DISPATCH_TIME_NOW,
-                                Int64(4.5 * Double(NSEC_PER_SEC)))
-
-    var GlobalMainQueue: dispatch_queue_t {
-        return dispatch_get_main_queue()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -52,71 +42,84 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
          self.view.addSubview(mapView)
          */
         
-
-        dispatch_async(dispatch_get_main_queue(), {
-            //loadMap()
-            self.loadEvents()
-        })
-        
-        dispatch_after(self.twoTime, self.GlobalMainQueue) {
-        
-        self.yesEventsButton.addTarget(self, action: #selector(CalendarViewController.yesEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
-        self.yesEventsButton.setTitle("Confirmed", forState: .Normal)
-        self.view.addSubview(self.yesEventsButton)
-            
-        self.myEventsButton.addTarget(self, action: #selector(CalendarViewController.myEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
-        self.myEventsButton.setTitle("Hosting", forState: .Normal)
-            self.view.addSubview(self.myEventsButton)
-        
-        self.pendingEventsButton.addTarget(self, action: #selector(CalendarViewController.pendingEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
-        self.pendingEventsButton.setTitle("Pending", forState: .Normal)
-        self.view.addSubview(self.pendingEventsButton)
-        self.pendingEventsButton.selected = true
-        
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        self.tableView.rowHeight = 50
-        self.view.addSubview(self.tableView)
-            
-        self.tableView.reloadData()
-        }
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
+        
+        //loadMap()
+        loadEvents ({ (success, errorString) in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed.")
+                    self.alertMessage("Error", message: "Failure to load Events.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("success")
+                self.yesEventsButton.addTarget(self, action: #selector(CalendarViewController.yesEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
+                self.yesEventsButton.setTitle("Confirmed", forState: .Normal)
+                self.view.addSubview(self.yesEventsButton)
+                
+                self.myEventsButton.addTarget(self, action: #selector(CalendarViewController.myEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
+                self.myEventsButton.setTitle("Hosting", forState: .Normal)
+                self.view.addSubview(self.myEventsButton)
+                
+                self.pendingEventsButton.addTarget(self, action: #selector(CalendarViewController.pendingEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
+                self.pendingEventsButton.setTitle("Pending", forState: .Normal)
+                self.view.addSubview(self.pendingEventsButton)
+                self.pendingEventsButton.selected = true
+                
+                self.tableView.dataSource = self
+                self.tableView.delegate = self
+                self.tableView.rowHeight = 50
+                self.view.addSubview(self.tableView)
+                
+                self.tableView.reloadData()
+            })
+        })
     }
     
     override func viewDidLayoutSubviews() {
         tableView.frame = CGRectMake(0, screenHeight/3, screenWidth, (screenHeight/2))
     }
     
-    func loadEvents() {
+    func loadEvents(completionHandler: (success: Bool, errorString: String?) -> Void) {
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
                     print("couldn't load")
                     self.alertMessage("Error", message: "Unable to load")
+                    completionHandler(success: false, errorString: "did not load evnts")
                 })
                 return
             }
+            print("found events")
+            print(Users.sharedInstance().hosted)
+            print(Users.sharedInstance().pending)
             
-            dispatch_after(self.oneTime, self.GlobalMainQueue) {
-
-                print("found events")
-
-                print(Users.sharedInstance().hosted)
-                print(Users.sharedInstance().pending)
-            }
+            dispatch_async(dispatch_get_main_queue(), {
+                completionHandler(success: true, errorString: nil)
+            })
         }
     }
     
     func reloadEvents() {
-        loadEvents()
-        dispatch_after(self.twoTime, self.GlobalMainQueue) {
-           
-            self.tableView.reloadData()
-        }
+        loadEvents ({ (success, errorString) in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                print("Failed.")
+                    self.alertMessage("Error", message: "Failure to update events.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("success")
+                self.tableView.reloadData()
+            })
+        })
     }
 
    /* func loadMap() {
@@ -272,7 +275,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             }
         }
         delete.backgroundColor = UIColor.grayColor()
-        
         
         if yesEventsButton.selected == true {
             return [delete]

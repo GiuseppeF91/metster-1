@@ -122,7 +122,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
       
         if moviesButton.selected == true {
             Users.sharedInstance().movie_pref = new_movie_pref
-            Users.sharedInstance().what = "moviepref"
+            Users.sharedInstance().what = "movie_pref"
         }
         
         RequestInfo.sharedInstance().postReq("111003")

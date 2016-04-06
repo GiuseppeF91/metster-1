@@ -13,15 +13,18 @@ import Firebase
 
 class ProfileViewController: BaseVC {
     
-    var logoutButton = UIButton(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height)-(UIScreen.mainScreen().bounds.height/15)-50, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var logoutButton = ProfileButton(frame: CGRectMake(0, (screenHeight)-(screenHeight/15)-50, screenWidth, screenHeight/14.5))
+    var aboutButton = ProfileButton(frame: CGRectMake(0, screenHeight/2 + screenHeight/16 + 10, screenWidth, screenHeight/14.5))
     
-    var aboutButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + UIScreen.mainScreen().bounds.height/16 + 10, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
-    var notifyButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/16)*2 + 20, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var notifyButton = ProfileButton(frame: CGRectMake(0, screenHeight/2 + (screenHeight/16)*2 + 20, screenWidth, screenHeight/14.5))
+    var notifySwitch = UISwitch(frame:CGRectMake(screenWidth-80, screenHeight/2 + (screenHeight/16)*2 + 25, 0, 0))
     
-    var publishButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2 + (UIScreen.mainScreen().bounds.height/15)*3 + 30, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
-    var addressButton = UIButton(frame: CGRectMake(0, UIScreen.mainScreen().bounds.height/2, UIScreen.mainScreen().bounds.width, UIScreen.mainScreen().bounds.height/15))
+    var publishButton = ProfileButton(frame: CGRectMake(0, screenHeight/2 + (screenHeight/15)*3 + 30, screenWidth, screenHeight/14.5))
+    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-80, screenHeight/2 + (screenHeight/15)*3 + 35, 0, 0))
     
-    var nameLabel = UILabel(frame: CGRectMake(20, UIScreen.mainScreen().bounds.height/2.5, UIScreen.mainScreen().bounds.width-40, 40))
+    var addressButton = ProfileButton(frame: CGRectMake(0, screenHeight/2, screenWidth, screenHeight/14.5))
+    
+    var nameLabel = UILabel(frame: CGRectMake(20, screenHeight/2.5, screenWidth-40, 40))
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
@@ -30,33 +33,32 @@ class ProfileViewController: BaseVC {
         
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.text = Users.sharedInstance().name as? String
-        print(Users.sharedInstance().name)
-        
         nameLabel.font = UIFont(name: "HelveticaNeue-", size: 30)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)
         
-        aboutButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
         aboutButton.setTitle("About", forState: .Normal)
-        aboutButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
         self.view.addSubview(aboutButton)
         
-        notifyButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
         notifyButton.setTitle("Notifications", forState: .Normal)
-        notifyButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
         self.view.addSubview(notifyButton)
         
-        publishButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        notifySwitch.on = true
+        notifySwitch.setOn(true, animated: false)
+        //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+        self.view.addSubview(notifySwitch)
+        
         publishButton.setTitle("Publish Activity", forState: .Normal)
-        publishButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
         self.view.addSubview(publishButton)
         
-        addressButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
+        publishSwitch.on = true
+        publishSwitch.setOn(true, animated: false)
+        //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
+        self.view.addSubview(publishSwitch)
+        
         addressButton.setTitle("Address", forState: .Normal)
-        addressButton.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
         self.view.addSubview(addressButton)
         
-        logoutButton.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.3)
         logoutButton.setTitle("Logout", forState: .Normal)
         logoutButton.addTarget(self, action: #selector(ProfileViewController.logoutClicked), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)

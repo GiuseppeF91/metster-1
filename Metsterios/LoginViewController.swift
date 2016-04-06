@@ -21,13 +21,6 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     var currentLat = ""
     var currentLong = ""
     var error : NSError?
-   
-    var popTime = dispatch_time(DISPATCH_TIME_NOW,
-                                Int64(2.0 * Double(NSEC_PER_SEC)))
-    
-    var GlobalMainQueue: dispatch_queue_t {
-        return dispatch_get_main_queue()
-    }
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
@@ -117,7 +110,9 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 print("OKOKOKOKOKOKOK")
                 let data = result.valueForKey("data")
                 print(data?.valueForKey("email"))
-                Users.sharedInstance().user_friends = data?.valueForKey("name")
+                
+                let friends = data?.valueForKey("name")
+                Users.sharedInstance().user_friends = friends as! NSArray
             } else {
                 print("Error Getting Friends \(error)")
                 Users.sharedInstance().user_friends = ["User Friend", "User Friend"]

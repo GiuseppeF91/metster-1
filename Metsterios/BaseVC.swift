@@ -11,9 +11,7 @@ import UIKit
 class BaseVC: UIViewController, UITextFieldDelegate {
     
     var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)
-    
     var navBar = UINavigationBar(frame: CGRectMake(0, 25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/12))
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
