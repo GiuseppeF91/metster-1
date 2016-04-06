@@ -46,13 +46,24 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         if (FBSDKAccessToken.currentAccessToken() != nil) {
             
             dispatch_async(dispatch_get_main_queue(), {
-                self.returnUserData()
+                
                 self.returnUserFriends()
+                self.returnUserData({ (success, errorString) in
+                    guard success else {
+                        dispatch_async(dispatch_get_main_queue(), {
+                            print("Failed.")
+                            self.alertMessage("Error", message: "failure")
+                        })
+                        return
+                    }
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("success")
+                        Users.sharedInstance().lat = ""
+                        Users.sharedInstance().long = ""
+                        self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+                    })
+                })
             })
-            
-            dispatch_after(popTime, GlobalMainQueue) {
-                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
-            }
         } else {
             print("not logged in")
         }
@@ -74,18 +85,22 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
             self.locManager.startUpdatingLocation()
             print("user data returned")
             
-            dispatch_async(dispatch_get_main_queue(), {
-                self.returnUserData()
-                self.returnUserFriends()
-                
-                Users.sharedInstance().lat = ""
-                Users.sharedInstance().long = ""
+            returnUserFriends()
+            returnUserData({ (success, errorString) in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("Failed.")
+                        self.alertMessage("Error", message: "failure")
+                    })
+                    return
+                }
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("success")
+                    Users.sharedInstance().lat = ""
+                    Users.sharedInstance().long = ""
+                    self.findAccount()
+                })
             })
-            
-            dispatch_after(popTime, GlobalMainQueue) {
-                self.findAccount()
-                
-            }
         }
     }
     
@@ -104,12 +119,13 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 print(data?.valueForKey("email"))
                 Users.sharedInstance().user_friends = data?.valueForKey("name")
             } else {
-                print("Error Getting Friends \(error)");
+                print("Error Getting Friends \(error)")
+                Users.sharedInstance().user_friends = ["User Friend", "User Friend"]
             }
         })
     }
     
-    func returnUserData() {
+    func returnUserData(completionHandler: (success: Bool, errorString: String?) -> Void) {
         let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "email, name"])
         graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
             
@@ -117,11 +133,15 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 // Process error
                 print("Error: \(error)")
             } else {
+                completionHandler(success: true, errorString: nil)
                 print("fetched user: \(result)")
                 Users.sharedInstance().name = result.valueForKey("name") as! NSString
                 print("User Name is: \(Users.sharedInstance().name)")
-                Users.sharedInstance().email = result.valueForKey("email") as! NSString
-                
+                if result.valueForKey("email") == nil {
+                    Users.sharedInstance().email = result.valueForKey("id")
+                } else {
+                    Users.sharedInstance().email = result.valueForKey("email") as! NSString
+                }
                 Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
             }
         })
@@ -161,7 +181,6 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     }
     
     func locRequest() {
-        
         if (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedWhenInUse) || (CLLocationManager.authorizationStatus() == CLAuthorizationStatus.AuthorizedAlways) {
             currentLocation = locManager.location
             

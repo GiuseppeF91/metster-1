@@ -27,7 +27,6 @@
 		69DE751D1CA7CF4200AA35D2 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */; };
 		69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */; };
 		69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */; };
-		69DE75231CA7CF7800AA35D2 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */; };
 		A2B5EDDBCDD3FB8EE84384B7 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54F889C4A320D404C6808342 /* Pods.framework */; };
 /* End PBXBuildFile section */
 
@@ -77,7 +76,6 @@
 		69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
 		69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
-		69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		A6B8EAB71597986F6E7FBD9D /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,7 +110,6 @@
 			children = (
 				69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */,
 				69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */,
-				69DE75221CA7CF7800AA35D2 /* ChatViewController.swift */,
 				69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */,
 				69DE751A1CA7CF2900AA35D2 /* PreferencesViewController.swift */,
 				69DE75181CA7CDC700AA35D2 /* TabBarViewController.swift */,
@@ -393,7 +390,6 @@
 				69796BA61CAFBF2300A6378B /* BaseVC.swift in Sources */,
 				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
-				69DE75231CA7CF7800AA35D2 /* ChatViewController.swift in Sources */,
 				695AEE761CAE1325006B4D6D /* RequestInfo.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,
 				690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */,

@@ -31,8 +31,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var notesTextField = MainTextField(frame: CGRectMake(20, 440, (UIScreen.mainScreen().bounds.width)-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, 555, (UIScreen.mainScreen().bounds.width)-160, 40))
     
-    var invitedFriends : NSMutableArray = []
-    
+    var invitedFriends : NSMutableArray = ["green@green.com", "jessi.gui@gmail.com"]
     
     var dateBool: Bool = false {
         didSet {
@@ -233,7 +232,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         Users.sharedInstance().event_date = dateLabel.text
         Users.sharedInstance().event_time = timeLabel.text
         Users.sharedInstance().event_notes = notesTextField.text
-        Users.sharedInstance().invited_members = ["green@green.com", "jessi.gui@gmail.com"]
+        
+        Users.sharedInstance().invited_members = invitedFriends
         
         print(Users.sharedInstance().eventName)
         print(Users.sharedInstance().event_date)
@@ -253,7 +253,10 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             }
             dispatch_async(dispatch_get_main_queue(), {
                 print("suucessssss")
-                self.findFood()
+                
+                //self.findFood()
+                
+                self.inviteMembers()
             })
         }
     }
@@ -272,56 +275,50 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             
             dispatch_async(dispatch_get_main_queue(), {
                 print("Found restauants!")
+                
+                //self.chooseEventLocation()
             })
         }
     }
     
     func chooseEventLocation() {
-        // 999000 find food... the first location is saved and 997000 pushes to firebase
-        RequestInfo.sharedInstance().postReq("998001")
+        
+        // The first location is saved and 997000 pushes to firebase
+        RequestInfo.sharedInstance().postReq("997000")
         { (success, errorString) -> Void in
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
-                    print("Unable to save preference")
-                    self.alertMessage("Error", message: "Unable to connect.")
+                    print("failed")
                 })
                 return
             }
             dispatch_async(dispatch_get_main_queue(), {
+                
                 print("suucssssss")
-                self.alertMessage("Event Created!", message: "")
-                RequestInfo.sharedInstance().postReq("997000")
-                { (success, errorString) -> Void in
-                    guard success else {
-                        dispatch_async(dispatch_get_main_queue(), {
-                            print("Unable to save preference")
-                            self.alertMessage("Error", message: "Unable to connect.")
-                        })
-                        return
-                    }
-                    dispatch_async(dispatch_get_main_queue(), {
-                        print("suucssssss")
-                        self.inviteMembers()
-                    })
-                }
+                self.inviteMembers()
             })
         }
     }
     
     func inviteMembers() { // invites are sent via 998001
-        RequestInfo.sharedInstance().postReq("998001")
-        { (success, errorString) -> Void in
-            guard success else {
+        
+        for friend in invitedFriends {
+            Users.sharedInstance().invited_members = friend
+            print(friend)
+            RequestInfo.sharedInstance().postReq("998001")
+            { (success, errorString) -> Void in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("Unable to save preference")
+                        self.alertMessage("Error", message: "Unable to connect.")
+                    })
+                    return
+                }
                 dispatch_async(dispatch_get_main_queue(), {
-                    print("Unable to save preference")
-                    self.alertMessage("Error", message: "Unable to connect.")
+                    print("suucssssss")
+                    self.alertMessage("Success!", message: "Event Created")
                 })
-                return
             }
-            dispatch_async(dispatch_get_main_queue(), {
-                print("suucssssss")
-                self.alertMessage("Success!", message: "Event Created")
-            })
         }
     }
 
@@ -376,15 +373,15 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     //MARK : helpers
     func datePickerValueChanged() {
         let dateformatter = NSDateFormatter()
-        dateformatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        dateformatter.dateStyle = NSDateFormatterStyle.ShortStyle
         let dateValue = dateformatter.stringFromDate(datePicker.date)
         dateLabel.text = dateValue 
     }
     
     func timePickerValueChanged() {
         let dateformatter = NSDateFormatter()
-        dateformatter.timeStyle = NSDateFormatterStyle.MediumStyle
-        let timeValue = dateformatter.stringFromDate(datePicker.date)
+        dateformatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        let timeValue = dateformatter.stringFromDate(timePicker.date)
         timeLabel.text = timeValue
     }
     

@@ -11,43 +11,8 @@ import Foundation
 class RequestInfo {
    
     var key = "22"
-    var email = Users.sharedInstance().email
-
-    var query = Users.sharedInstance().query
-    var event_id = Users.sharedInstance().event_id
-    var fb_id = Users.sharedInstance().fbid
-    var name = Users.sharedInstance().name
-    var latitude = Users.sharedInstance().lat
-
-    var longitude = Users.sharedInstance().long
-    var event_name = Users.sharedInstance().event_id
-    var event_date = Users.sharedInstance().event_date
-    
-    var event_time = Users.sharedInstance().event_time
-    var event_notes = Users.sharedInstance().event_notes
-    var invited_members = Users.sharedInstance().invited_members
-    var event_members = Users.sharedInstance().event_members
-    
-    var what = Users.sharedInstance().what
-    var movie_pref = Users.sharedInstance().movie_pref
-    var food_pref = Users.sharedInstance().food_pref
-    
     var dictionary  = NSDictionary()
     var error : NSError?
-    
-    func parseFoodRequest(responseData: NSDictionary ) {
-        let response =  (responseData["response"]) as! NSDictionary
-        let restaurantString = (response.allValues[0] as! String)
-        let restaurantData : NSData = (restaurantString.dataUsingEncoding(NSUTF8StringEncoding))!
-        do {
-            let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData as NSData, options: .AllowFragments) as! NSDictionary
-            
-            print(restaurantInfo)
-            print(restaurantInfo["name"])
-        } catch {
-            print(ErrorType)
-        }
-    }
     
     func parseAccountInfo(responseData: NSDictionary) {
         let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
@@ -67,16 +32,11 @@ class RequestInfo {
             
             print("USE MEEEEE")
             print(useME)
-            let userName = useME["name"]
-            let email = useME["email"]
-            let latitude = useME["latitde"]
             let hosted = useME["hosted"]
             let joined = useME["joined"]
             let invites  = useME["invites"]
             let food_pref = useME["food_pref"]
             let movie_pref = useME["movie_pref"]
-            print(userName)
-            print(email)
             
             Users.sharedInstance().hosted = hosted
             Users.sharedInstance().joined = joined
@@ -93,53 +53,56 @@ class RequestInfo {
         print("req started")
         print(Users.sharedInstance().email)
         
-        if oper == "997000" {
-            dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!]
+        if oper == "997000" { //insert venue info to firebase
+            //TODO: THIS IS NOT WORKING
+            dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!, "place_info": Users.sharedInstance().place_info!]
         }
         
         if oper == "111003" { // edit account pref
-            print(email)
             print(Users.sharedInstance().food_pref)
             print(Users.sharedInstance().movie_pref)
             print(Users.sharedInstance().what)
             
-            dictionary = ["email": email!, "what": Users.sharedInstance().what!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
+            dictionary = ["email": Users.sharedInstance().email!, "what": Users.sharedInstance().what!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
         }
         
-        if oper == "111002" { //#find in account
-            dictionary = ["email": email!]
+        if oper == "111002" { // find in account
+            dictionary = ["email": Users.sharedInstance().email!]
         }
         
-        if oper == "999000" { //Find Fooood
+        if oper == "999000" { // find fooood
+            print("foooooood")
+            print(Users.sharedInstance().query)
+            print(Users.sharedInstance().event_id)
             dictionary = ["query": Users.sharedInstance().query! , "event_id": Users.sharedInstance().event_id!]
         }
         
-        if oper == "111000" {  //#insert to account
-            print(email)
-            print(fb_id)
-            print(name)
+        if oper == "111000" { // insert to account
     
-            dictionary = ["dev_id": "12er34", "email": email!, "fb_id": fb_id!, "name": name!, "invites": NSNull(), "hosted": NSNull(), "joined": NSNull(), "latitude": latitude!, "longitude": longitude!, "food_pref": "Chinese", "moviepref": "Horror"]
+            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!, "longitude": Users.sharedInstance().long!, "food_pref": "Chinese", "movie_pref": "Horror"]
             }
             
-        if oper == "121000" { //insert to events
-            dictionary = ["host_email": email!, "event_name": Users.sharedInstance().eventName!, "event_date": Users.sharedInstance().event_date!, "event_time": Users.sharedInstance().event_time!, "event_notes": Users.sharedInstance().event_notes!, "event_members": Users.sharedInstance().invited_members!]
+        if oper == "121000" { // insert to events
+            dictionary = ["host_email": Users.sharedInstance().email!, "event_name": Users.sharedInstance().eventName!, "event_date": Users.sharedInstance().event_date!, "event_time": Users.sharedInstance().event_time!, "event_notes": Users.sharedInstance().event_notes!, "event_members": Users.sharedInstance().invited_members!]
             }
             
-        if oper == "998000" { //accept invite
-            dictionary = ["email": email!, "event_id": event_id!]
+        if oper == "998000" { // accept invite
+            dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
             }
         
-        if oper == "998001" { //senddd invite
-            dictionary = ["from_email": email!, "event_id": event_id!, "to_email": invited_members!]
+        if oper == "998001" { // senddd invite
+            print("SEND INVITESSSS")
+            print(Users.sharedInstance().event_id)
+            print(Users.sharedInstance().invited_members)
+            dictionary = ["from_email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!, "to_email": Users.sharedInstance().invited_members!]
         }
         
-        if oper == "121001" { //delete in events
-            dictionary = ["email": email!, "event_id": event_id!]
+        if oper == "121001" { // delete in events
+            dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
         }
         
-        if oper == "998002" { //reject invite
-            dictionary = ["email": email!, "event_id": event_id!]
+        if oper == "998002" { // reject invite
+            dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
         }
         
         let urlString = "http://104.236.177.93:8888"
@@ -173,34 +136,51 @@ class RequestInfo {
             do {
                 let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
                 print(responseData)
-                let status = responseData.valueForKey("status") as! String
-                let responseStat = responseData.valueForKey("response") as! String
-                
-                print(status)
-                
-                if status == "fail" {
-                    completionHandler(success: false, errorString: "that info does not exist")
+                if oper == "999000" {
+                    if responseData.valueForKey("status") as! String == "success" {
+                        let responseStat = responseData.valueForKey("response")
+                        
+                        let firstKey = Array(responseStat!.allKeys).first
+                        let place_id = firstKey as! String
+                        Users.sharedInstance().place_id = place_id
+                        Users.sharedInstance().place_info = responseStat![place_id]
+                        
+                        print("HERE IS WHERE YOU ARE GOING")
+                        print(Users.sharedInstance().place_id)
+                        print(Users.sharedInstance().place_info)
+                        completionHandler(success: true, errorString: nil)
+                    } else {
+                        completionHandler(success: false, errorString: "unable to connect")
+                    }
                 }
                 
-                if responseStat == "update failed" {
-                    completionHandler(success: false, errorString: "Unable to update")
-                }
-    
-                if status == "success" {
-                    completionHandler(success: true, errorString: "info found")
-                    if oper == "121000" {
-                        Users.sharedInstance().event_id = responseData.valueForKey("response")
-                        print(Users.sharedInstance().event_id)
+                if oper == "111000" {
+                    if responseData.valueForKey("status") as! String == "success" {
+                            completionHandler(success: true, errorString: nil)
+                    } else {
+                        completionHandler(success: false, errorString: "couldn't create account")
                     }
-                    if oper == "111002" {
-                        self.parseAccountInfo(responseData)
+                } else {
+                    let status = responseData.valueForKey("status") as! String
+                    let responseStat = responseData.valueForKey("response") as! String
+                    
+                    if status == "fail" {
+                        completionHandler(success: false, errorString: "that info does not exist")
                     }
-                    if oper == "999000" {
-                        
-                        
-                        //TODO : find out real place id AND parse correctly
-                        self.parseFoodRequest(responseData)
-                        Users.sharedInstance().place_id = responseData.valueForKey("response")
+                    
+                    if responseStat == "update failed" {
+                        completionHandler(success: false, errorString: "Unable to update")
+                    }
+                    
+                    if status == "success" {
+                        completionHandler(success: true, errorString: "info found")
+                        if oper == "121000" {
+                            Users.sharedInstance().event_id = responseData.valueForKey("response")
+                            print(Users.sharedInstance().event_id)
+                        }
+                        if oper == "111002" {
+                            self.parseAccountInfo(responseData)
+                        }
                     }
                 }
                 

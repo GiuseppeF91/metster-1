@@ -14,7 +14,6 @@ class TabBarViewController: UITabBarController {
     var preferencesVC : PreferencesViewController?
     var addEventVC : AddEventViewController?
     var calendarVC : CalendarViewController?
-    var chatVC : ChatViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,22 +24,19 @@ class TabBarViewController: UITabBarController {
         preferencesVC = PreferencesViewController()
         addEventVC = AddEventViewController()
         calendarVC = CalendarViewController()
-        chatVC = ChatViewController()
         
-        self.viewControllers = [profileVC! , preferencesVC! , addEventVC!, calendarVC!, chatVC!]
+        self.viewControllers = [profileVC! , preferencesVC! , addEventVC!, calendarVC!]
         
         let profile = UITabBarItem(title: "Profile", image: nil, tag: 0)
         let pref = UITabBarItem(title: "Pref", image: nil, tag: 1)
         let add = UITabBarItem(title: "Add", image: nil, tag: 2)
-        let cal = UITabBarItem(title: "Cal", image: nil, tag: 3)
-        let chat = UITabBarItem(title: "Chat", image: nil, tag: 4)
+        let cal = UITabBarItem(title: "Events", image: nil, tag: 3)
         
-        self.selectedIndex = 3
+        self.selectedIndex = 0
        
         profileVC?.tabBarItem = profile
         preferencesVC?.tabBarItem = pref
         addEventVC?.tabBarItem = add
         calendarVC?.tabBarItem = cal
-        chatVC?.tabBarItem = chat
     }
 }

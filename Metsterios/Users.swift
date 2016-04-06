@@ -30,11 +30,12 @@ class Users: NSObject {
     var eventModel: [EventModel]
     
     var place_id : AnyObject?
+    var place_name : AnyObject?
+    var place_info : AnyObject?
     
     var user_friends: AnyObject?
     
     var hosted : AnyObject?
-
     var joined : AnyObject?
     var pending : AnyObject?
     
