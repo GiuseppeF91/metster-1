@@ -81,7 +81,6 @@ class RequestInfo {
         }
         
         if oper == "111000" { // insert to account
-    
             dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!, "longitude": Users.sharedInstance().long!, "food_pref": "Chinese", "movie_pref": "Horror"]
             }
             

@@ -144,7 +144,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         notesTextField.delegate = self
         self.view.addSubview(notesTextField)
     
-        submitButton.addTarget(self, action: #selector(self.newEventCreated), forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: #selector(self.findFood), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         
@@ -245,9 +245,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             dispatch_async(dispatch_get_main_queue(), {
                 print("suucessssss")
                 
-                //self.findFood()
-                
-                self.inviteMembers()
+                self.findFood()
+                //self.inviteMembers()
             })
         }
     }
@@ -260,6 +259,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
                     print("Failed at getting foodz")
+                    self.alertMessage("Error", message: "Unable to connect.")
                 })
                 return
             }

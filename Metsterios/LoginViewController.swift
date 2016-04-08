@@ -109,7 +109,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 print("Friends are : \(result)")
                 print("OKOKOKOKOKOKOK")
                 let data = result.valueForKey("data")
-                print(data?.valueForKey("email"))
+                //print(data?.valueForKey("email"))
                 
                 let friends = data?.valueForKey("name")
                 Users.sharedInstance().user_friends = friends as! NSArray
