@@ -27,6 +27,9 @@ class Place {
     //private var _snippet: String!
     //private var _url: String!
     private var _eventid: String!
+    private var _eventdate: String!
+    private var _eventname: String!
+    private var _eventtime: String!
     
     var placeKey: String {
         return _placeKey
@@ -56,6 +59,18 @@ class Place {
         return _eventid
     }
     
+    var eventdate: String {
+        return _eventdate
+    }
+    
+    var eventname: String {
+        return _eventname
+    }
+    
+    var eventtime: String {
+        return _eventtime
+    }
+    
     // Initialize
     init(key: String, dictionary: Dictionary<String, AnyObject>) {
         self._placeKey = key
@@ -83,6 +98,18 @@ class Place {
         
         if let eventid = dictionary["eventid"] as? String {
             self._eventid = eventid
+        }
+        
+        if let eventdate = dictionary["eventdate"] as? String {
+            self._eventdate = eventdate
+        }
+        
+        if let eventname = dictionary["eventname"] as? String {
+            self._eventname = eventname
+        }
+        
+        if let eventtime = dictionary["eventtime"] as? String {
+            self._eventtime = eventtime
         }
     }
 }

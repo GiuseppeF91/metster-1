@@ -31,7 +31,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, 460, screenWidth-160, 40))
     
-    var invitedFriends : NSMutableArray = ["chelseagreen@live.com"]
+    var invitedFriends : NSMutableArray = []
     
     var dateBool: Bool = false {
         didSet {
@@ -249,15 +249,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         }
     }
     
-    var popTime = dispatch_time(DISPATCH_TIME_NOW,
-                                Int64(4.0 * Double(NSEC_PER_SEC)))
-    
-    var GlobalMainQueue: dispatch_queue_t {
-        return dispatch_get_main_queue()
-    }
-    
     func findFood() {
-        Users.sharedInstance().query = "french"
+        Users.sharedInstance().query = "japanese"
         
         RequestInfo.sharedInstance().postReq("999000")
         { (success, errorString) -> Void in
@@ -277,7 +270,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 print(Users.sharedInstance().place_id)
                 print(Users.sharedInstance().place_info)
                 
-                self.inviteMembers()
+                //self.inviteMembers()
             })
         }
     }

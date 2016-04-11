@@ -33,7 +33,7 @@ class ProfileViewController: BaseVC {
         
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.text = Users.sharedInstance().name as? String
-        nameLabel.font = UIFont(name: "HelveticaNeue-", size: 30)
+        nameLabel.font = UIFont(name: "HelveticaNeue", size: 30)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)
         

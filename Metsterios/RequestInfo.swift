@@ -33,7 +33,7 @@ class RequestInfo {
 
             //dictionary with all restauarant info
             
-            dictionary = ["category": restaurantInfo["category"]!, "ratings": restaurantInfo["ratings"]!, "review_count": restaurantInfo["review_count"]!, "name": restaurantInfo["name"]!, "latitude": restaurantInfo["latitude"]!, "url": "www.yelp.com", "rank": restaurantInfo["rank"]!, "snippet": restaurantInfo["snippet"]!, "phone": restaurantInfo["phone"]!, "image_url": "www.yelp.com", "longitude" : restaurantInfo["longitude"]!, "address": restaurantInfo["address"]!, "coordinate": restaurantInfo["coordinate"]!, "eventid": Users.sharedInstance().event_id!]
+            dictionary = ["category": restaurantInfo["category"]!, "ratings": restaurantInfo["ratings"]!, "review_count": restaurantInfo["review_count"]!, "name": restaurantInfo["name"]!, "latitude": restaurantInfo["latitude"]!, "url": "www.yelp.com", "rank": restaurantInfo["rank"]!, "snippet": restaurantInfo["snippet"]!, "phone": restaurantInfo["phone"]!, "image_url": "www.yelp.com", "longitude" : restaurantInfo["longitude"]!, "address": restaurantInfo["address"]!, "coordinate": restaurantInfo["coordinate"]!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
             
             print(dictionary)
             

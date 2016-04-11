@@ -21,12 +21,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var yesEventsButton = SelectionButton(frame: CGRectMake(0, (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
     var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3, (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
     var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
-    
-    //var mapView = MKMapView(frame: CGRectMake(0, (UIScreen.mainScreen().bounds.height/6)+25, UIScreen.mainScreen().bounds.width, (UIScreen.mainScreen().bounds.height)/2))
-    
+
     var tableView : UITableView = UITableView()
-    var annotationsConfirmed = [MKPointAnnotation]()
-    var annotationsPending = [MKPointAnnotation]()
+    var annotations = [MKPointAnnotation]()
+    var mapView : MKMapView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,20 +32,11 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         navigationItem.title = "Events"
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
-        
-        /*
-         mapView.delegate = self
-         let span = MKCoordinateSpanMake(10, 10)
-         let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 37.7, longitude: -122.4), span: span)
-         mapView.setRegion(region, animated: true)
-         self.view.addSubview(mapView)
-         */
     }
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
-        //loadMap()
         loadEvents ({ (success, errorString) in
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
@@ -69,23 +58,25 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 self.pendingEventsButton.addTarget(self, action: #selector(CalendarViewController.pendingEventsClicked), forControlEvents: UIControlEvents.TouchUpInside)
                 self.pendingEventsButton.setTitle("Pending", forState: .Normal)
                 self.view.addSubview(self.pendingEventsButton)
-                self.pendingEventsButton.selected = true
-                
+                self.pendingEventsClicked()
+               
                 self.tableView.dataSource = self
                 self.tableView.delegate = self
                 self.tableView.rowHeight = 100
                 self.view.addSubview(self.tableView)
                 
                 self.tableView.reloadData()
+                self.tableView.bringSubviewToFront(self.tableView)
             })
         })
     }
     
     override func viewDidLayoutSubviews() {
-        tableView.frame = CGRectMake(0, screenHeight/3, screenWidth, (screenHeight/2))
+        tableView.frame = CGRectMake(0, screenHeight/2, screenWidth, (screenHeight/2)-50)
     }
     
     func loadEvents(completionHandler: (success: Bool, errorString: String?) -> Void) {
+        
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
@@ -171,7 +162,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                             self.alertMessage("Error", message: "Something went wrong.")
                     })
                 }
-        
+                self.loadMap()
                 completionHandler(success: true, errorString: nil)
             })
         }
@@ -186,29 +177,70 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 })
                 return
             }
-            dispatch_async(dispatch_get_main_queue(), {
-                print("success")
-                self.tableView.reloadData()
-            })
+            
+            print("success")
+            let time1 = 8.23
+            let time2 = 3.42
+            
+            // Delay 2 seconds
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(4.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
+                self.loadMap()
+            }
         })
     }
-
-   /* func loadMap() {
-        mapView.removeAnnotations(annotationsConfirmed)
-        mapView.removeAnnotations(annotationsPending)
-        if pendingEventsButton.selected == true {
-            mapView.addAnnotations(annotationsPending)
-        } else {
-            mapView.addAnnotations(annotationsConfirmed)
+    
+    func loadMap() {
+        mapView = MKMapView(frame: CGRectMake(0, screenHeight/12+screenHeight/12+25, screenWidth, screenHeight/3.5))
+        mapView?.delegate = self
+        let span = MKCoordinateSpanMake(4, 4)
+        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 38.5, longitude: -121.4), span: span)
+        mapView?.zoomEnabled = true
+        mapView?.scrollEnabled = true
+        mapView?.setRegion(region, animated: true)
+        self.view.addSubview(mapView!)
+        
+        let time1 = 8.23
+        let time2 = 3.42
+        
+        // Delay 2 seconds
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
+            self.currentButton()
         }
-    } */
+        
+    }
+    
+    func currentButton() {
+          print("getting annots")
+        if self.yesEventsButton.selected == true {
+            self.yesEventsClicked()
+        }
+        if self.myEventsButton.selected == true {
+            self.myEventsClicked()
+        } else {
+            self.pendingEventsClicked()
+        }
+    }
     
     func pendingEventsClicked() {
         pendingEventsButton.selected = true
         yesEventsButton.selected = false
         myEventsButton.selected = false
         tableView.reloadData()
-        //loadMap()
+        mapView!.removeAnnotations(annotations)
+        
+        for pendingPlace in pendingPlaces {
+            let latitude = Double(pendingPlace.latitude)
+            let longitude = Double(pendingPlace.longitude)
+            print(latitude)
+            print(longitude)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+            annotation.title = pendingPlace.name
+            annotation.subtitle = pendingPlace.address
+            self.annotations.removeAll()
+            self.annotations.append(annotation)
+            mapView!.addAnnotations(self.annotations)
+        }
     }
     
     func yesEventsClicked() {
@@ -216,7 +248,21 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         pendingEventsButton.selected = false
         myEventsButton.selected = false
         tableView.reloadData()
-        //loadMap()
+        mapView!.removeAnnotations(annotations)
+        
+        for acceptedPlace in acceptedPlaces {
+            let latitude = Double(acceptedPlace.latitude)
+            let longitude = Double(acceptedPlace.longitude)
+            print(latitude)
+            print(longitude)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+            annotation.title = acceptedPlace.name
+            annotation.subtitle = acceptedPlace.address
+            self.annotations.removeAll()
+            self.annotations.append(annotation)
+            mapView!.addAnnotations(self.annotations)
+        }
     }
     
     func myEventsClicked() {
@@ -224,8 +270,23 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         pendingEventsButton.selected = false
         myEventsButton.selected = true
         tableView.reloadData()
-        //loadMap
+        mapView!.removeAnnotations(annotations)
+        
+        for hostedPlace in hostedPlaces {
+            let latitude = Double(hostedPlace.latitude)
+            let longitude = Double(hostedPlace.longitude)
+            print(latitude)
+            print(longitude)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
+            annotation.title = hostedPlace.name
+            annotation.subtitle = hostedPlace.address
+            self.annotations.removeAll()
+            self.annotations.append(annotation)
+            mapView!.addAnnotations(self.annotations)
+        }
     }
+    
     //MARK : Table View delegate & data source methods
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if pendingEventsButton.selected == true {
@@ -246,6 +307,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             Users.sharedInstance().event_id = pendingPlace.eventid
             cell.eventPlaceLabel.text = pendingPlace.name
             cell.eventAddressLabel.text = pendingPlace.address
+            cell.eventTimeLabel.text = pendingPlace.eventtime
+            cell.eventDateLabel.text = pendingPlace.eventdate
+            cell.eventNameLabel.text = pendingPlace.eventname
             return cell
         }
         if yesEventsButton.selected == true {
@@ -253,12 +317,18 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             Users.sharedInstance().event_id = acceptedPlace.eventid
             cell.eventPlaceLabel.text = acceptedPlace.name
             cell.eventAddressLabel.text = acceptedPlace.address
+            cell.eventTimeLabel.text = acceptedPlace.eventtime
+            cell.eventDateLabel.text = acceptedPlace.eventdate
+            cell.eventNameLabel.text = acceptedPlace.eventname
             return cell
         } else {
             let hostedPlace = hostedPlaces[indexPath.row]
             Users.sharedInstance().event_id = hostedPlace.eventid
             cell.eventPlaceLabel.text = hostedPlace.name
             cell.eventAddressLabel.text = hostedPlace.address
+            cell.eventTimeLabel.text = hostedPlace.eventtime
+            cell.eventDateLabel.text = hostedPlace.eventdate
+            cell.eventNameLabel.text = hostedPlace.eventname
             return cell
         }
     }
@@ -271,8 +341,18 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
-    
-        let cell = tableView.cellForRowAtIndexPath(indexPath)
+        
+        if pendingEventsButton.selected == true {
+            let pendingPlace = pendingPlaces[indexPath.row]
+            Users.sharedInstance().event_id = pendingPlace.eventid
+        }
+        if yesEventsButton.selected == true {
+            let confirmedPlace = acceptedPlaces[indexPath.row]
+            Users.sharedInstance().event_id = confirmedPlace.eventid
+        } else {
+            let hostedPlace = hostedPlaces[indexPath.row]
+            Users.sharedInstance().event_id = hostedPlace.eventid
+        }
         
         let save = UITableViewRowAction(style: .Normal, title: "Save to Events") { action, index in
             print(Users.sharedInstance().event_id)
@@ -317,7 +397,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                         dispatch_async(dispatch_get_main_queue(), {
                             print("suucssssss")
                             self.alertMessage("Success!", message: "Event Removed")
-                            
                             self.reloadEvents()
                         })
                     }
@@ -365,4 +444,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             return [delete, save]
         }
     }
+    
+    /*//Links to URL in Safari Browswer
+    func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
+        let link = NSURLRequest(URL: NSURL(string: annotationView.annotation!.subtitle!!)!)
+        UIApplication.sharedApplication().openURL(link.URL!)
+    }*/
 }
