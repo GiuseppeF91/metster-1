@@ -31,7 +31,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, 460, screenWidth-160, 40))
     
-    var invitedFriends : NSMutableArray = ["green@green.com", "jessi.gui@gmail.com"]
+    var invitedFriends : NSMutableArray = ["chelseagreen@live.com"]
     
     var dateBool: Bool = false {
         didSet {
@@ -144,7 +144,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         notesTextField.delegate = self
         self.view.addSubview(notesTextField)
     
-        submitButton.addTarget(self, action: #selector(self.findFood), forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: #selector(self.newEventCreated), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         
@@ -173,7 +173,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         timeButton.hidden = true
         notesTextField.hidden = true
         submitButton.hidden = true
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -246,13 +245,19 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 print("suucessssss")
                 
                 self.findFood()
-                //self.inviteMembers()
             })
         }
     }
     
+    var popTime = dispatch_time(DISPATCH_TIME_NOW,
+                                Int64(4.0 * Double(NSEC_PER_SEC)))
+    
+    var GlobalMainQueue: dispatch_queue_t {
+        return dispatch_get_main_queue()
+    }
+    
     func findFood() {
-        Users.sharedInstance().query = Users.sharedInstance().food_pref
+        Users.sharedInstance().query = "french"
         
         RequestInfo.sharedInstance().postReq("999000")
         { (success, errorString) -> Void in
@@ -267,25 +272,11 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             dispatch_async(dispatch_get_main_queue(), {
                 print("Found restauants!")
                 
-                //self.chooseEventLocation()
-            })
-        }
-    }
-    
-    func chooseEventLocation() {
-        
-        // The first location is saved and 997000 pushes to firebase
-        RequestInfo.sharedInstance().postReq("997000")
-        { (success, errorString) -> Void in
-            guard success else {
-                dispatch_async(dispatch_get_main_queue(), {
-                    print("failed")
-                })
-                return
-            }
-            dispatch_async(dispatch_get_main_queue(), {
+                print("HERE IS WHERE YOU ARE GOING")
+                print(Users.sharedInstance().event_id)
+                print(Users.sharedInstance().place_id)
+                print(Users.sharedInstance().place_info)
                 
-                print("suucssssss")
                 self.inviteMembers()
             })
         }

@@ -53,6 +53,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                         print("success")
                         Users.sharedInstance().lat = ""
                         Users.sharedInstance().long = ""
+                        self.findAccount()
                         self.presentViewController(TabBarViewController(), animated: true, completion: nil)
                     })
                 })
@@ -152,9 +153,10 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 })
                 return
             }
-            
             dispatch_async(dispatch_get_main_queue(), {
                 print("account is hereeeee")
+                self.findAccount()
+                
                 self.presentViewController(TabBarViewController(), animated: true, completion: nil)
             })
         }

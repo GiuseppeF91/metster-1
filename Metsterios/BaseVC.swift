@@ -8,6 +8,9 @@
 
 import UIKit
 
+var screenWidth = UIScreen.mainScreen().bounds.width
+var screenHeight = UIScreen.mainScreen().bounds.height
+
 class BaseVC: UIViewController, UITextFieldDelegate {
     
     var activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.Gray)

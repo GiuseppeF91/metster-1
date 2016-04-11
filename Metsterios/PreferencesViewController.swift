@@ -19,8 +19,10 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     
     var tableView : UITableView = UITableView()
     
-    var lettersArray = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l" ]
     var moviesArray = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Horror", "Romance", "Sci-fi", "Thriller", "War"]
+    
+    var food_pref : String?
+    var food_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +66,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     //MARK : Table View delegate & data source methods
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if restaurantButton.selected == true {
-            return lettersArray.count
+            return 12
         } else {
             return moviesArray.count
         }
@@ -74,46 +76,50 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
         let cell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         if restaurantButton.selected == true {
             
-            //Once all user prefs are saved correctly, the lettersArray can be deleted. Users.sharedInstance().food_pref can be loaded instead after server req 111002, on home screen. 
-
-            let item = lettersArray[indexPath.row]
-    
-                if item == "a" {
-                    cell.textLabel!.text = "American"
-                }
-                if item == "b" {
-                    cell.textLabel!.text = "British"
-                }
-                if item == "c" {
-                    cell.textLabel!.text  = "Chinese"
-                }
-                if item == "d" {
-                    cell.textLabel!.text  = "Greek"
-                }
-                if item == "e" {
-                    cell.textLabel!.text  = "French"
-                }
-                if item == "f" {
-                    cell.textLabel!.text  = "Indian"
-                }
-                if item == "g" {
-                    cell.textLabel!.text  = "Italian"
-                }
-                if item == "h" {
-                    cell.textLabel!.text  = "Japanese"
-                }
-                if item == "i" {
-                    cell.textLabel!.text  = "Mediterranean"
-                }
-                if item == "j" {
-                    cell.textLabel!.text = "Mexican"
-                }
-                if item == "k" {
-                    cell.textLabel!.text  = "Thai"
-                }
-                if item == "l" {
-                    cell.textLabel!.text  = "Vietnamese"
-                }
+            //food_pref = Users.sharedInstance().food_pref as? String
+            //food_array = food_pref!.characters.map { String($0) }
+            //food_array = [Character](food_pref!.characters)
+            food_pref = Users.sharedInstance().food_pref as? String
+            
+            let item = food_array[indexPath.row]
+            
+            if item == "a" {
+                cell.textLabel!.text = "American"
+            }
+            if item == "b" {
+                cell.textLabel!.text = "British"
+            }
+            if item == "c" {
+                cell.textLabel!.text  = "Chinese"
+            }
+            if item == "d" {
+                cell.textLabel!.text  = "Greek"
+            }
+            if item == "e" {
+                cell.textLabel!.text  = "French"
+            }
+            if item == "f" {
+                cell.textLabel!.text  = "Indian"
+            }
+            if item == "g" {
+                cell.textLabel!.text  = "Italian"
+            }
+            if item == "h" {
+                cell.textLabel!.text  = "Japanese"
+            }
+            if item == "i" {
+                cell.textLabel!.text  = "Mediterranean"
+            }
+            if item == "j" {
+                cell.textLabel!.text = "Mexican"
+            }
+            if item == "k" {
+                cell.textLabel!.text  = "Thai"
+            }
+            if item == "l" {
+                cell.textLabel!.text  = "Vietnamese"
+            }
+            
             
         } else {
             cell.textLabel!.text = moviesArray[indexPath.row]
@@ -122,11 +128,10 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     }
     
     func tableView(tableView: UITableView, moveRowAtIndexPath fromIndexPath: NSIndexPath, toIndexPath: NSIndexPath) {
-        let itemToMove = lettersArray[fromIndexPath.row]
-        lettersArray.removeAtIndex(fromIndexPath.row)
-        lettersArray.insert(itemToMove, atIndex: toIndexPath.row)
-        
-        print(lettersArray)
+        let itemToMove = food_array[fromIndexPath.row]
+        food_array.removeAtIndex(fromIndexPath.row)
+        food_array.insert(itemToMove, atIndex: toIndexPath.row)
+        print(food_array)
     }
     
     func reorderItems() {
@@ -140,31 +145,33 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
 
     func saveClicked() {
         if restaurantButton.selected == true {
-            Users.sharedInstance().food_pref = lettersArray
+            
+            let lettersString  = food_array.joinWithSeparator("")
+            Users.sharedInstance().food_pref = lettersString
             print(Users.sharedInstance().food_pref)
-            //Users.sharedInstance().what = "food_pref"
-            //print(Users.sharedInstance().food_pref)
+            Users.sharedInstance().what = "food_pref"
+            tableView.setEditing(false, animated: true)
+            
+            RequestInfo.sharedInstance().postReq("111003")
+            { (success, errorString) -> Void in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("Unable to save preference")
+                        self.alertMessage("Error", message: "Unable to update.")
+                    })
+                    return
+                }
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("suucssssss")
+                    self.alertMessage("Preference Saved!", message: "")
+                })
+            }
         }
       
         if moviesButton.selected == true {
            // Users.sharedInstance().movie_pref = new_movie_pref
             Users.sharedInstance().what = "movie_pref"
         }
-        
-       /* RequestInfo.sharedInstance().postReq("111003")
-        { (success, errorString) -> Void in
-            guard success else {
-                dispatch_async(dispatch_get_main_queue(), {
-                    print("Unable to save preference")
-                    self.alertMessage("Error", message: "Unable to update.")
-                })
-                return
-            }
-            dispatch_async(dispatch_get_main_queue(), {
-                print("suucssssss")
-                self.alertMessage("Preference Saved!", message: "")
-            })
-        } */
     }
     
     func restaurantClicked() {

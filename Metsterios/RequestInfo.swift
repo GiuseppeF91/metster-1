@@ -14,6 +14,60 @@ class RequestInfo {
     var dictionary  = NSDictionary()
     var error : NSError?
     
+    var popTime = dispatch_time(DISPATCH_TIME_NOW,
+                                Int64(4.0 * Double(NSEC_PER_SEC)))
+    
+    var GlobalMainQueue: dispatch_queue_t {
+        return dispatch_get_main_queue()
+    }
+    
+    func parseFoodInfo(responseStat: NSDictionary) {
+
+        let firstKey = Array(responseStat.allKeys).first
+        let place_id = firstKey as! String
+        Users.sharedInstance().place_id = place_id
+        let resString = responseStat[place_id] as! String
+        let restaurantData : NSData = (responseStat[place_id]?.dataUsingEncoding(NSUTF8StringEncoding))!
+        do {
+            let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData, options: .AllowFragments) as! NSMutableDictionary
+
+            //dictionary with all restauarant info
+            
+            dictionary = ["category": restaurantInfo["category"]!, "ratings": restaurantInfo["ratings"]!, "review_count": restaurantInfo["review_count"]!, "name": restaurantInfo["name"]!, "latitude": restaurantInfo["latitude"]!, "url": "www.yelp.com", "rank": restaurantInfo["rank"]!, "snippet": restaurantInfo["snippet"]!, "phone": restaurantInfo["phone"]!, "image_url": "www.yelp.com", "longitude" : restaurantInfo["longitude"]!, "address": restaurantInfo["address"]!, "coordinate": restaurantInfo["coordinate"]!, "eventid": Users.sharedInstance().event_id!]
+            
+            print(dictionary)
+            
+            let jsonData = try! NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.init(rawValue: 0))
+            let myString = String(data: jsonData, encoding: NSUTF8StringEncoding)
+            guard error == nil else {
+                print("can't get data into the right form")
+                return
+            }
+            Users.sharedInstance().place_info = myString
+        } catch {
+            print(error)
+        }
+    
+        print("HERE IS WHERE YOU ARE GOING")
+    
+       dispatch_after(self.popTime, self.GlobalMainQueue) {
+
+           RequestInfo.sharedInstance().postReq("997000")
+            { (success, errorString) -> Void in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("failed")
+                    })
+                    return
+                }
+                dispatch_async(dispatch_get_main_queue(), {
+                    
+                    print("suucssssss")
+                })
+            }
+        }
+    }
+    
     func parseAccountInfo(responseData: NSDictionary) {
         let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
         let bData = String(data: aData!, encoding: NSUTF8StringEncoding)
@@ -41,9 +95,9 @@ class RequestInfo {
             //let name = useME["name"]
             //Users.sharedInstance().email = email
             //Users.sharedInstance().name = name
-            Users.sharedInstance().hosted = hosted as! NSArray
-            Users.sharedInstance().joined = joined as! NSArray
-            Users.sharedInstance().pending = invites as! NSArray
+            Users.sharedInstance().hosted = hosted as? NSArray
+            Users.sharedInstance().joined = joined as? NSArray
+            Users.sharedInstance().pending = invites as? NSArray
             Users.sharedInstance().food_pref = food_pref
             Users.sharedInstance().movie_pref = movie_pref
             
@@ -134,60 +188,60 @@ class RequestInfo {
             let data: NSData = (content!.dataUsingEncoding(NSUTF8StringEncoding))!
             
             print(content)
-        
-            do {
-                let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
-                print(responseData)
-                if oper == "999000" {
+            
+            if oper == "999000" {
+                do {
+                    let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
+                    
                     if responseData.valueForKey("status") as! String == "success" {
-                        let responseStat = responseData.valueForKey("response")
-                        
-                        let firstKey = Array(responseStat!.allKeys).first
-                        let place_id = firstKey as! String
-                        Users.sharedInstance().place_id = place_id
-                        Users.sharedInstance().place_info = responseStat![place_id]
-                        
-                        print("HERE IS WHERE YOU ARE GOING")
-                        print(Users.sharedInstance().place_id)
-                        print(Users.sharedInstance().place_info)
                         completionHandler(success: true, errorString: nil)
-                    } else {
+                        let responseStat = responseData.valueForKey("response") as! NSDictionary
+                        self.parseFoodInfo(responseStat)
+                    }
+                    if responseData.valueForKey("status") as! String != "success" {
                         completionHandler(success: false, errorString: "unable to connect")
                     }
+                }catch {
+                    print(ErrorType)
                 }
-                
-                if oper == "111000" {
-                    if responseData.valueForKey("status") as! String == "success" {
+            } else {
+                do {
+                    let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
+                    print(responseData)
+                    
+                    if oper == "111000" {
+                        if responseData.valueForKey("status") as! String == "success" {
                             completionHandler(success: true, errorString: nil)
+                        } else {
+                            completionHandler(success: false, errorString: "couldn't create account")
+                        }
                     } else {
-                        completionHandler(success: false, errorString: "couldn't create account")
-                    }
-                } else {
-                    let status = responseData.valueForKey("status") as! String
-                    let responseStat = responseData.valueForKey("response") as! String
-                    
-                    if status == "fail" {
-                        completionHandler(success: false, errorString: "that info does not exist")
-                    }
-                    
-                    if responseStat == "update failed" {
-                        completionHandler(success: false, errorString: "Unable to update")
-                    }
-                    
-                    if status == "success" {
-                        if oper == "121000" {
-                            Users.sharedInstance().event_id = responseData.valueForKey("response")
-                            print(Users.sharedInstance().event_id)
+                        let status = responseData.valueForKey("status") as! String
+                        let responseStat = responseData.valueForKey("response") as! String
+                        
+                        if status == "fail" {
+                            completionHandler(success: false, errorString: "that info does not exist")
                         }
-                        if oper == "111002" {
-                            self.parseAccountInfo(responseData)
+                        
+                        if responseStat == "update failed" {
+                            completionHandler(success: false, errorString: "Unable to update")
                         }
-                        completionHandler(success: true, errorString: "info found")
+                        
+                        if status == "success" {
+                            if oper == "121000" {
+                                Users.sharedInstance().event_id = responseData.valueForKey("response")
+                                print(Users.sharedInstance().event_id)
+                            }
+                            if oper == "111002" {
+                                self.parseAccountInfo(responseData)
+                            }
+                            completionHandler(success: true, errorString: "info found")
+                        }
                     }
+                    
+                }catch {
+                    print("there was an error")
                 }
-                
-            }catch {
-                print("there was an error")
             }
         })
         task.resume()
