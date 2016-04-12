@@ -177,7 +177,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 })
                 return
             }
-            
             print("success")
             let time1 = 8.23
             let time2 = 3.42

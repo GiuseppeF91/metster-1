@@ -16,7 +16,6 @@
 		6964A96C1CBB230C0090EC4C /* EventTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6964A96B1CBB230C0090EC4C /* EventTableViewCell.swift */; };
 		6964A96E1CBB43860090EC4C /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6964A96D1CBB43860090EC4C /* MapKit.framework */; };
 		69796BA21CAE416500A6378B /* Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69796BA11CAE416500A6378B /* Users.swift */; };
-		69796BA41CAE634500A6378B /* EventModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69796BA31CAE634500A6378B /* EventModel.swift */; };
 		69796BA61CAFBF2300A6378B /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69796BA51CAFBF2300A6378B /* BaseVC.swift */; };
 		69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */; };
 		69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */; };
@@ -63,7 +62,6 @@
 		6964A96B1CBB230C0090EC4C /* EventTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventTableViewCell.swift; sourceTree = "<group>"; };
 		6964A96D1CBB43860090EC4C /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		69796BA11CAE416500A6378B /* Users.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Users.swift; sourceTree = "<group>"; };
-		69796BA31CAE634500A6378B /* EventModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventModel.swift; sourceTree = "<group>"; };
 		69796BA51CAFBF2300A6378B /* BaseVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		69DE74E71CA7CC0600AA35D2 /* Metsterios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Metsterios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69DE74EA1CA7CC0600AA35D2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -175,7 +173,6 @@
 				691DEE991CAA5DE4004263F8 /* View */,
 				69796BA11CAE416500A6378B /* Users.swift */,
 				6964A9691CBB04190090EC4C /* Place.swift */,
-				69796BA31CAE634500A6378B /* EventModel.swift */,
 				695AEE751CAE1325006B4D6D /* RequestInfo.swift */,
 			);
 			path = Metsterios;
@@ -416,7 +413,6 @@
 				69FC06861CB4EB8600BED317 /* ProfileButton.swift in Sources */,
 				6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */,
 				69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */,
-				69796BA41CAE634500A6378B /* EventModel.swift in Sources */,
 				69DE751B1CA7CF2900AA35D2 /* PreferencesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -23,7 +23,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var restaurantButton = SelectionButton(frame: CGRectMake((screenWidth/2)+10, 100, (screenWidth/2)-30, 40))
     
     var searchLabel = UILabel(frame: CGRectMake(20, 350, screenWidth/2, 30))
-    var searchQueryTextField = MainTextField(frame: CGRectMake(20, 380, screenWidth-40, 40))
+    var myPrefLabel = UILabel(frame: CGRectMake(20, 380, screenWidth-40, 40))
+    var myPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 380, 0, 0))
+    var friendsPrefLabel = UILabel(frame: CGRectMake(20, 420, screenWidth-40, 40))
+    var friendsPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 420, 0, 0))
+    var searchQueryTextField = MainTextField(frame: CGRectMake(20, 460, screenWidth-130, 40))
+    var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 460, 0, 0))
     
     var dateLabel = MainLabel(frame: CGRectMake(20, 210, screenWidth/3.2, 50))
     var dateButton = UIButton(frame: CGRectMake(20, 210, screenWidth/3, 50))
@@ -33,7 +38,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var timeButton = UIButton(frame: CGRectMake(20, 270, screenWidth/3, 50))
     var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, 210, screenWidth/1.7, 150))
     var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
-    var submitButton = SubmitButton(frame: CGRectMake(80, 460, screenWidth-160, 40))
+    var submitButton = SubmitButton(frame: CGRectMake(80, screenHeight-100, screenWidth-160, 40))
     
     var invitedFriends : NSMutableArray = []
     var names : NSMutableArray? = []
@@ -83,6 +88,34 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        searchLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
+        searchLabel.text = "Search Preference"
+        self.view.addSubview(searchLabel)
+        
+        myPrefLabel.textAlignment = NSTextAlignment.Left
+        myPrefLabel.text = "My Saved Preferences"
+        //myPrefLabel.font = UIFont(name: "HelveticaNeue", size: 30)
+        myPrefLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.myPrefLabel)
+        friendsPrefLabel.textAlignment = NSTextAlignment.Left
+        friendsPrefLabel.text = "Friend Preferences"
+        //friendsPrefLabel.font = UIFont(name: "HelveticaNeue", size: 30)
+        friendsPrefLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.friendsPrefLabel)
+        
+        myPrefSwitch.on = false
+        myPrefSwitch.setOn(false, animated: false)
+        myPrefSwitch.addTarget(self, action: #selector(self.myPref), forControlEvents: .ValueChanged)
+        self.view.addSubview(myPrefSwitch)
+        friendsPrefSwitch.on = true
+        friendsPrefSwitch.setOn(true, animated: false)
+        friendsPrefSwitch.addTarget(self, action: #selector(self.friendPref), forControlEvents: .ValueChanged);
+        self.view.addSubview(friendsPrefSwitch)
+        searchQSwitch.on = false
+        searchQSwitch.setOn(false, animated: false)
+        searchQSwitch.addTarget(self, action: #selector(self.customPref), forControlEvents: .ValueChanged)
+        self.view.addSubview(searchQSwitch)
+
         cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(self.cancelClicked))
         nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: #selector(AddEventViewController.nextPressed))
         
@@ -112,9 +145,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         eventNameTextField.attributedPlaceholder=name
         eventNameTextField.delegate = self
         self.view.addSubview(eventNameTextField)
-        
-        searchLabel.text = "Search Preference"
-        self.view.addSubview(searchLabel)
         
         let search=NSAttributedString(string: "Custom Search...", attributes:    [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
         searchQueryTextField.attributedPlaceholder=search
@@ -157,7 +187,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         notesTextField.delegate = self
         self.view.addSubview(notesTextField)
     
-        submitButton.addTarget(self, action: #selector(self.findFood), forControlEvents: UIControlEvents.TouchUpInside)
+        submitButton.addTarget(self, action: #selector(self.newEventCreated), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         
@@ -189,6 +219,10 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         submitButton.hidden = true
         searchQueryTextField.hidden = true
         searchLabel.hidden = true
+        myPrefSwitch.hidden = true
+        myPrefLabel.hidden = true
+        friendsPrefLabel.hidden = true
+        friendsPrefSwitch.hidden = true
         
         placesTableView.hidden = true
     }
@@ -216,9 +250,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         if tableView == friendsTableView {
             count = (Users.sharedInstance().user_friends?.count)!
         }
-        if tableView == placesTableView {
-            //TO DO: return count of all food choices queried
-            count = 5
+        if tableView == placesTableView  {
+            if Users.sharedInstance().places == nil {
+                count = 0
+            } else {
+                count = Users.sharedInstance().places!.count
+            }
         }
         return count!
     }
@@ -232,9 +269,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             
             for item in newValues! {
                 let newName = item.valueForKey("name")
-                print(newName)
                 self.names?.addObject(newName!)
-                print(self.names)
             }
             Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
             cell.textLabel!.text = names![indexPath.row] as? String
@@ -288,6 +323,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                             //self.alertMessage("Success!", message: "Event Saved")
                             self.inviteMembers()
                             self.placesTableView.hidden = true
+                            self.mapView?.hidden = true
                         })
                     }
                 }))
@@ -306,6 +342,24 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func selectTime() {
         timeBool = !timeBool
+    }
+    
+    func myPref() {
+        myPrefSwitch.on = true
+        friendsPrefSwitch.on = false
+        searchQSwitch.on = false
+    }
+    
+    func friendPref() {
+        myPrefSwitch.on = false
+        friendsPrefSwitch.on = true
+        searchQSwitch.on = false
+    }
+    
+    func customPref() {
+        myPrefSwitch.on = false
+        friendsPrefSwitch.on = false
+        searchQSwitch.on = true
     }
     
     func newEventCreated() {
@@ -334,11 +388,15 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     func findFood() {
-        Users.sharedInstance().query = "mexican"
-        Users.sharedInstance().event_id = "10154789858868079--event--46"
-        Users.sharedInstance().event_date = "may"
-        Users.sharedInstance().eventName = "may"
-        Users.sharedInstance().event_time = "may"
+        if myPrefSwitch.on == true {
+            Users.sharedInstance().query = Users.sharedInstance().food_pref
+        }
+        if friendsPrefSwitch.on == true {
+            Users.sharedInstance().query = "go_with_group"
+        }
+        if searchQSwitch.on == true {
+            Users.sharedInstance().query = searchQueryTextField.text
+        }
         
         RequestInfo.sharedInstance().postReq("999000")
         { (success, errorString) -> Void in
@@ -375,7 +433,13 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 self.notesTextField.hidden = true
                 self.submitButton.hidden = true
                 self.searchQueryTextField.hidden = true
+                self.searchQSwitch.hidden = true
                 self.searchLabel.hidden = true
+                self.myPrefSwitch.hidden = true
+                self.myPrefLabel.hidden = true
+                self.friendsPrefLabel.hidden = true
+                self.friendsPrefSwitch.hidden = true
+
                 print("Found restauants!")
                 self.placesTableView.hidden = false
                 print(Users.sharedInstance().places)
@@ -449,7 +513,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         cancelButton.tintColor = UIColor.clearColor()
         nextButton.enabled = false
         searchQueryTextField.hidden = false
-        searchLabel.hidden = false 
+        searchLabel.hidden = false
+        myPrefSwitch.hidden = false
+        myPrefLabel.hidden = false
+        searchQSwitch.hidden = false
+        friendsPrefLabel.hidden = false
+        friendsPrefSwitch.hidden = false
         nextButton.tintColor = UIColor.clearColor()
         backButton = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(AddEventViewController.backPressed))
         navigationItem.leftBarButtonItem = backButton
@@ -479,6 +548,15 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         cancelButton.enabled = true
         cancelButton.tintColor = UIColor.blackColor()
         nextButton.enabled = true
+        searchLabel.hidden = true
+        searchQSwitch.hidden = true
+        searchQueryTextField.hidden = true
+        friendsPrefSwitch.hidden = true
+        friendsPrefLabel.hidden = true
+        myPrefLabel.hidden = true
+        myPrefSwitch.hidden = true
+        mapView?.hidden = true 
+        
         nextButton.tintColor = UIColor.blackColor()
         
         mapView?.hidden = true

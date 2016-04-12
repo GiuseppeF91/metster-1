@@ -202,9 +202,21 @@ class RequestInfo {
                     
                     if responseData.valueForKey("status") as! String == "success" {
                         
+                        let allValues : NSMutableArray? = []
+                        let allKeys : NSMutableArray? = []
                         let responseStat = responseData.valueForKey("response") as! NSDictionary
                         
-                        let valueone = Array(responseStat.allValues)[0]
+                        let values = Array(responseStat.allValues)
+                        for value in values {
+                            allValues?.insertObject(value, atIndex: 0)
+                        }
+                        
+                        let keys = Array(responseStat.allKeys)
+                        for key in keys {
+                            allKeys?.insertObject(key, atIndex: 0)
+                        }
+        
+                        /*let valueone = Array(responseStat.allValues)[0]
                         let valuetwo = Array(responseStat.allValues)[1]
                         let valuethree = Array(responseStat.allValues)[2]
                         let valuefour = Array(responseStat.allValues)[3]
@@ -216,7 +228,7 @@ class RequestInfo {
                         let keythree = Array(responseStat.allKeys)[2]
                         let keyfour = Array(responseStat.allKeys)[3]
                         let keyfive = Array(responseStat.allKeys)[4]
-                        let allKeys : NSMutableArray = [keyone, keytwo, keythree, keyfour, keyfive]
+                        //let allKeys : NSMutableArray = [keyone, keytwo, keythree, keyfour, keyfive] */
                     
                         Users.sharedInstance().place_ids = allKeys
                         Users.sharedInstance().places = allValues

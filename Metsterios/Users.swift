@@ -27,7 +27,6 @@ class Users: NSObject {
     var event_notes : AnyObject?
     var invited_members : AnyObject?
     var event_members : AnyObject?
-    var eventModel: [EventModel]
     
     var place_info : AnyObject?
     var place_id : AnyObject?
@@ -40,10 +39,6 @@ class Users: NSObject {
     var hosted : NSArray?
     var joined : NSArray?
     var pending : NSArray?
-    
-    override init() {
-        eventModel = [EventModel]()
-    }
     
     class func sharedInstance() -> Users {
         struct Singleton {
