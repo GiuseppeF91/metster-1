@@ -13,8 +13,8 @@ class MainTextField: UITextField {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        super.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.2)
-        super.textColor=UIColor.grayColor()
+        super.backgroundColor = lightBlue.colorWithAlphaComponent(0.2)
+        super.textColor = darkBlue
         super.layer.cornerRadius = 5
     }
     

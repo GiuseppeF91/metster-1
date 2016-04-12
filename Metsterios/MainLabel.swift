@@ -12,7 +12,7 @@ class MainLabel: UILabel {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        super.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.2)
+        super.backgroundColor = lightBlue.colorWithAlphaComponent(0.2)
         super.layer.cornerRadius = 1
     }
     

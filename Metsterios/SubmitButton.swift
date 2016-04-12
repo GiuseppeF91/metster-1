@@ -12,7 +12,7 @@ class SubmitButton: UIButton {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        super.backgroundColor = UIColor.blackColor()
+        super.backgroundColor = darkBlue
         super.layer.cornerRadius = 5
         super.setTitleColor(UIColor.whiteColor(), forState: .Normal)
     }

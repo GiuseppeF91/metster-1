@@ -25,11 +25,30 @@ class ProfileViewController: BaseVC {
     var addressButton = ProfileButton(frame: CGRectMake(0, screenHeight/2, screenWidth, screenHeight/14.5))
     
     var nameLabel = UILabel(frame: CGRectMake(20, screenHeight/2.5, screenWidth-40, 40))
+    var profImage : UIImageView?
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var access = Users.sharedInstance().fbid as! String
+        let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+        
+        profImage = UIImageView()
+        profImage?.frame = CGRectMake(screenWidth/3, screenHeight/7, screenWidth/3, screenWidth/3)
+        profImage!.contentMode = UIViewContentMode.ScaleAspectFit
+        self.view.addSubview(profImage!)
+        
+        let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+        ) { (responseData, responseUrl, error) -> Void in
+            if let data = responseData{
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.profImage!.image = UIImage(data: data)
+                })
+            }
+        }
+        task.resume()
         
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.text = Users.sharedInstance().name as? String

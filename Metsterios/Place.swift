@@ -16,7 +16,7 @@ class Place {
     private var _address: String!
     private var _category: String!
     //private var _coordinate: String!
-    //private var _image_url: String!
+    private var _image_url: String!
     private var _latitude: String!
     private var _longitude: String!
     private var _name: String!
@@ -71,6 +71,10 @@ class Place {
         return _eventtime
     }
     
+    var image_url: String {
+        return _image_url
+    }
+    
     // Initialize
     init(key: String, dictionary: Dictionary<String, AnyObject>) {
         self._placeKey = key
@@ -110,6 +114,10 @@ class Place {
         
         if let eventtime = dictionary["eventtime"] as? String {
             self._eventtime = eventtime
+        }
+        
+        if let image_url = dictionary["image_url"] as? String {
+            self._image_url = image_url
         }
     }
 }

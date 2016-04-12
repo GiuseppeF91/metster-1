@@ -13,8 +13,8 @@ class ProfileButton: UIButton {
         super.init(frame: frame)
     
         super.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Left
-        super.backgroundColor = UIColor.grayColor().colorWithAlphaComponent(0.2)
-        super.setTitleColor(UIColor.darkGrayColor(), forState: .Normal)
+        super.backgroundColor = darkBlue
+        super.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         super.layer.borderWidth = 1
         super.layer.borderColor = UIColor.lightGrayColor().CGColor
     }

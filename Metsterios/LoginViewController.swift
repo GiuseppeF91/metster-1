@@ -14,7 +14,7 @@ import Firebase
 
 class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDelegate {
     
-    var loginButton = SubmitButton(frame: CGRectMake(10, 100, UIScreen.mainScreen().bounds.width-20, (UIScreen.mainScreen().bounds.height)/12))
+    var loginButton = SubmitButton(frame: CGRectMake(10, screenHeight-200, UIScreen.mainScreen().bounds.width-20, (UIScreen.mainScreen().bounds.height)/12))
     
     var locManager = CLLocationManager()
     var currentLocation : CLLocation!
@@ -22,22 +22,29 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     var currentLong = ""
     var error : NSError?
     
+    var metsLogo = UIImage(named: "logo")
+    
     let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        let logoView = UIImageView(image: metsLogo)
+        logoView.frame = CGRect(x: 0, y: 100, width: screenWidth, height: screenHeight/1.8 )
+        logoView.contentMode = UIViewContentMode.ScaleAspectFit
+        view.addSubview(logoView)
+
         locManager.delegate = self
         
         let loginView : FBSDKLoginButton = FBSDKLoginButton()
+        loginView.frame = CGRectMake(40, screenHeight-100, UIScreen.mainScreen().bounds.width-80, 40)
         self.view.addSubview(loginView)
-        loginView.center = self.view.center
         loginView.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_photos"]
         loginView.delegate = self
         
         if (FBSDKAccessToken.currentAccessToken() != nil) {
-            
+            self.activityIndicator.startAnimating()
             dispatch_async(dispatch_get_main_queue(), {
                 
                 self.returnUserFriends()
@@ -46,6 +53,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                         dispatch_async(dispatch_get_main_queue(), {
                             print("Failed.")
                             self.alertMessage("Error", message: "failure")
+                            self.activityIndicator.stopAnimating()
                         })
                         return
                     }
@@ -55,6 +63,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                         Users.sharedInstance().long = ""
                         self.findAccount()
                         self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+                        self.activityIndicator.stopAnimating()
                     })
                 })
             })

@@ -22,26 +22,27 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var moviesButton = SelectionButton(frame: CGRectMake(20, 100, ((screenWidth)/2)-30, 40))
     var restaurantButton = SelectionButton(frame: CGRectMake((screenWidth/2)+10, 100, (screenWidth/2)-30, 40))
     
-    var searchLabel = UILabel(frame: CGRectMake(20, 350, screenWidth/2, 30))
-    var myPrefLabel = UILabel(frame: CGRectMake(20, 380, screenWidth-40, 40))
-    var myPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 380, 0, 0))
-    var friendsPrefLabel = UILabel(frame: CGRectMake(20, 420, screenWidth-40, 40))
-    var friendsPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 420, 0, 0))
-    var searchQueryTextField = MainTextField(frame: CGRectMake(20, 460, screenWidth-130, 40))
-    var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, 460, 0, 0))
+    var searchLabel = UILabel(frame: CGRectMake(20, screenHeight-260, screenWidth, 30))
+    var myPrefLabel = UILabel(frame: CGRectMake(20, screenHeight-230, screenWidth-40, 30))
+    var myPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-230, 0, 0))
+    var friendsPrefLabel = UILabel(frame: CGRectMake(20, screenHeight-190, screenWidth-40, 30))
+    var friendsPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-190, 0, 0))
+    var searchQueryTextField = MainTextField(frame: CGRectMake(20, screenHeight-150, screenWidth-130, 30))
+    var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-150, 0, 0))
     
-    var dateLabel = MainLabel(frame: CGRectMake(20, 210, screenWidth/3.2, 50))
-    var dateButton = UIButton(frame: CGRectMake(20, 210, screenWidth/3, 50))
+    var dateLabel = MainLabel(frame: CGRectMake(20, 210, screenWidth/3.2, 40))
+    var dateButton = UIButton(frame: CGRectMake(20, 210, screenWidth/3, 40))
     var datePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, 210, screenWidth/1.7, 150))
     
-    var timeLabel = MainLabel(frame: CGRectMake(20, 270, screenWidth/3.2, 50))
-    var timeButton = UIButton(frame: CGRectMake(20, 270, screenWidth/3, 50))
+    var timeLabel = MainLabel(frame: CGRectMake(20, 270, screenWidth/3.2, 40))
+    var timeButton = UIButton(frame: CGRectMake(20, 270, screenWidth/3, 40))
     var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, 210, screenWidth/1.7, 150))
     var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, screenHeight-100, screenWidth-160, 40))
     
     var invitedFriends : NSMutableArray = []
     var names : NSMutableArray? = []
+    var images : NSMutableArray? = []
     let newValues : NSMutableArray? = []
     var dictionary = NSDictionary()
     var mapView : MKMapView?
@@ -126,7 +127,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         
         placesTableView.dataSource = self
         placesTableView.delegate = self
-        placesTableView.rowHeight = 75
+        placesTableView.rowHeight = 100
         self.view.addSubview(self.placesTableView)
         
         navigationItem.rightBarButtonItem = nextButton
@@ -138,6 +139,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         inviteToList.text = "To:"
         //inviteToList.attributedPlaceholder=inviteTo
         //inviteToList.delegate = self
+        inviteToList.backgroundColor = darkBlue.colorWithAlphaComponent(0.5)
         inviteToList.layer.cornerRadius = 5
         self.view.addSubview(inviteToList)
         
@@ -261,7 +263,9 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        //let friendCell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        let cell = EventTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        
         if tableView == friendsTableView {
             cell.textLabel!.text = Users.sharedInstance().user_friends![indexPath.row] as? String
         }
@@ -270,9 +274,25 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             for item in newValues! {
                 let newName = item.valueForKey("name")
                 self.names?.addObject(newName!)
+                
+                let newImage = item.valueForKey("image_url")
+                
+                
+                self.images?.addObject(newImage!)
             }
             Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
-            cell.textLabel!.text = names![indexPath.row] as? String
+            cell.eventNameLabel!.text = names![indexPath.row] as? String
+    
+            let url = NSURL(string: images![indexPath.row] as! String)!
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.foodImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
+            
         }
         return cell
     }
@@ -298,7 +318,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             print(Users.sharedInstance().place_id)
             let item = newValues![indexPath.row]
 
-            dictionary = ["category": item.valueForKey("category")!, "ratings": item.valueForKey("ratings")!, "review_count": item.valueForKey("review_count")!, "name": item.valueForKey("name")!, "latitude": item.valueForKey("latitude")!, "url": "www.yelp.com", "rank": item.valueForKey("rank")!, "snippet": item.valueForKey("snippet")!, "phone": item.valueForKey("phone")!, "image_url": "www.yelp.com", "longitude" : item.valueForKey("longitude")!, "address": item.valueForKey("address")!, "coordinate": item.valueForKey("coordinate")!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
+            dictionary = ["category": item.valueForKey("category")!, "ratings": item.valueForKey("ratings")!, "review_count": item.valueForKey("review_count")!, "name": item.valueForKey("name")!, "latitude": item.valueForKey("latitude")!, "url": "www.yelp.com", "rank": item.valueForKey("rank")!, "snippet": item.valueForKey("snippet")!, "phone": item.valueForKey("phone")!, "image_url": item.valueForKey("image_url")!, "longitude" : item.valueForKey("longitude")!, "address": item.valueForKey("address")!, "coordinate": item.valueForKey("coordinate")!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
             
             print(dictionary)
             
@@ -363,12 +383,16 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     func newEventCreated() {
+        activityIndicator.startAnimating()
         //Inserts Event
         Users.sharedInstance().eventName = eventNameTextField.text
         Users.sharedInstance().event_date = dateLabel.text
         Users.sharedInstance().event_time = timeLabel.text
         Users.sharedInstance().event_notes = notesTextField.text
         Users.sharedInstance().invited_members = invitedFriends
+        timeBool = false
+        dateBool = false 
+        
 
         RequestInfo.sharedInstance().postReq("121000")
         { (success, errorString) -> Void in
@@ -388,6 +412,11 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     func findFood() {
+
+        newValues?.removeAllObjects()
+        names?.removeAllObjects()
+        images?.removeAllObjects()
+        
         if myPrefSwitch.on == true {
             Users.sharedInstance().query = Users.sharedInstance().food_pref
         }
@@ -439,6 +468,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 self.myPrefLabel.hidden = true
                 self.friendsPrefLabel.hidden = true
                 self.friendsPrefSwitch.hidden = true
+                self.timePicker.hidden = true
+                self.datePicker.hidden = true
 
                 print("Found restauants!")
                 self.placesTableView.hidden = false
@@ -449,7 +480,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     func loadMap() {
-        mapView = MKMapView(frame: CGRectMake(0, screenHeight/8, screenWidth, screenHeight/3))
+        mapView = MKMapView(frame: CGRectMake(0, screenHeight/8, screenWidth, screenHeight/2.8))
         mapView?.delegate = self
         let span = MKCoordinateSpanMake(4, 4)
         let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 38.5, longitude: -121.4), span: span)
@@ -457,7 +488,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         mapView?.scrollEnabled = true
         mapView?.setRegion(region, animated: true)
         self.view.addSubview(mapView!)
-        
+        view.bringSubviewToFront(friendsTableView)
         for value in newValues! {
             let latitude = Double(value.valueForKey("latitude") as! String)
             let longitude = Double(value.valueForKey("longitude") as! String)
@@ -470,8 +501,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             self.annotations.removeAll()
             self.annotations.append(annotation)
             mapView!.addAnnotations(self.annotations)
+            activityIndicator.stopAnimating()
         }
-        
     }
     
     func inviteMembers() { // invites are sent via 998001

@@ -12,6 +12,7 @@ class Users: NSObject {
     
     var name : AnyObject?
     var email : AnyObject?
+    var profpic : AnyObject?
     var fbid : AnyObject?
     var lat : AnyObject?
     var long : AnyObject?

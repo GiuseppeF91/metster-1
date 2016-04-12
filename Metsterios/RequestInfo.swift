@@ -29,52 +29,6 @@ class RequestInfo {
         let allkeys : NSMutableArray = [keysone!, keystwo!, keysthree!]
         print(allkeys)
         Users.sharedInstance().places = allkeys
-        
-      
-        //let firstKey = Array(responseStat.allKeys).first
-        //let place_id = firstKey as! String
-        /* Users.sharedInstance().place_id = place_id
-        let resString = responseStat[place_id] as! String
-        let restaurantData : NSData = (responseStat[place_id]?.dataUsingEncoding(NSUTF8StringEncoding))!
-        do {
-            let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData, options: .AllowFragments) as! NSMutableDictionary
-
-            Users.sharedInstance().place_name = restaurantInfo["name"]
-            //dictionary with all restauarant info
-            
-            dictionary = ["category": restaurantInfo["category"]!, "ratings": restaurantInfo["ratings"]!, "review_count": restaurantInfo["review_count"]!, "name": restaurantInfo["name"]!, "latitude": restaurantInfo["latitude"]!, "url": "www.yelp.com", "rank": restaurantInfo["rank"]!, "snippet": restaurantInfo["snippet"]!, "phone": restaurantInfo["phone"]!, "image_url": "www.yelp.com", "longitude" : restaurantInfo["longitude"]!, "address": restaurantInfo["address"]!, "coordinate": restaurantInfo["coordinate"]!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
-            
-            print(dictionary)
-            
-            let jsonData = try! NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.init(rawValue: 0))
-            let myString = String(data: jsonData, encoding: NSUTF8StringEncoding)
-            guard error == nil else {
-                print("can't get data into the right form")
-                return
-            }
-            Users.sharedInstance().place_info = myString
-        } catch {
-            print(error)
-        } */
-    
-        /*print("HERE IS WHERE YOU ARE GOING")
-        
-        dispatch_after(self.popTime, self.GlobalMainQueue) {
-
-           RequestInfo.sharedInstance().postReq("997000")
-            { (success, errorString) -> Void in
-                guard success else {
-                    dispatch_async(dispatch_get_main_queue(), {
-                        print("failed")
-                    })
-                    return
-                }
-                dispatch_async(dispatch_get_main_queue(), {
-                    
-                    print("suucssssss")
-                })
-            }
-        } */
     }
     
     func parseAccountInfo(responseData: NSDictionary) {

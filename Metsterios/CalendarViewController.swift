@@ -23,7 +23,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
 
     var tableView : UITableView = UITableView()
-    var annotations = [MKPointAnnotation]()
+    var hostedAnnotations = [MKPointAnnotation]()
+    var acceptedAnnotations = [MKPointAnnotation]()
+    var pendingAnnotations = [MKPointAnnotation]()
     var mapView : MKMapView?
     
     override func viewDidLoad() {
@@ -76,7 +78,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     func loadEvents(completionHandler: (success: Bool, errorString: String?) -> Void) {
-        
+        activityIndicator.startAnimating()
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
@@ -183,6 +185,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             
             // Delay 2 seconds
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(4.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
+            
                 self.loadMap()
             }
         })
@@ -203,29 +206,31 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         
         // Delay 2 seconds
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
-            self.currentButton()
-        } 
-    }
-    
-    func currentButton() {
-          print("getting annots")
-        if self.yesEventsButton.selected == true {
-            self.yesEventsClicked()
+            
+            if self.yesEventsButton.selected == true {
+                self.yesEventsClicked()
+            }
+            if self.myEventsButton.selected == true {
+                self.myEventsClicked()
+           
+            } else {
+                self.pendingEventsClicked()
+            }
         }
-        if self.myEventsButton.selected == true {
-            self.myEventsClicked()
-        } else {
-            self.pendingEventsClicked()
-        }
+        activityIndicator.stopAnimating()
     }
-    
+   
     func pendingEventsClicked() {
         pendingEventsButton.selected = true
         yesEventsButton.selected = false
         myEventsButton.selected = false
-        tableView.reloadData()
-        mapView!.removeAnnotations(annotations)
-        
+        let allAnnotations = self.mapView!.annotations
+        self.mapView!.removeAnnotations(allAnnotations)
+        self.pendingAnnotations.removeAll()
+        self.hostedAnnotations.removeAll()
+        self.acceptedPlaces.removeAll()
+        self.tableView.reloadData()
+   
         for pendingPlace in pendingPlaces {
             let latitude = Double(pendingPlace.latitude)
             let longitude = Double(pendingPlace.longitude)
@@ -235,9 +240,8 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = pendingPlace.name
             annotation.subtitle = pendingPlace.address
-            self.annotations.removeAll()
-            self.annotations.append(annotation)
-            mapView!.addAnnotations(self.annotations)
+            self.pendingAnnotations.append(annotation)
+            mapView!.addAnnotations(self.pendingAnnotations)
         }
     }
     
@@ -245,8 +249,12 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         yesEventsButton.selected = true
         pendingEventsButton.selected = false
         myEventsButton.selected = false
-        tableView.reloadData()
-        mapView!.removeAnnotations(annotations)
+        let allAnnotations = self.mapView!.annotations
+        self.mapView!.removeAnnotations(allAnnotations)
+        self.pendingAnnotations.removeAll()
+        self.hostedAnnotations.removeAll()
+        self.acceptedPlaces.removeAll()
+        self.tableView.reloadData()
         
         for acceptedPlace in acceptedPlaces {
             let latitude = Double(acceptedPlace.latitude)
@@ -257,9 +265,8 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = acceptedPlace.name
             annotation.subtitle = acceptedPlace.address
-            self.annotations.removeAll()
-            self.annotations.append(annotation)
-            mapView!.addAnnotations(self.annotations)
+            self.acceptedAnnotations.append(annotation)
+            mapView!.addAnnotations(self.acceptedAnnotations)
         }
     }
     
@@ -267,8 +274,12 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         yesEventsButton.selected = false
         pendingEventsButton.selected = false
         myEventsButton.selected = true
-        tableView.reloadData()
-        mapView!.removeAnnotations(annotations)
+        let allAnnotations = self.mapView!.annotations
+        self.mapView!.removeAnnotations(allAnnotations)
+        self.pendingAnnotations.removeAll()
+        self.hostedAnnotations.removeAll()
+        self.acceptedPlaces.removeAll()
+        self.tableView.reloadData()
         
         for hostedPlace in hostedPlaces {
             let latitude = Double(hostedPlace.latitude)
@@ -279,10 +290,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = hostedPlace.name
             annotation.subtitle = hostedPlace.address
-            self.annotations.removeAll()
-            self.annotations.append(annotation)
-            mapView!.addAnnotations(self.annotations)
+            self.hostedAnnotations.append(annotation)
+            mapView!.addAnnotations(self.hostedAnnotations)
         }
+
     }
     
     //MARK : Table View delegate & data source methods
@@ -308,6 +319,18 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventTimeLabel.text = pendingPlace.eventtime
             cell.eventDateLabel.text = pendingPlace.eventdate
             cell.eventNameLabel.text = pendingPlace.eventname
+            
+            let url = NSURL(string: pendingPlace.image_url)!
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.foodImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
+            
+            
             return cell
         }
         if yesEventsButton.selected == true {
@@ -318,6 +341,16 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventTimeLabel.text = acceptedPlace.eventtime
             cell.eventDateLabel.text = acceptedPlace.eventdate
             cell.eventNameLabel.text = acceptedPlace.eventname
+            
+            let url = NSURL(string: acceptedPlace.image_url)!
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.foodImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
             return cell
         } else {
             let hostedPlace = hostedPlaces[indexPath.row]
@@ -327,6 +360,15 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventTimeLabel.text = hostedPlace.eventtime
             cell.eventDateLabel.text = hostedPlace.eventdate
             cell.eventNameLabel.text = hostedPlace.eventname
+            let url = NSURL(string: hostedPlace.image_url)!
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.foodImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
             return cell
         }
     }
@@ -347,12 +389,13 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         if yesEventsButton.selected == true {
             let confirmedPlace = acceptedPlaces[indexPath.row]
             Users.sharedInstance().event_id = confirmedPlace.eventid
-        } else {
+        }
+        if myEventsButton.selected == true {
             let hostedPlace = hostedPlaces[indexPath.row]
             Users.sharedInstance().event_id = hostedPlace.eventid
         }
         
-        let save = UITableViewRowAction(style: .Normal, title: "Save to Events") { action, index in
+        let save = UITableViewRowAction(style: .Normal, title: "Accept") { action, index in
             print(Users.sharedInstance().event_id)
             print("save button tapped")
 
@@ -373,7 +416,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 })
             }
         }
-        save.backgroundColor = UIColor.greenColor()
+        save.backgroundColor = lightBlue
         
         let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             print("delete button tapped")
@@ -431,7 +474,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 self.presentViewController(alert, animated: true, completion: nil)
             }
         }
-        delete.backgroundColor = UIColor.grayColor()
+        delete.backgroundColor = darkBlue
         
         if yesEventsButton.selected == true {
             return [delete]

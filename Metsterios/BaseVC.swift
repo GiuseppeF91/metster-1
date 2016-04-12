@@ -10,6 +10,8 @@ import UIKit
 
 var screenWidth = UIScreen.mainScreen().bounds.width
 var screenHeight = UIScreen.mainScreen().bounds.height
+var lightBlue = UIColor(red:97.0/255.0, green:200.0/255.0, blue:255.0/255.0, alpha:1.0)
+var darkBlue = UIColor(red:39.0/255.0, green:40.0/255.0, blue:81.0/255.0, alpha:1.0)
 
 class BaseVC: UIViewController, UITextFieldDelegate {
     
@@ -19,8 +21,8 @@ class BaseVC: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navBar.backgroundColor = UIColor.whiteColor()
-        navBar.tintColor = UIColor.blackColor()
+        navBar.backgroundColor = lightBlue
+        navBar.tintColor = darkBlue
     }
     
     override func viewWillAppear(animated: Bool) {
