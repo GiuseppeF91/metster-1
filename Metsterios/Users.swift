@@ -33,6 +33,9 @@ class Users: NSObject {
     var place_id : AnyObject?
     var place_name : AnyObject?
     
+    var places : NSMutableArray?
+    var place_ids : NSMutableArray?
+    
     var user_friends: NSArray?
     var hosted : NSArray?
     var joined : NSArray?

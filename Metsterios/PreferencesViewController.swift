@@ -40,10 +40,12 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
         restaurantButton.setTitle("Restaurants", forState: .Normal)
         restaurantButton.selected = true
         self.view.addSubview(restaurantButton)
+        restaurantButton.hidden = true
         
         moviesButton.addTarget(self, action: #selector(PreferencesViewController.moviesClicked), forControlEvents: UIControlEvents.TouchUpInside)
         moviesButton.setTitle("Movies", forState: .Normal)
         self.view.addSubview(moviesButton)
+        moviesButton.hidden = true 
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -57,6 +59,10 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     
     func tableView(tableView: UITableView, canMoveRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
+    }
+    
+    func tableView(tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+        return .None
     }
     
     func tableView(tableView: UITableView, shouldIndentWhileEditingRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -75,6 +81,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         if restaurantButton.selected == true {
+            //TO DO: List food_array in the saved order
             
             //food_pref = Users.sharedInstance().food_pref as? String
             //food_array = food_pref!.characters.map { String($0) }
@@ -120,7 +127,6 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
                 cell.textLabel!.text  = "Vietnamese"
             }
             
-            
         } else {
             cell.textLabel!.text = moviesArray[indexPath.row]
         }
@@ -137,7 +143,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     func reorderItems() {
         if(tableView.editing == true) {
             tableView.setEditing(false, animated: true)
-            
+
         } else {
             tableView.setEditing(true, animated: true)
         }

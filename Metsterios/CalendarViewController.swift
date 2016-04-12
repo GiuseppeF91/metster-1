@@ -205,8 +205,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         // Delay 2 seconds
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
             self.currentButton()
-        }
-        
+        } 
     }
     
     func currentButton() {

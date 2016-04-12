@@ -55,6 +55,8 @@ class ProfileViewController: BaseVC {
         publishSwitch.setOn(true, animated: false)
         //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
         self.view.addSubview(publishSwitch)
+        publishButton.hidden = true
+        publishSwitch.hidden = true 
         
         addressButton.setTitle("Address", forState: .Normal)
         self.view.addSubview(addressButton)

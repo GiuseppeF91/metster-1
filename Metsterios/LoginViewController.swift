@@ -117,7 +117,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 //print(data?.valueForKey("email"))
                 
                 let friends = data?.valueForKey("name")
-                Users.sharedInstance().user_friends = friends as! NSArray
+                Users.sharedInstance().user_friends = friends as? NSArray
             } else {
                 print("Error Getting Friends \(error)")
                 Users.sharedInstance().user_friends = ["User Friend", "User Friend"]

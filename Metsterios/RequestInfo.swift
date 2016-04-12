@@ -22,15 +22,24 @@ class RequestInfo {
     }
     
     func parseFoodInfo(responseStat: NSDictionary) {
-
-        let firstKey = Array(responseStat.allKeys).first
-        let place_id = firstKey as! String
-        Users.sharedInstance().place_id = place_id
+        
+        let keysone = Array(responseStat.allKeys).first
+        let keystwo = Array(responseStat.allKeys).dropFirst().first
+        let keysthree = Array(responseStat.allKeys).dropFirst().first
+        let allkeys : NSMutableArray = [keysone!, keystwo!, keysthree!]
+        print(allkeys)
+        Users.sharedInstance().places = allkeys
+        
+      
+        //let firstKey = Array(responseStat.allKeys).first
+        //let place_id = firstKey as! String
+        /* Users.sharedInstance().place_id = place_id
         let resString = responseStat[place_id] as! String
         let restaurantData : NSData = (responseStat[place_id]?.dataUsingEncoding(NSUTF8StringEncoding))!
         do {
             let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData, options: .AllowFragments) as! NSMutableDictionary
 
+            Users.sharedInstance().place_name = restaurantInfo["name"]
             //dictionary with all restauarant info
             
             dictionary = ["category": restaurantInfo["category"]!, "ratings": restaurantInfo["ratings"]!, "review_count": restaurantInfo["review_count"]!, "name": restaurantInfo["name"]!, "latitude": restaurantInfo["latitude"]!, "url": "www.yelp.com", "rank": restaurantInfo["rank"]!, "snippet": restaurantInfo["snippet"]!, "phone": restaurantInfo["phone"]!, "image_url": "www.yelp.com", "longitude" : restaurantInfo["longitude"]!, "address": restaurantInfo["address"]!, "coordinate": restaurantInfo["coordinate"]!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
@@ -46,11 +55,11 @@ class RequestInfo {
             Users.sharedInstance().place_info = myString
         } catch {
             print(error)
-        }
+        } */
     
-        print("HERE IS WHERE YOU ARE GOING")
-    
-       dispatch_after(self.popTime, self.GlobalMainQueue) {
+        /*print("HERE IS WHERE YOU ARE GOING")
+        
+        dispatch_after(self.popTime, self.GlobalMainQueue) {
 
            RequestInfo.sharedInstance().postReq("997000")
             { (success, errorString) -> Void in
@@ -65,7 +74,7 @@ class RequestInfo {
                     print("suucssssss")
                 })
             }
-        }
+        } */
     }
     
     func parseAccountInfo(responseData: NSDictionary) {
@@ -187,16 +196,32 @@ class RequestInfo {
             let content = String(data: data!, encoding: NSUTF8StringEncoding)
             let data: NSData = (content!.dataUsingEncoding(NSUTF8StringEncoding))!
             
-            print(content)
-            
             if oper == "999000" {
                 do {
                     let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
                     
                     if responseData.valueForKey("status") as! String == "success" {
-                        completionHandler(success: true, errorString: nil)
+                        
                         let responseStat = responseData.valueForKey("response") as! NSDictionary
-                        self.parseFoodInfo(responseStat)
+                        
+                        let valueone = Array(responseStat.allValues)[0]
+                        let valuetwo = Array(responseStat.allValues)[1]
+                        let valuethree = Array(responseStat.allValues)[2]
+                        let valuefour = Array(responseStat.allValues)[3]
+                        let valuefive = Array(responseStat.allValues)[4]
+                        let allValues : NSMutableArray = [valueone, valuetwo, valuethree, valuefour, valuefive]
+                        
+                        let keyone = Array(responseStat.allKeys)[0]
+                        let keytwo = Array(responseStat.allKeys)[1]
+                        let keythree = Array(responseStat.allKeys)[2]
+                        let keyfour = Array(responseStat.allKeys)[3]
+                        let keyfive = Array(responseStat.allKeys)[4]
+                        let allKeys : NSMutableArray = [keyone, keytwo, keythree, keyfour, keyfive]
+                    
+                        Users.sharedInstance().place_ids = allKeys
+                        Users.sharedInstance().places = allValues
+                        
+                        completionHandler(success: true, errorString: nil)
                     }
                     if responseData.valueForKey("status") as! String != "success" {
                         completionHandler(success: false, errorString: "unable to connect")

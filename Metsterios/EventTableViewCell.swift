@@ -18,7 +18,6 @@ class EventTableViewCell: UITableViewCell {
     var eventTimeLabel : UILabel!
     var eventDateLabel : UILabel!
     
-    
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
     }
