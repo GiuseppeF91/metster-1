@@ -31,31 +31,7 @@ class ProfileViewController: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        var access = Users.sharedInstance().fbid as! String
-        let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
-        
-        profImage = UIImageView()
-        profImage?.frame = CGRectMake(screenWidth/3, screenHeight/7, screenWidth/3, screenWidth/3)
-        profImage!.contentMode = UIViewContentMode.ScaleAspectFit
-        self.view.addSubview(profImage!)
-        
-        let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-        ) { (responseData, responseUrl, error) -> Void in
-            if let data = responseData{
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.profImage!.image = UIImage(data: data)
-                })
-            }
-        }
-        task.resume()
-        
-        nameLabel.textAlignment = NSTextAlignment.Center
-        nameLabel.text = Users.sharedInstance().name as? String
-        nameLabel.font = UIFont(name: "HelveticaNeue", size: 30)
-        nameLabel.adjustsFontSizeToFitWidth = true
-        view.addSubview(self.nameLabel)
-        
+
         aboutButton.setTitle("About", forState: .Normal)
         self.view.addSubview(aboutButton)
         
@@ -83,6 +59,35 @@ class ProfileViewController: BaseVC {
         logoutButton.setTitle("Logout", forState: .Normal)
         logoutButton.addTarget(self, action: #selector(ProfileViewController.logoutClicked), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(logoutButton)
+        
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        
+        var access = Users.sharedInstance().fbid as! String
+        let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+        
+        profImage = UIImageView()
+        profImage?.frame = CGRectMake(screenWidth/3, screenHeight/7, screenWidth/3, screenWidth/3)
+        profImage!.contentMode = UIViewContentMode.ScaleAspectFit
+        self.view.addSubview(profImage!)
+        
+        let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+        ) { (responseData, responseUrl, error) -> Void in
+            if let data = responseData{
+                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                    self.profImage!.image = UIImage(data: data)
+                })
+            }
+        }
+        task.resume()
+        
+        nameLabel.textAlignment = NSTextAlignment.Center
+        nameLabel.text = Users.sharedInstance().name as? String
+        nameLabel.font = UIFont(name: "HelveticaNeue", size: 30)
+        nameLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.nameLabel)
     }
     
     func logoutClicked() {

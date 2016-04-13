@@ -69,6 +69,29 @@ class RequestInfo {
         }
     }
     
+    func parseEventInfo(responseData: NSDictionary) {
+        let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
+        let bData = String(data: aData!, encoding: NSUTF8StringEncoding)
+        let cData = bData!.stringByReplacingOccurrencesOfString("'", withString: "\"", options: NSStringCompareOptions.LiteralSearch, range: nil)
+        let ccData = cData.stringByReplacingOccurrencesOfString("u", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+        let cccData = ccData.stringByReplacingOccurrencesOfString("(", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+        let ccccData = cccData.stringByReplacingOccurrencesOfString(")", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+        let cccccData = ccccData.stringByReplacingOccurrencesOfString("ObjectId", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
+        let dData = (cccccData as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+        let eData = String(data: dData!, encoding: NSUTF8StringEncoding)
+        
+        let fData : NSData = (eData?.dataUsingEncoding(NSUTF8StringEncoding))!
+        
+        do {
+            let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
+            
+            Users.sharedInstance().host_email = useME["host_email"] as! String
+            
+        } catch {
+            print(ErrorType)
+        }
+    }
+    
     func postReq(oper: String, completionHandler: (success: Bool, errorString: String?) -> Void) {
         print("req started")
         print(Users.sharedInstance().email)
@@ -76,6 +99,10 @@ class RequestInfo {
         if oper == "997000" { //insert venue info to firebase
             //TODO: THIS IS NOT WORKING
             dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!, "place_info": Users.sharedInstance().place_info!]
+        }
+        
+        if oper == "121002" {
+            dictionary = ["event_id": Users.sharedInstance().event_id!]
         }
         
         if oper == "111003" { // edit account pref
@@ -169,20 +196,6 @@ class RequestInfo {
                         for key in keys {
                             allKeys?.insertObject(key, atIndex: 0)
                         }
-        
-                        /*let valueone = Array(responseStat.allValues)[0]
-                        let valuetwo = Array(responseStat.allValues)[1]
-                        let valuethree = Array(responseStat.allValues)[2]
-                        let valuefour = Array(responseStat.allValues)[3]
-                        let valuefive = Array(responseStat.allValues)[4]
-                        let allValues : NSMutableArray = [valueone, valuetwo, valuethree, valuefour, valuefive]
-                        
-                        let keyone = Array(responseStat.allKeys)[0]
-                        let keytwo = Array(responseStat.allKeys)[1]
-                        let keythree = Array(responseStat.allKeys)[2]
-                        let keyfour = Array(responseStat.allKeys)[3]
-                        let keyfive = Array(responseStat.allKeys)[4]
-                        //let allKeys : NSMutableArray = [keyone, keytwo, keythree, keyfour, keyfive] */
                     
                         Users.sharedInstance().place_ids = allKeys
                         Users.sharedInstance().places = allValues
@@ -226,6 +239,10 @@ class RequestInfo {
                             if oper == "111002" {
                                 self.parseAccountInfo(responseData)
                             }
+                            if oper == "121002" {
+                                self.parseEventInfo(responseData)
+                            }
+                            
                             completionHandler(success: true, errorString: "info found")
                         }
                     }

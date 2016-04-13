@@ -96,6 +96,29 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 self.acceptedPlaces = []
                 self.pendingPlaces = []
                 
+                for item in Users.sharedInstance().joined! {
+                    let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
+                    event_ref.observeEventType(.Value, withBlock: { snapshot in
+                        
+                        //Loads hosts places from Firebase...
+                        if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
+                            for snap in snapshots {
+                                if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
+                                    let key = snap.key
+                                    let place = Place(key: key, dictionary: postDictionary)
+                                    
+                                    self.acceptedPlaces.insert(place, atIndex: 0)
+                                }
+                            }
+                        }
+                        // TableView updates when there is new data.
+                        self.tableView.reloadData()
+                        
+                        }, withCancelBlock: { error in
+                            self.alertMessage("Error", message: "Something went wrong.")
+                    })
+                }
+                
                 for item in Users.sharedInstance().hosted! {
                     let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
                     event_ref.observeEventType(.Value, withBlock: { snapshot in
@@ -131,29 +154,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                                     let place = Place(key: key, dictionary: postDictionary)
                                     
                                     self.pendingPlaces.insert(place, atIndex: 0)
-                                }
-                            }
-                        }
-                        // TableView updates when there is new data.
-                        self.tableView.reloadData()
-                        
-                        }, withCancelBlock: { error in
-                            self.alertMessage("Error", message: "Something went wrong.")
-                    })
-                }
-                
-                for item in Users.sharedInstance().joined! {
-                    let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
-                    event_ref.observeEventType(.Value, withBlock: { snapshot in
-                        
-                        //Loads hosts places from Firebase...
-                        if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                            for snap in snapshots {
-                                if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                                    let key = snap.key
-                                    let place = Place(key: key, dictionary: postDictionary)
-                                    
-                                    self.acceptedPlaces.insert(place, atIndex: 0)
                                 }
                             }
                         }
@@ -228,7 +228,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         self.mapView!.removeAnnotations(allAnnotations)
         self.pendingAnnotations.removeAll()
         self.hostedAnnotations.removeAll()
-        self.acceptedPlaces.removeAll()
+        self.acceptedAnnotations.removeAll()
         self.tableView.reloadData()
    
         for pendingPlace in pendingPlaces {
@@ -253,7 +253,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         self.mapView!.removeAnnotations(allAnnotations)
         self.pendingAnnotations.removeAll()
         self.hostedAnnotations.removeAll()
-        self.acceptedPlaces.removeAll()
+        self.acceptedAnnotations.removeAll()
         self.tableView.reloadData()
         
         for acceptedPlace in acceptedPlaces {
@@ -278,7 +278,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         self.mapView!.removeAnnotations(allAnnotations)
         self.pendingAnnotations.removeAll()
         self.hostedAnnotations.removeAll()
-        self.acceptedPlaces.removeAll()
+        self.acceptedAnnotations.removeAll()
         self.tableView.reloadData()
         
         for hostedPlace in hostedPlaces {
@@ -293,7 +293,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             self.hostedAnnotations.append(annotation)
             mapView!.addAnnotations(self.hostedAnnotations)
         }
-
     }
     
     //MARK : Table View delegate & data source methods
@@ -308,9 +307,11 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         }
     }
     
+    var selectCell: Bool = false
+    
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = EventTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
-    
+        
         if pendingEventsButton.selected == true {
             let pendingPlace = pendingPlaces[indexPath.row]
             Users.sharedInstance().event_id = pendingPlace.eventid
@@ -329,7 +330,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 }
             }
             task.resume()
-            
             
             return cell
         }
@@ -378,6 +378,43 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    }
+    
+
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        RequestInfo.sharedInstance().postReq("121002")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed at returning data")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("suucssssss")
+                if self.pendingEventsButton.selected == true || self.yesEventsButton.selected == true  {
+                    var customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
+                    customCell.eventDateLabel.hidden = true
+                    customCell.eventTimeLabel.hidden = true
+                    customCell.eventNameLabel.text = "Invited By"
+                    customCell.eventPlaceLabel.text = Users.sharedInstance().host_email as! String
+                    customCell.eventAddressLabel.hidden = true
+                    customCell.foodImage!.hidden = true
+                }
+            })
+        }
+    }
+
+    func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
+        var customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
+        customCell.eventDateLabel.hidden = false
+        customCell.eventTimeLabel.hidden = false
+        customCell.eventNameLabel.hidden = false
+        customCell.eventPlaceLabel.hidden = false
+        customCell.eventAddressLabel.hidden = false
+        customCell.foodImage!.hidden = false
+        tableView.reloadData()
     }
     
     func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {

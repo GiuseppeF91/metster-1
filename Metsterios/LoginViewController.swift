@@ -23,6 +23,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     var error : NSError?
     
     var metsLogo = UIImage(named: "logo")
+    var stripeLogo = UILabel()
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
@@ -30,15 +31,30 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        UIGraphicsBeginImageContext(self.view.frame.size)
+        UIImage(named: "homebackground")?.drawInRect(self.view.bounds)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        self.view.backgroundColor = UIColor.whiteColor()
+        self.view.backgroundColor = UIColor(patternImage: image).colorWithAlphaComponent(0.9)
+        self.view.opaque = true
+        
+        stripeLogo.frame = CGRectMake(0, screenHeight/3, screenWidth, screenHeight/6)
+        stripeLogo.backgroundColor = UIColor(red:255.0, green:255.0, blue:255.0, alpha:0.5)
+        stripeLogo.center = self.view.center
+        view.addSubview(stripeLogo)
+        
         let logoView = UIImageView(image: metsLogo)
-        logoView.frame = CGRect(x: 0, y: 100, width: screenWidth, height: screenHeight/1.8 )
+        logoView.frame = CGRect(x: screenWidth, y: screenHeight, width: screenWidth, height: screenHeight)
         logoView.contentMode = UIViewContentMode.ScaleAspectFit
+        logoView.center = self.view.center
         view.addSubview(logoView)
-
+ 
         locManager.delegate = self
         
         let loginView : FBSDKLoginButton = FBSDKLoginButton()
-        loginView.frame = CGRectMake(40, screenHeight-100, UIScreen.mainScreen().bounds.width-80, 40)
+        loginView.frame = CGRectMake(40, screenHeight-70, UIScreen.mainScreen().bounds.width-80, 40)
         self.view.addSubview(loginView)
         loginView.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_photos"]
         loginView.delegate = self

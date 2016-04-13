@@ -18,7 +18,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var friendsTableView : UITableView = UITableView()
     var placesTableView : UITableView = UITableView()
     
-    var eventNameTextField = MainTextField(frame: CGRectMake(20, 150, screenWidth-40, 50))
+    var eventNameTextField = MainTextField(frame: CGRectMake(20, screenHeight-(screenHeight/1.2), screenWidth-40, 50))
     var moviesButton = SelectionButton(frame: CGRectMake(20, 100, ((screenWidth)/2)-30, 40))
     var restaurantButton = SelectionButton(frame: CGRectMake((screenWidth/2)+10, 100, (screenWidth/2)-30, 40))
     
@@ -30,13 +30,14 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var searchQueryTextField = MainTextField(frame: CGRectMake(20, screenHeight-150, screenWidth-130, 30))
     var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-150, 0, 0))
     
-    var dateLabel = MainLabel(frame: CGRectMake(20, 210, screenWidth/3.2, 40))
-    var dateButton = UIButton(frame: CGRectMake(20, 210, screenWidth/3, 40))
-    var datePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, 210, screenWidth/1.7, 150))
+    var dateLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/3.2, 40))
+    var dateButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/3, 40))
+    var datePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+60, screenWidth/1.7, 150))
     
-    var timeLabel = MainLabel(frame: CGRectMake(20, 270, screenWidth/3.2, 40))
-    var timeButton = UIButton(frame: CGRectMake(20, 270, screenWidth/3, 40))
-    var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, 210, screenWidth/1.7, 150))
+    var timeLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/3.2, 40))
+    var timeButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/3, 40))
+    var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+60, screenWidth/1.7, 150))
+    
     var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
     var submitButton = SubmitButton(frame: CGRectMake(80, screenHeight-100, screenWidth-160, 40))
     
@@ -88,6 +89,9 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
         
         searchLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
         searchLabel.text = "Search Preference"
@@ -153,10 +157,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         searchQueryTextField.delegate = self
         self.view.addSubview(searchQueryTextField)
         
-        dateLabel.textAlignment = NSTextAlignment.Left
-        dateLabel.text = "Date"
-        self.view.addSubview(dateLabel)
-        
         dateButton.addTarget(self, action: #selector(self.selectDate), forControlEvents: UIControlEvents.TouchUpInside)
         dateButton.backgroundColor = UIColor.clearColor()
         self.view.addSubview(dateButton)
@@ -169,9 +169,20 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         datePicker.addTarget(self, action: #selector(AddEventViewController.datePickerValueChanged), forControlEvents: UIControlEvents.ValueChanged)
         self.view.addSubview(datePicker)
         datePicker.hidden = true
+        
+        dateLabel.textAlignment = NSTextAlignment.Left
+        let dateformatter = NSDateFormatter()
+        dateformatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let dateValue = dateformatter.stringFromDate(datePicker.date)
+        dateLabel.text = dateValue
+        dateLabel.text = String(dateValue)
+        self.view.addSubview(dateLabel)
 
         timeLabel.textAlignment = NSTextAlignment.Left
-        timeLabel.text = "Time"
+        let timeformatter = NSDateFormatter()
+        timeformatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        let timeValue = timeformatter.stringFromDate(timePicker.date)
+        timeLabel.text = String(timeValue)
         self.view.addSubview(timeLabel)
         
         timeButton.addTarget(self, action: #selector(AddEventViewController.selectTime), forControlEvents: UIControlEvents.TouchUpInside)
@@ -292,7 +303,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 }
             }
             task.resume()
-            
         }
         return cell
     }
@@ -586,11 +596,10 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         friendsPrefLabel.hidden = true
         myPrefLabel.hidden = true
         myPrefSwitch.hidden = true
-        mapView?.hidden = true 
-        
-        nextButton.tintColor = UIColor.blackColor()
-        
         mapView?.hidden = true
+        datePicker.hidden = true
+        timePicker.hidden = true
+        nextButton.tintColor = darkBlue
         placesTableView.hidden = true
     }
     
@@ -617,6 +626,26 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 if let cell = friendsTableView.cellForRowAtIndexPath(NSIndexPath(forRow: j, inSection: i)) {
                     cell.accessoryType = .None
                 }
+            }
+        }
+    }
+    
+    func keyboardWillShow(notification: NSNotification) {
+        
+        if searchQueryTextField.editing == true {
+            submitButton.enabled = false
+            if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+                self.view.frame.origin.y -= keyboardSize.height
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        
+        if searchQueryTextField.editing == true{
+            submitButton.enabled = true 
+            if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+                self.view.frame.origin.y += keyboardSize.height
             }
         }
     }
