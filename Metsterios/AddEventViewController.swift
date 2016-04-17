@@ -354,6 +354,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                             self.inviteMembers()
                             self.placesTableView.hidden = true
                             self.mapView?.hidden = true
+                            self.performSegueWithIdentifier("MapViewController", sender:self)
                         })
                     }
                 }))

@@ -18,9 +18,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
-    var yesEventsButton = SelectionButton(frame: CGRectMake(0, (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
-    var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3, (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
-    var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), (screenHeight/12)+25, screenWidth/3, (screenHeight)/12))
+    // button ( yes, pending, accepted) styles
+    var yesEventsButton = SelectionButton(frame: CGRectMake(0, 20, screenWidth/3, (screenHeight)/20))
+    var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3, 20, screenWidth/3, (screenHeight)/20))
+    var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), 20, screenWidth/3, (screenHeight)/20))
 
     var tableView : UITableView = UITableView()
     var hostedAnnotations = [MKPointAnnotation]()
@@ -30,10 +31,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationItem.title = "Events"
-        navBar.items = [navigationItem]
-        self.view.addSubview(navBar)
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -192,7 +189,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     func loadMap() {
-        mapView = MKMapView(frame: CGRectMake(0, screenHeight/12+screenHeight/12+25, screenWidth, screenHeight/3.5))
+        mapView = MKMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2))
         mapView?.delegate = self
         let span = MKCoordinateSpanMake(4, 4)
         let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 38.5, longitude: -121.4), span: span)

@@ -12,12 +12,14 @@ PODS:
   - FBSDKShareKit (4.10.1):
     - FBSDKCoreKit
   - Firebase (2.5.1)
+  - Mapbox-iOS-SDK (3.2.0)
 
 DEPENDENCIES:
   - FBSDKCoreKit
   - FBSDKLoginKit
   - FBSDKShareKit
   - Firebase (>= 2.5.1)
+  - Mapbox-iOS-SDK
 
 SPEC CHECKSUMS:
   Bolts: f52a250053bb517ca874523c3913776359ab3def
@@ -25,5 +27,8 @@ SPEC CHECKSUMS:
   FBSDKLoginKit: 699ff169080e3072de4b9b0faca90bf23dc36deb
   FBSDKShareKit: 2fd887cce0056bdda91f99b2021d724a4fed8e88
   Firebase: 3565ea88b830f28f2c77ecc524622bc71a20d085
+  Mapbox-iOS-SDK: 3b9e8d0f77098494cc236384fde2a26eb6683f3d
 
-COCOAPODS: 0.39.0
+PODFILE CHECKSUM: d9856c256b99a146c8347a67dd09794c56181389
+
+COCOAPODS: 1.0.0.beta.6

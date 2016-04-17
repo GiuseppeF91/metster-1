@@ -10,7 +10,7 @@ pod 'Firebase', '>= 2.5.1'
 pod 'FBSDKCoreKit'
 pod 'FBSDKLoginKit'
 pod 'FBSDKShareKit'
-
+pod "Mapbox-iOS-SDK"
 
 target 'Metsterios' do
 
