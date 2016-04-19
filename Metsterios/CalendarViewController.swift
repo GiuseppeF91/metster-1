@@ -19,9 +19,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
     // button ( yes, pending, accepted) styles
-    var yesEventsButton = SelectionButton(frame: CGRectMake(0, 20, screenWidth/3, (screenHeight)/20))
-    var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3, 20, screenWidth/3, (screenHeight)/20))
-    var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), 20, screenWidth/3, (screenHeight)/20))
+    var yesEventsButton = SelectionButton(frame: CGRectMake(0, 20, screenWidth/3, (screenHeight)/16))
+    var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3, 20, screenWidth/3, (screenHeight)/16))
+    var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), 20, screenWidth/3, (screenHeight)/16))
 
     var tableView : UITableView = UITableView()
     var hostedAnnotations = [MKPointAnnotation]()

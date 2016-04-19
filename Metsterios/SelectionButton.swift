@@ -11,13 +11,15 @@ import UIKit
 class SelectionButton: UIButton {
     
     override init(frame: CGRect) {
+        let bg = UIColor(red: 250, green: 250, blue: 250, alpha: 1)
         super.init(frame: frame)
         super.layer.borderWidth = 1
         super.layer.cornerRadius = 2
-        super.layer.borderColor = UIColor.lightGrayColor().CGColor
+        super.layer.borderColor = lightBlue.CGColor
         super.setTitleColor(lightBlue, forState: .Selected)
-        super.setTitleColor(UIColor.whiteColor(), forState: .Normal)
-        super.backgroundColor = darkBlue
+        super.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
+        super.backgroundColor = bg
+
         
     }
     

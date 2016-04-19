@@ -151,7 +151,6 @@
 				69DE74EC1CA7CC0600AA35D2 /* LoginViewController.swift */,
 				69796BA51CAFBF2300A6378B /* BaseVC.swift */,
 				57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */,
-				57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -165,6 +164,7 @@
 				690288741CA87F48009C5B16 /* MainLabel.swift */,
 				69DE74F31CA7CC0600AA35D2 /* LaunchScreen.storyboard */,
 				69DE74EE1CA7CC0600AA35D2 /* Main.storyboard */,
+				57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */,
 				69FC06851CB4EB8600BED317 /* ProfileButton.swift */,
 				6964A96B1CBB230C0090EC4C /* EventTableViewCell.swift */,
 			);
