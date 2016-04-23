@@ -8,19 +8,20 @@
 
 import UIKit
 
-class ProfileButton: UIButton {
+class LogoutButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)
-    
+        
         super.contentHorizontalAlignment = UIControlContentHorizontalAlignment.Center
-        super.backgroundColor = UIColor.whiteColor()
-        super.setTitleColor(UIColor.grayColor(), forState: .Normal)
+        super.backgroundColor = UIColor(red: 0.9569, green: 0.2392, blue: 0, alpha: 1.0)
+        super.setTitleColor(UIColor.whiteColor(), forState: .Normal)
         super.layer.borderWidth = 1
+        super.layer.cornerRadius = 5
         super.layer.borderColor = UIColor.lightGrayColor().CGColor
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
 }

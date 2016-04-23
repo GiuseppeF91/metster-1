@@ -31,7 +31,8 @@
                     <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                 </activityIndicatorView>
                 <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aUa-Dc-mXW">
-                    <rect key="frame" x="0.0" y="352" width="320" height="216"/>
+                    <rect key="frame" x="0.0" y="376" width="320" height="151"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                 </pickerView>
             </subviews>

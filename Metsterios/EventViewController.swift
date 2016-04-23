@@ -10,8 +10,8 @@ import UIKit
 import Mapbox
 import Firebase
 
-class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate {
-
+class EventViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate {
+    
     @IBOutlet var mapView: MGLMapView!
     var hostedPlaces = [Place]()
     var pinAnnotations = [MGLPointAnnotation]()
@@ -19,8 +19,6 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
     let newValues : NSMutableArray? = []
     var pickerDataSource = ["White", "Red", "Green", "Blue"];
     
-    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 42, 0, 0))
-
     
     @IBOutlet var pickerView: UIPickerView!
     
@@ -45,21 +43,14 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        
-        publishSwitch.on = true
-        publishSwitch.setOn(true, animated: false)
-        //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
-        self.view.addSubview(publishSwitch)
-        publishSwitch.hidden = false
-        
         // close keyboard
         //Looks for single or multiple taps.
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         view.addGestureRecognizer(tap)
         
-         self.pickerView.dataSource = self;
+        self.pickerView.dataSource = self;
         
-         self.pickerView.delegate = self;
+        self.pickerView.delegate = self;
         
         pickerView.hidden = true
         
@@ -73,38 +64,38 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         
         // Do any additional setup after loading the view.
         /*
-        self.hostedPlaces = []
-        let event_ref = Firebase(url:"https://metsterios.firebaseio.com/10103884620845432--event--18/places")
-        // Read data and react to changes
-        event_ref.observeEventType(.Value, withBlock: { snapshot in
-            
-            //Loads hosts places from Firebase...
-            if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                for snap in snapshots {
-                    if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                        let key = snap.key
-                        let place = Place(key: key, dictionary: postDictionary)
-                        print (place.address )
-                        self.add_annot(place.latitude, lon: place.longitude, name: place.name)
-                        self.hostedPlaces.insert(place, atIndex: 0)
-                    }
-                }
-            }
-            // TableView updates when there is new data.
-            
-            }, withCancelBlock: { error in
-                self.alertMessage("Error", message: "Something went wrong.")
-        })
-        
-        
-        for hostedPlace in self.hostedPlaces {
-            let latitude = Double(hostedPlace.latitude)
-            let longitude = Double(hostedPlace.longitude)
-            print(latitude)
-            print(longitude)
-            print(hostedPlace.address)
-        }
- */
+         self.hostedPlaces = []
+         let event_ref = Firebase(url:"https://metsterios.firebaseio.com/10103884620845432--event--18/places")
+         // Read data and react to changes
+         event_ref.observeEventType(.Value, withBlock: { snapshot in
+         
+         //Loads hosts places from Firebase...
+         if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
+         for snap in snapshots {
+         if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
+         let key = snap.key
+         let place = Place(key: key, dictionary: postDictionary)
+         print (place.address )
+         self.add_annot(place.latitude, lon: place.longitude, name: place.name)
+         self.hostedPlaces.insert(place, atIndex: 0)
+         }
+         }
+         }
+         // TableView updates when there is new data.
+         
+         }, withCancelBlock: { error in
+         self.alertMessage("Error", message: "Something went wrong.")
+         })
+         
+         
+         for hostedPlace in self.hostedPlaces {
+         let latitude = Double(hostedPlace.latitude)
+         let longitude = Double(hostedPlace.longitude)
+         print(latitude)
+         print(longitude)
+         print(hostedPlace.address)
+         }
+         */
         
     }
     
@@ -190,6 +181,7 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         
     }
     
+    // clear map
     func clean_map(){
         let annt = mapView.annotations
         for at in annt!{
@@ -198,6 +190,7 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         pickerView.hidden = true
     }
     
+    // add all point annotations here for the map
     func add_annot(lat : String, lon : String, name : String, address : String){
         let lpoint = MGLPointAnnotation()
         lpoint.coordinate = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
@@ -212,13 +205,13 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         // mapView.selectAnnotation(lpoint, animated: true)
         pinAnnotations.append(lpoint)
         // fit the map to the annotation(s)
-
+        
     }
-
+    
     func locationManager(manager: CLLocationManager,
                          didUpdateLocations locations: [CLLocation])
     {
-        let location:CLLocation = locations[locations.count-1] 
+        let location:CLLocation = locations[locations.count-1]
         
         if (location.horizontalAccuracy > 0) {
             self.locationManager.stopUpdatingLocation()
@@ -259,33 +252,33 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
     }
     
     /*
-    func mapView(mapView: MGLMapView, imageForAnnotation annotation: MGLAnnotation) -> MGLAnnotationImage? {
-        return nil
-    }
-    
-    func mapView(mapView: MGLMapView, layerForAnnotation annotation: MGLAnnotation) -> MGLAnnotationImage? {
-        
-        return nil
-    }
-    
-    
-    func mapView(mapView: MGLMapView, calloutViewForAnnotation annotation: MGLAnnotation) -> UIView? {
-        // Only show callouts for `Hello world!` annotation
-        return nil
-    }
-    
-    func mapView(mapView: MGLMapView, tapOnCalloutForAnnotation annotation: MGLAnnotation) {
-        // Optionally handle taps on the callout
-        print("Tapped the callout for: \(annotation)")
-        // Hide the callout
-        //mapView.deselectAnnotation(annotation, animated: true)
-    }
-    
-    func mapView(mapView: MGLMapView, viewForAnnotation annotation: MGLAnnotation){
-        
-        print ("cicekd")
-    }
-    */
+     func mapView(mapView: MGLMapView, imageForAnnotation annotation: MGLAnnotation) -> MGLAnnotationImage? {
+     return nil
+     }
+     
+     func mapView(mapView: MGLMapView, layerForAnnotation annotation: MGLAnnotation) -> MGLAnnotationImage? {
+     
+     return nil
+     }
+     
+     
+     func mapView(mapView: MGLMapView, calloutViewForAnnotation annotation: MGLAnnotation) -> UIView? {
+     // Only show callouts for `Hello world!` annotation
+     return nil
+     }
+     
+     func mapView(mapView: MGLMapView, tapOnCalloutForAnnotation annotation: MGLAnnotation) {
+     // Optionally handle taps on the callout
+     print("Tapped the callout for: \(annotation)")
+     // Hide the callout
+     //mapView.deselectAnnotation(annotation, animated: true)
+     }
+     
+     func mapView(mapView: MGLMapView, viewForAnnotation annotation: MGLAnnotation){
+     
+     print ("cicekd")
+     }
+     */
     
     func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
         return 1
@@ -306,24 +299,24 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-       let att = pinAnnotations[row]
-       mapView.selectAnnotation(att, animated: true) // set att
-       /*
-       mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
-            longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
-       */
-       print(att)
-       print (row)
+        let att = pinAnnotations[row]
+        mapView.selectAnnotation(att, animated: true) // set att
+        /*
+         mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
+         longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
+         */
+        print(att)
+        print (row)
     }
-
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+     // Get the new view controller using segue.destinationViewController.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
 }

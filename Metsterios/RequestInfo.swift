@@ -88,11 +88,12 @@ class RequestInfo {
             //userevents.init(key: String(useME["mid"]), dictionary: useME as! Dictionary<String, AnyObject>)
             //userevents.events.update
             let evnt = userevents(eid: useME["mid"] as! String,
-                       ename: useME["mid"] as! String,
-                       ehost: useME["mid"] as! String,
-                       edesp: useME["mid"] as! String,
-                       edate: useME["mid"] as! String,
-                       etime: useME["mid"] as! String)
+                       ename: useME["event_name"] as! String,
+                       ehost: useME["host_email"] as! String,
+                       edesp: useME["event_notes"] as! String,
+                       edate: useME["event_date"] as! String,
+                       etime: useME["event_time"] as! String,
+                       ehostname: useME["host_name"] as! String)
             
             Users.sharedInstance().event_dic.updateValue(evnt, forKey: useME["mid"] as! String)
             Users.sharedInstance().host_email = useME["host_email"] as! String

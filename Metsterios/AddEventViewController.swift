@@ -298,7 +298,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.foodImage!.image = UIImage(data: data)
+                        cell.userImage!.image = UIImage(data: data)
                     })
                 }
             }

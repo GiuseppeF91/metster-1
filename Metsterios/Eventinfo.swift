@@ -11,14 +11,14 @@ import Firebase
 
 
 /*
-var events =  [String: userevents]()
-
-func set_event(key: String, dictionary: Dictionary<String, AnyObject>){
+ var events =  [String: userevents]()
+ 
+ func set_event(key: String, dictionary: Dictionary<String, AnyObject>){
  events.updateValue(dictionary, forKey: key)
-}
+ }
  */
 
-class userevents {
+class selected_event {
     var eventid: String
     var eventname: String
     var eventhost: String

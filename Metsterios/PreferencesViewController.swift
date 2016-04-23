@@ -40,12 +40,12 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
         restaurantButton.setTitle("Restaurants", forState: .Normal)
         restaurantButton.selected = true
         self.view.addSubview(restaurantButton)
-        restaurantButton.hidden = true
+        restaurantButton.hidden = false
         
         moviesButton.addTarget(self, action: #selector(PreferencesViewController.moviesClicked), forControlEvents: UIControlEvents.TouchUpInside)
         moviesButton.setTitle("Movies", forState: .Normal)
         self.view.addSubview(moviesButton)
-        moviesButton.hidden = true 
+        moviesButton.hidden = false
         
         tableView.dataSource = self
         tableView.delegate = self

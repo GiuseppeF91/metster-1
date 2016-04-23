@@ -9,14 +9,17 @@
 import UIKit
 import MapKit
 import Firebase
+import Mapbox
 
-class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
+class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate {
     
-    var hostedPlaces = [Place]()
+    var hostedPlaces = [Place]() // use this for annotations
     var pendingPlaces = [Place]()
     var acceptedPlaces = [Place]()
     
-    var myevents = [userevents]()
+    var myHostedevents = [userevents]() // use this for puttting data in the event screen
+    var myJoinedevents = [userevents]()
+    var myInvitedevents = [userevents]()
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
@@ -26,10 +29,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3), 20, screenWidth/3, (screenHeight)/16))
 
     var tableView : UITableView = UITableView()
-    var hostedAnnotations = [MKPointAnnotation]()
-    var acceptedAnnotations = [MKPointAnnotation]()
-    var pendingAnnotations = [MKPointAnnotation]()
-    var mapView : MKMapView?
+    var hostedAnnotations = [MGLPointAnnotation]()
+    var acceptedAnnotations = [MGLPointAnnotation]()
+    var pendingAnnotations = [MGLPointAnnotation]()
+    var mapView : MGLMapView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,6 +82,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     func loadEvents(completionHandler: (success: Bool, errorString: String?) -> Void) {
         print ("enter loadEvents")
         activityIndicator.startAnimating()
+        // making account find request
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
@@ -98,32 +102,6 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
 
                 // these loops pull data from firebase for a given eventid
                 
-                for item in Users.sharedInstance().joined! {
-                    let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
-                    print("\(self.ref)/\(item)/places")
-                    event_ref.observeEventType(.Value, withBlock: { snapshot in
-                        
-                        //Loads hosts places from Firebase...
-                        if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                            for snap in snapshots {
-                                if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                                    let key = snap.key
-                                    print ("ref1")
-                                    print (key)
-                                    let place = Place(key: key, dictionary: postDictionary)
-                                    
-                                    self.acceptedPlaces.insert(place, atIndex: 0)
-                                }
-                            }
-                        }
-                        // TableView updates when there is new data.
-                        self.tableView.reloadData()
-                        
-                        }, withCancelBlock: { error in
-                            self.alertMessage("Error", message: "Something went wrong.")
-                    })
-                }
-                
                 for item in Users.sharedInstance().hosted! {
                     print ("items")
                     print (item)
@@ -131,56 +109,29 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                     
                     // get event data from server not firebase
                     Users.sharedInstance().event_id = item
-                    self.getEvent(item as! String)
-                    /*
-                    event_ref.observeEventType(.Value, withBlock: { snapshot in
-                        
-                        //Loads hosts places from Firebase...
-                        if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                            for snap in snapshots {
-                                if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                                    let key = snap.key
-                                    let place = Place(key: key, dictionary: postDictionary)
-                                    print (key)
-                                    print (postDictionary)
-                                     print ("ref2")
-                                    self.hostedPlaces.insert(place, atIndex: 0)
-                                }
-                            }
-                        }
-                        // TableView updates when there is new data.
-                        self.tableView.reloadData()
-                        
-                        }, withCancelBlock: { error in
-                            self.alertMessage("Error", message: "Something went wrong.")
-                    })
-                     */
+                    self.getHostedEvent(item as! String)
+                }
+                
+                for item in Users.sharedInstance().joined! {
+                    print ("items")
+                    print (item)
+                    // let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
                     
+                    // get event data from server not firebase
+                    Users.sharedInstance().event_id = item
+                    self.getJoinedEvent(item as! String)
                 }
                 
                 for item in Users.sharedInstance().pending! {
-                    let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
-                    event_ref.observeEventType(.Value, withBlock: { snapshot in
-                        
-                        //Loads hosts places from Firebase...
-                        if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                            for snap in snapshots {
-                                if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                                    let key = snap.key
-                                    let place = Place(key: key, dictionary: postDictionary)
-                                    print (key)
-                                     print ("ref3")
-                                    self.pendingPlaces.insert(place, atIndex: 0)
-                                }
-                            }
-                        }
-                        // TableView updates when there is new data.
-                        self.tableView.reloadData()
-                        
-                        }, withCancelBlock: { error in
-                            self.alertMessage("Error", message: "Something went wrong.")
-                    })
+                    print ("items")
+                    print (item)
+                    // let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
+                    
+                    // get event data from server not firebase
+                    Users.sharedInstance().event_id = item
+                    self.getInvitedEvent(item as! String)
                 }
+                
                 self.loadMap()
                 completionHandler(success: true, errorString: nil)
             })
@@ -189,8 +140,8 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     }
     
     
-    
-    func getEvent(item: String) {
+// ----------- populate events sections
+    func getHostedEvent(item: String) {
         RequestInfo.sharedInstance().postReq("121002")
         { (success, errorString) -> Void in
             guard success else {
@@ -207,26 +158,91 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                     print ( Users.sharedInstance().event_dic[item] )
                     let obj = Users.sharedInstance().event_dic[item] as! userevents
                     print (obj.eventid)
-                    self.myevents.insert(obj, atIndex: 0)
+                    self.myHostedevents.insert(obj, atIndex: 0)
                 
                 } else {
                     print ("nil for " + item)
                 }
-                //let edic = Users.sharedInstance().event_dic[item]
-                //self.myevents.insert(edic, atIndex: 0)
-                /*
-                for evid in Users.sharedInstance().event_dic {
-                    let key = String(evid)
-                    let edic = Users.sharedInstance().event_dic[key]
-                    let place = Place(key: key, dictionary: (edic as? Dictionary<String, AnyObject>)!)
-                    self.hostedPlaces.insert(place, atIndex: 0)
+            })
+            
+            // for annonations
+            let event_ref = Firebase(url: "\(self.ref)/\(item)/places")
+            event_ref.observeEventType(.Value, withBlock: { snapshot in
+                
+                //Loads hosts places from Firebase...
+                if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
+                    for snap in snapshots {
+                        if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
+                            let key = snap.key
+                            let place = Place(key: key, dictionary: postDictionary)
+                            
+                            self.hostedPlaces.insert(place, atIndex: 0)
+                        }
+                    }
                 }
-                 */
-
+                // TableView updates when there is new data.
+                self.tableView.reloadData()
+                
+                }, withCancelBlock: { error in
+                    self.alertMessage("Error", message: "Something went wrong.")
+            })
+            
+        }
+    }
+    
+    func getJoinedEvent(item: String) {
+        RequestInfo.sharedInstance().postReq("121002")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed at account creation.")
+                    self.alertMessage("Error", message: "Your Account Info Was Not Saved.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("event is hereeeee")
+                if(Users.sharedInstance().event_dic[item] != nil) {
+                    print("we got this...")
+                    print ( Users.sharedInstance().event_dic[item] )
+                    let obj = Users.sharedInstance().event_dic[item] as! userevents
+                    print (obj.eventid)
+                    self.myJoinedevents.insert(obj, atIndex: 0)
+                    
+                } else {
+                    print ("nil for " + item)
+                }
             })
         }
     }
     
+    func getInvitedEvent(item: String) {
+        RequestInfo.sharedInstance().postReq("121002")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed at account creation.")
+                    self.alertMessage("Error", message: "Your Account Info Was Not Saved.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("event is hereeeee")
+                if(Users.sharedInstance().event_dic[item] != nil) {
+                    print("we got this...")
+                    print ( Users.sharedInstance().event_dic[item] )
+                    let obj = Users.sharedInstance().event_dic[item] as! userevents
+                    print (obj.eventid)
+                    self.myInvitedevents.insert(obj, atIndex: 0)
+                    
+                } else {
+                    print ("nil for " + item)
+                }
+            })
+        }
+    }
+    
+//----------------------------------------
     
     func reloadEvents() {
         print ("enter reloadEvents")
@@ -253,13 +269,17 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     func loadMap() {
         print ("enter loadMap")
-        mapView = MKMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2))
+        mapView = MGLMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2))
         mapView?.delegate = self
-        let span = MKCoordinateSpanMake(4, 4)
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 38.5, longitude: -121.4), span: span)
+        let span = MGLCoordinateSpanMake(4, 4)
+
+        // set the map's center coordinate
+        mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: 38.5,
+            longitude: -121.4), zoomLevel: 12, animated: false)
+        
         mapView?.zoomEnabled = true
         mapView?.scrollEnabled = true
-        mapView?.setRegion(region, animated: true)
+        // mapView?.setRegion(region, animated: true)
         self.view.addSubview(mapView!)
         
         let time1 = 8.23
@@ -282,29 +302,39 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         print ("exit loadMap")
     }
    
+    
+//----------------- Map population
     func pendingEventsClicked() {
         print ("enter pendingEventsClicked")
         pendingEventsButton.selected = true
         yesEventsButton.selected = false
         myEventsButton.selected = false
         let allAnnotations = self.mapView!.annotations
-        self.mapView!.removeAnnotations(allAnnotations)
-        self.pendingAnnotations.removeAll()
-        self.hostedAnnotations.removeAll()
-        self.acceptedAnnotations.removeAll()
+        if (allAnnotations?.count > 0 ){
+            self.mapView!.removeAnnotations(allAnnotations!)
+            self.pendingAnnotations.removeAll()
+            self.hostedAnnotations.removeAll()
+            self.acceptedAnnotations.removeAll()
+        }
         self.tableView.reloadData()
    
+        print ("comes till here..")
         for pendingPlace in pendingPlaces {
             let latitude = Double(pendingPlace.latitude)
             let longitude = Double(pendingPlace.longitude)
             print(latitude)
             print(longitude)
-            let annotation = MKPointAnnotation()
+            let annotation = MGLPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = pendingPlace.name
             annotation.subtitle = pendingPlace.address
             self.pendingAnnotations.append(annotation)
             mapView!.addAnnotations(self.pendingAnnotations)
+            
+            // updat the map center
+            // set the map's center coordinate
+            mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: latitude!,
+                longitude: longitude!), zoomLevel: 12, animated: false)
         }
          print ("exit pendingEventsClicked")
     }
@@ -315,23 +345,28 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         pendingEventsButton.selected = false
         myEventsButton.selected = false
         let allAnnotations = self.mapView!.annotations
-        self.mapView!.removeAnnotations(allAnnotations)
-        self.pendingAnnotations.removeAll()
-        self.hostedAnnotations.removeAll()
-        self.acceptedAnnotations.removeAll()
+        if (allAnnotations?.count > 0 ){
+            self.mapView!.removeAnnotations(allAnnotations!)
+            self.pendingAnnotations.removeAll()
+            self.hostedAnnotations.removeAll()
+            self.acceptedAnnotations.removeAll()
+        }
         self.tableView.reloadData()
-        
         for acceptedPlace in acceptedPlaces {
             let latitude = Double(acceptedPlace.latitude)
             let longitude = Double(acceptedPlace.longitude)
             print(latitude)
             print(longitude)
-            let annotation = MKPointAnnotation()
+            let annotation = MGLPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = acceptedPlace.name
             annotation.subtitle = acceptedPlace.address
             self.acceptedAnnotations.append(annotation)
             mapView!.addAnnotations(self.acceptedAnnotations)
+            // updat the map center
+            // set the map's center coordinate
+            mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: latitude!,
+                longitude: longitude!), zoomLevel: 12, animated: false)
         }
         print ("exit yesEventsClicked")
     }
@@ -342,23 +377,28 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         pendingEventsButton.selected = false
         myEventsButton.selected = true
         let allAnnotations = self.mapView!.annotations
-        self.mapView!.removeAnnotations(allAnnotations)
-        self.pendingAnnotations.removeAll()
-        self.hostedAnnotations.removeAll()
-        self.acceptedAnnotations.removeAll()
+        if (allAnnotations?.count > 0 ){
+            self.mapView!.removeAnnotations(allAnnotations!)
+            self.pendingAnnotations.removeAll()
+            self.hostedAnnotations.removeAll()
+            self.acceptedAnnotations.removeAll()
+        }
         self.tableView.reloadData()
-        
         for hostedPlace in hostedPlaces {
             
             print (hostedPlace)
             let latitude = Double(hostedPlace.latitude)
             let longitude = Double(hostedPlace.longitude)
-            let annotation = MKPointAnnotation()
+            let annotation = MGLPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
             annotation.title = hostedPlace.name
             annotation.subtitle = hostedPlace.address
             self.hostedAnnotations.append(annotation)
             mapView!.addAnnotations(self.hostedAnnotations)
+            // updat the map center
+            // set the map's center coordinate
+            mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: latitude!,
+                longitude: longitude!), zoomLevel: 12, animated: false)
             print ("----")
             print (latitude)
             print (longitude)
@@ -367,22 +407,23 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             print ("---")
         }
         
-        for ev in myevents {
+        for ev in myHostedevents {
             print("hosted places")
             print (ev)
         }
         print ("exit myEventsClicked")
     }
+//------------------
     
     //MARK : Table View delegate & data source methods
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if pendingEventsButton.selected == true {
-            return pendingPlaces.count
+            return myInvitedevents.count
         }
         if yesEventsButton.selected == true {
-            return acceptedPlaces.count
+            return myJoinedevents.count
         } else {
-            return myevents.count
+            return myHostedevents.count
         }
     }
     
@@ -393,68 +434,92 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         let cell = EventTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         
         if pendingEventsButton.selected == true {
-            let pendingPlace = pendingPlaces[indexPath.row]
-            Users.sharedInstance().event_id = pendingPlace.eventid
-            cell.eventPlaceLabel.text = pendingPlace.name
-            cell.eventAddressLabel.text = pendingPlace.address
-            cell.eventTimeLabel.text = pendingPlace.eventtime
-            cell.eventDateLabel.text = pendingPlace.eventdate
-            cell.eventNameLabel.text = pendingPlace.eventname
+            let acceptedPlace = myInvitedevents[indexPath.row]
+            Users.sharedInstance().event_id = acceptedPlace.eventid
+            let fbid = Users.sharedInstance().event_id!.componentsSeparatedByString("--")
+            let fid = fbid[0]
+            cell.eventHostLabel.text = myHostedevents[Int(indexPath.row)].eventhostname
+            cell.eventDescpLabel.text = myInvitedevents[Int(indexPath.row)].eventdesp
+            cell.eventTimeLabel.text = " "
+            cell.eventDateLabel.text = myInvitedevents[Int(indexPath.row)].eventdate + " " + myInvitedevents[Int(indexPath.row)].eventtime
+            cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname
             
-            let url = NSURL(string: pendingPlace.image_url)!
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+            //let access = Users.sharedInstance().fbid as! String
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+            
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+            ) { (responseData, responseUrl, error) -> Void in
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.foodImage!.image = UIImage(data: data)
+                        cell.userImage!.image = UIImage(data: data)
                     })
                 }
             }
             task.resume()
-            
             return cell
         }
         if yesEventsButton.selected == true {
-            let acceptedPlace = acceptedPlaces[indexPath.row]
-            Users.sharedInstance().event_id = acceptedPlace.eventid
-            cell.eventPlaceLabel.text = acceptedPlace.name
-            cell.eventAddressLabel.text = acceptedPlace.address
-            cell.eventTimeLabel.text = acceptedPlace.eventtime
-            cell.eventDateLabel.text = acceptedPlace.eventdate
-            cell.eventNameLabel.text = acceptedPlace.eventname
-            
-            let url = NSURL(string: acceptedPlace.image_url)!
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
-                if let data = responseData{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.foodImage!.image = UIImage(data: data)
-                    })
-                }
-            }
-            task.resume()
-            return cell
-        } else {
-            print ("comes here")
             
             // get data from myevent
             
             print (indexPath.row)
-            Users.sharedInstance().event_id = myevents[Int(indexPath.row)].eventid
-            cell.eventPlaceLabel.text = myevents[Int(indexPath.row)].eventname
-            cell.eventAddressLabel.text = myevents[Int(indexPath.row)].eventid
-            cell.eventTimeLabel.text = myevents[Int(indexPath.row)].eventtime
-            cell.eventDateLabel.text = myevents[Int(indexPath.row)].eventhost
-            cell.eventNameLabel.text = "Dinner"//hostedPlace.eventname
-            /*
-            let url = NSURL(string: hostedPlace.image_url)!
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+            Users.sharedInstance().event_id = myJoinedevents[Int(indexPath.row)].eventid
+            let fbid = Users.sharedInstance().event_id!.componentsSeparatedByString("--")
+            let fid = fbid[0]
+            print(Users.sharedInstance().event_id)
+            print(fid)
+            cell.eventHostLabel.text = myHostedevents[Int(indexPath.row)].eventhostname
+            cell.eventDescpLabel.text = myJoinedevents[Int(indexPath.row)].eventdesp
+            cell.eventTimeLabel.text = myJoinedevents[Int(indexPath.row)].eventtime
+            cell.eventDateLabel.text = myJoinedevents[Int(indexPath.row)].eventdate
+            cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname //hostedPlace.eventname
+            
+            // get the user facebook id and get the pic for that.
+            
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+            
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+            ) { (responseData, responseUrl, error) -> Void in
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.foodImage!.image = UIImage(data: data)
+                        cell.userImage!.image = UIImage(data: data)
                     })
                 }
             }
             task.resume()
-             */
+            
+            return cell
+        } else {
+            
+            // get data from myevent
+            
+            print (indexPath.row)
+            Users.sharedInstance().event_id = myHostedevents[Int(indexPath.row)].eventid
+            let fbid = Users.sharedInstance().event_id!.componentsSeparatedByString("--")
+            let fid = String(fbid[0])
+            print(Users.sharedInstance().event_id)
+            print(Users.sharedInstance().fbid)
+            print(fid)
+            cell.eventHostLabel.text = myHostedevents[Int(indexPath.row)].eventhostname
+            cell.eventDescpLabel.text = myHostedevents[Int(indexPath.row)].eventdesp
+            cell.eventTimeLabel.text = myHostedevents[Int(indexPath.row)].eventtime
+            cell.eventDateLabel.text = myHostedevents[Int(indexPath.row)].eventdate
+            cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname //hostedPlace.eventname
+            
+            // get the user facebook id and get the pic for that.
+
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+            
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+            ) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.userImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
+        
             return cell
         }
     }
@@ -480,26 +545,31 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             dispatch_async(dispatch_get_main_queue(), {
                 print("suucssssss")
                 if self.pendingEventsButton.selected == true || self.yesEventsButton.selected == true  {
-                    var customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
+                    let customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
                     customCell.eventDateLabel.hidden = true
                     customCell.eventTimeLabel.hidden = true
                     customCell.eventNameLabel.text = "Invited By"
-                    customCell.eventPlaceLabel.text = Users.sharedInstance().host_email as! String
-                    customCell.eventAddressLabel.hidden = true
-                    customCell.foodImage!.hidden = true
+                    customCell.eventHostLabel.text = Users.sharedInstance().host_email as? String
+                    customCell.eventDescpLabel.hidden = true
+                    customCell.userImage!.hidden = true
+                } else {
+                    print ("handle clicked case here...")
+                    
+                    // frame the in globsl class
                 }
+                
             })
         }
     }
 
     func tableView(tableView: UITableView, didDeselectRowAtIndexPath indexPath: NSIndexPath) {
-        var customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
+        let customCell = self.tableView.cellForRowAtIndexPath(indexPath) as! EventTableViewCell
         customCell.eventDateLabel.hidden = false
         customCell.eventTimeLabel.hidden = false
         customCell.eventNameLabel.hidden = false
-        customCell.eventPlaceLabel.hidden = false
-        customCell.eventAddressLabel.hidden = false
-        customCell.foodImage!.hidden = false
+        customCell.eventHostLabel.hidden = false
+        customCell.eventDescpLabel.hidden = false
+        customCell.userImage!.hidden = false
         tableView.reloadData()
     }
     
@@ -608,6 +678,18 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             return [delete, save]
         }
     }
+    
+    
+    
+    // Use the default marker; see our custom marker example for more information
+    func mapView(mapView: MGLMapView, imageForAnnotation annotation: MGLAnnotation) -> MGLAnnotationImage? {
+        return nil
+    }
+    
+    func mapView(mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
+        return true
+    }
+    
     
     /*//Links to URL in Safari Browswer
     func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {

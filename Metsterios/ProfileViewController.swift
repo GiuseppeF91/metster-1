@@ -13,7 +13,7 @@ import Firebase
 
 class ProfileViewController: BaseVC {
     
-    var logoutButton = ProfileButton(frame: CGRectMake(0, (screenHeight)-(screenHeight/15)-50, screenWidth, screenHeight/14.5))
+    var logoutButton = LogoutButton(frame: CGRectMake(0, (screenHeight)-(screenHeight/15)-60, screenWidth, screenHeight/14.5))
     var aboutButton = ProfileButton(frame: CGRectMake(0, screenHeight/2 + screenHeight/16 + 10, screenWidth, screenHeight/14.5))
     
     var notifyButton = ProfileButton(frame: CGRectMake(0, screenHeight/2 + (screenHeight/16)*2 + 20, screenWidth, screenHeight/14.5))
@@ -65,13 +65,18 @@ class ProfileViewController: BaseVC {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
-        var access = Users.sharedInstance().fbid as! String
+        let access = Users.sharedInstance().fbid as! String
         let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
         
-        profImage = UIImageView()
-        profImage?.frame = CGRectMake(screenWidth/3, screenHeight/7, screenWidth/3, screenWidth/3)
-        profImage!.contentMode = UIViewContentMode.ScaleAspectFit
+        //
+        profImage = UIImageView(frame: CGRectMake(screenWidth/4, screenHeight/9, self.view.bounds.width * 0.50 , self.view.bounds.height * 0.29))
+        profImage?.layer.borderWidth = 0.3
+        profImage?.layer.masksToBounds = false
+        profImage?.layer.borderColor = UIColor.blackColor().CGColor
+        profImage?.layer.cornerRadius = profImage!.frame.height/2
+        profImage?.clipsToBounds = true
         self.view.addSubview(profImage!)
+        //
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
         ) { (responseData, responseUrl, error) -> Void in
@@ -85,7 +90,7 @@ class ProfileViewController: BaseVC {
         
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.text = Users.sharedInstance().name as? String
-        nameLabel.font = UIFont(name: "HelveticaNeue", size: 30)
+        nameLabel.font = UIFont(name: "HelveticaNeue", size: 20)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)
     }
