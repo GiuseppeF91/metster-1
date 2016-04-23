@@ -16,7 +16,7 @@ class SelectionButton: UIButton {
         super.layer.borderWidth = 1
         super.layer.cornerRadius = 2
         super.layer.borderColor = lightBlue.CGColor
-        super.setTitleColor(lightBlue, forState: .Selected)
+        super.setTitleColor(UIColor.blackColor(), forState: .Selected)
         super.setTitleColor(UIColor.lightGrayColor(), forState: .Normal)
         super.backgroundColor = bg
 

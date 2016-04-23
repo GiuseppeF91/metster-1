@@ -48,7 +48,6 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         view.addGestureRecognizer(tap)
         
-        
          self.pickerView.dataSource = self;
         
          self.pickerView.delegate = self;

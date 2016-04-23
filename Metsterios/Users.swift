@@ -42,6 +42,8 @@ class Users: NSObject {
     var joined : NSArray?
     var pending : NSArray?
     
+    var event_dic =  [String: AnyObject?]()
+    
     class func sharedInstance() -> Users {
         struct Singleton {
             static var sharedInstance = Users()

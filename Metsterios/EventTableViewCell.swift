@@ -27,34 +27,39 @@ class EventTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         foodImage = UIImageView()
-        foodImage?.frame = CGRectMake(screenWidth-95, 0, 95, 95)
+        foodImage?.frame = CGRectMake(2, 10, 85, 85)
+        foodImage!.layer.cornerRadius = 8.0
+        foodImage!.clipsToBounds = true
         contentView.addSubview(foodImage!)
       
         eventNameLabel = UILabel()
-        eventNameLabel.frame = CGRectMake(2, 0, screenWidth-100, 30)
+        eventNameLabel.frame = CGRectMake(90, 12, screenWidth-100, 30)
         eventNameLabel.textColor = darkBlue
-        eventNameLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
+        eventNameLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 14)
         contentView.addSubview(eventNameLabel)
         
         eventDateLabel = UILabel()
-        eventDateLabel.frame = CGRectMake(2, 30, screenWidth/3, 25)
+        eventDateLabel.frame = CGRectMake(90, 30, screenWidth/3, 25)
         eventDateLabel.textColor = darkBlue
+        eventDateLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(eventDateLabel)
         
         eventTimeLabel = UILabel()
-        eventTimeLabel.frame = CGRectMake(screenWidth/3, 30, screenWidth/3, 25)
+        eventTimeLabel.frame = CGRectMake(90+90, 30, screenWidth/3, 25)
         eventTimeLabel.textColor = darkBlue
+        eventTimeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(eventTimeLabel)
         
         eventPlaceLabel = UILabel()
-        eventPlaceLabel.frame = CGRectMake(2, 55, screenWidth-100, 25)
+        eventPlaceLabel.frame = CGRectMake(90, 55, screenWidth-100, 25)
         eventPlaceLabel.textColor = darkBlue
+        eventPlaceLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(eventPlaceLabel)
         
         eventAddressLabel = UILabel()
-        eventAddressLabel.frame = CGRectMake(2, 80, screenWidth-100, 20)
+        eventAddressLabel.frame = CGRectMake(90, 75, screenWidth-100, 20)
         eventAddressLabel.textColor = darkBlue
-        eventAddressLabel.font = UIFont(name: "HelveticaNeue-Light", size: 15)
+        eventAddressLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
         contentView.addSubview(eventAddressLabel)
     }
     

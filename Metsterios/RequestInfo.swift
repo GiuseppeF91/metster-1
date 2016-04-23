@@ -27,7 +27,6 @@ class RequestInfo {
         let keystwo = Array(responseStat.allKeys).dropFirst().first
         let keysthree = Array(responseStat.allKeys).dropFirst().first
         let allkeys : NSMutableArray = [keysone!, keystwo!, keysthree!]
-        print(allkeys)
         Users.sharedInstance().places = allkeys
     }
     
@@ -47,8 +46,8 @@ class RequestInfo {
         do {
             let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
             
-            print("USE MEEEEE")
-            print(useME)
+            print("Parsed data in req info")
+            // print(useME)
             let hosted = useME["hosted"]
             let joined = useME["joined"]
             let invites  = useME["invites"]
@@ -84,7 +83,18 @@ class RequestInfo {
         
         do {
             let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
+            print ("dat here")
+            print (useME)
+            //userevents.init(key: String(useME["mid"]), dictionary: useME as! Dictionary<String, AnyObject>)
+            //userevents.events.update
+            let evnt = userevents(eid: useME["mid"] as! String,
+                       ename: useME["mid"] as! String,
+                       ehost: useME["mid"] as! String,
+                       edesp: useME["mid"] as! String,
+                       edate: useME["mid"] as! String,
+                       etime: useME["mid"] as! String)
             
+            Users.sharedInstance().event_dic.updateValue(evnt, forKey: useME["mid"] as! String)
             Users.sharedInstance().host_email = useME["host_email"] as! String
             
         } catch {
@@ -94,7 +104,7 @@ class RequestInfo {
     
     func postReq(oper: String, completionHandler: (success: Bool, errorString: String?) -> Void) {
         print("req started")
-        print(Users.sharedInstance().email)
+        print(oper)
         
         if oper == "997000" { //insert venue info to firebase
             //TODO: THIS IS NOT WORKING
@@ -106,10 +116,6 @@ class RequestInfo {
         }
         
         if oper == "111003" { // edit account pref
-            print(Users.sharedInstance().food_pref)
-            print(Users.sharedInstance().movie_pref)
-            print(Users.sharedInstance().what)
-            
             dictionary = ["email": Users.sharedInstance().email!, "what": Users.sharedInstance().what!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
         }
         
@@ -118,9 +124,6 @@ class RequestInfo {
         }
         
         if oper == "999000" { // find fooood
-            print("foooooood")
-            print(Users.sharedInstance().query)
-            print(Users.sharedInstance().event_id)
             dictionary = ["query": Users.sharedInstance().query! , "event_id": Users.sharedInstance().event_id!]
         }
         
@@ -137,9 +140,6 @@ class RequestInfo {
             }
         
         if oper == "998001" { // senddd invite
-            print("SEND INVITESSSS")
-            print(Users.sharedInstance().event_id)
-            print(Users.sharedInstance().invited_members)
             dictionary = ["from_email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!, "to_email": Users.sharedInstance().invited_members!]
         }
         
@@ -211,8 +211,8 @@ class RequestInfo {
             } else {
                 do {
                     let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
-                    print(responseData)
-                    
+                    //print(responseData)
+                    print("response got here")
                     if oper == "111000" {
                         if responseData.valueForKey("status") as! String == "success" {
                             completionHandler(success: true, errorString: nil)
@@ -234,7 +234,7 @@ class RequestInfo {
                         if status == "success" {
                             if oper == "121000" {
                                 Users.sharedInstance().event_id = responseData.valueForKey("response")
-                                print(Users.sharedInstance().event_id)
+                                //print(Users.sharedInstance().event_id)
                             }
                             if oper == "111002" {
                                 self.parseAccountInfo(responseData)
