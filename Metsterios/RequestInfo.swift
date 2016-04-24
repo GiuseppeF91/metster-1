@@ -116,8 +116,14 @@ class RequestInfo {
             dictionary = ["event_id": Users.sharedInstance().event_id!]
         }
         
-        if oper == "111003" { // edit account pref
-            dictionary = ["email": Users.sharedInstance().email!, "what": Users.sharedInstance().what!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
+        if oper == "111003" { // update account pref
+            if (Users.sharedInstance().movie_pref == nil ){
+                Users.sharedInstance().movie_pref = 0
+            }
+            if(Users.sharedInstance().food_pref == nil) {
+                Users.sharedInstance().food_pref = 0
+            }
+            dictionary = ["email": Users.sharedInstance().email!, "latitude": Users.sharedInstance().lat!,"longitude": Users.sharedInstance().long!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
         }
         
         if oper == "111002" { // find in account
@@ -129,7 +135,7 @@ class RequestInfo {
         }
         
         if oper == "111000" { // insert to account
-            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!, "longitude": Users.sharedInstance().long!, "food_pref": "Chinese", "movie_pref": "Horror"]
+            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!, "longitude": Users.sharedInstance().long!, "food_pref": "abcdefghijl", "movie_pref": "abcdefghijl"]
             }
             
         if oper == "121000" { // insert to events

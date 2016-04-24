@@ -11,6 +11,7 @@ pod 'FBSDKCoreKit'
 pod 'FBSDKLoginKit'
 pod 'FBSDKShareKit'
 pod "Mapbox-iOS-SDK"
+pod 'HanekeSwift'
 
 target 'Metsterios' do
 

@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import Firebase
 import Mapbox
+import Haneke
 
 class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate {
     
@@ -20,6 +21,8 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     var myHostedevents = [userevents]() // use this for puttting data in the event screen
     var myJoinedevents = [userevents]()
     var myInvitedevents = [userevents]()
+    
+    let cache = Shared.dataCache
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
@@ -269,6 +272,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     func loadMap() {
         print ("enter loadMap")
+        /*
+        mapView = MGLMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2), styleURL: MGLStyle.lightStyleURL())
+         */
         mapView = MGLMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2))
         mapView?.delegate = self
         let span = MGLCoordinateSpanMake(4, 4)
@@ -444,18 +450,34 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventDateLabel.text = myInvitedevents[Int(indexPath.row)].eventdate + " " + myInvitedevents[Int(indexPath.row)].eventtime
             cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname
             
-            //let access = Users.sharedInstance().fbid as! String
-            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
-            
-            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-            ) { (responseData, responseUrl, error) -> Void in
-                if let data = responseData{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.userImage!.image = UIImage(data: data)
-                    })
+            // get the user facebook id and get the pic for that.
+            //---- cache image management
+            let ckey = fid
+            cache.fetch(key: ckey).onFailure { data in
+                
+                print ("data was not found in cache")
+                let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+                
+                let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+                ) { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.userImage!.image = UIImage(data: data)
+                            let image : UIImage = UIImage(data: data)!
+                            self.cache.set(value: image.asData(), key: fid)
+                        })
+                    }
                 }
+                task.resume()
+                
             }
-            task.resume()
+            
+            cache.fetch(key: ckey).onSuccess { data in
+                print ("data was found in cache")
+                let image : UIImage = UIImage(data: data)!
+                cell.userImage!.image = image
+            }
+            //-----
             return cell
         }
         if yesEventsButton.selected == true {
@@ -475,18 +497,35 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname //hostedPlace.eventname
             
             // get the user facebook id and get the pic for that.
-            
-            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
-            
-            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-            ) { (responseData, responseUrl, error) -> Void in
-                if let data = responseData{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.userImage!.image = UIImage(data: data)
-                    })
+            //---- cache image management
+            let ckey = fid
+            cache.fetch(key: ckey).onFailure { data in
+                
+                print ("data was not found in cache")
+                let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+                
+                let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+                ) { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.userImage!.image = UIImage(data: data)
+                            let image : UIImage = UIImage(data: data)!
+                            self.cache.set(value: image.asData(), key: fid)
+                            print("caching image of")
+                            print(cell.eventHostLabel.text)
+                        })
+                    }
                 }
+                task.resume()
+                
             }
-            task.resume()
+            
+            cache.fetch(key: ckey).onSuccess { data in
+                print ("data was found in cache")
+                let image : UIImage = UIImage(data: data)!
+                cell.userImage!.image = image
+            }
+            //-----
             
             return cell
         } else {
@@ -507,18 +546,33 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname //hostedPlace.eventname
             
             // get the user facebook id and get the pic for that.
-
-            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
-            
-            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-            ) { (responseData, responseUrl, error) -> Void in
-                if let data = responseData{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.userImage!.image = UIImage(data: data)
-                    })
+            //---- cache image management
+            let ckey = fid
+            cache.fetch(key: ckey).onFailure { data in
+                
+                print ("data was not found in cache")
+                let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(fid)/picture?type=large")
+                
+                let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+                ) { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.userImage!.image = UIImage(data: data)
+                            let image : UIImage = UIImage(data: data)!
+                            self.cache.set(value: image.asData(), key: fid)
+                        })
+                    }
                 }
+                task.resume()
+                
             }
-            task.resume()
+            
+            cache.fetch(key: ckey).onSuccess { data in
+                print ("data was found in cache")
+                let image : UIImage = UIImage(data: data)!
+                cell.userImage!.image = image
+            }
+            //-----
         
             return cell
         }
@@ -556,6 +610,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                     print ("handle clicked case here...")
                     
                     // frame the in globsl class
+                    // let event = selected_event()
                 }
                 
             })

@@ -12,6 +12,7 @@
 		5747C4A41CCC0F9B0031F541 /* EventViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5747C4A31CCC0F9B0031F541 /* EventViewController.xib */; };
 		5747C4A61CCC13720031F541 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4A51CCC13720031F541 /* EventViewController.swift */; };
 		5747C4AA1CCC20CE0031F541 /* Eventinfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4A91CCC20CE0031F541 /* Eventinfo.swift */; };
+		5747C4AC1CCC4DCA0031F541 /* PlaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */; };
 		57C3A0AF1CC2D81500D5E335 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */; };
 		57C3A0B01CC2D81500D5E335 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */; };
 		57DA91EE1CC754670021834A /* userevents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DA91ED1CC754670021834A /* userevents.swift */; };
@@ -68,6 +69,7 @@
 		5747C4A31CCC0F9B0031F541 /* EventViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EventViewController.xib; sourceTree = "<group>"; };
 		5747C4A51CCC13720031F541 /* EventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		5747C4A91CCC20CE0031F541 /* Eventinfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Eventinfo.swift; sourceTree = "<group>"; };
+		5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceTableViewCell.swift; sourceTree = "<group>"; };
 		57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		57DA91ED1CC754670021834A /* userevents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userevents.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				69FC06851CB4EB8600BED317 /* ProfileButton.swift */,
 				6964A96B1CBB230C0090EC4C /* EventTableViewCell.swift */,
 				5747C4A31CCC0F9B0031F541 /* EventViewController.xib */,
+				5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -534,6 +537,7 @@
 				69DE74EB1CA7CC0600AA35D2 /* AppDelegate.swift in Sources */,
 				690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */,
 				57C3A0AF1CC2D81500D5E335 /* MapViewController.swift in Sources */,
+				5747C4AC1CCC4DCA0031F541 /* PlaceTableViewCell.swift in Sources */,
 				69FC06861CB4EB8600BED317 /* ProfileButton.swift in Sources */,
 				6929DB601CAC6ECB00867BE3 /* SelectionButton.swift in Sources */,
 				57DA91EE1CC754670021834A /* userevents.swift in Sources */,

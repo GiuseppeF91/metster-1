@@ -30,15 +30,15 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var searchQueryTextField = MainTextField(frame: CGRectMake(20, screenHeight-150, screenWidth-130, 30))
     var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-150, 0, 0))
     
-    var dateLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/3.2, 40))
-    var dateButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/3, 40))
-    var datePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+60, screenWidth/1.7, 150))
+    var dateLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/4, 40))
+    var dateButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/4, 40))
+    var datePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+40, screenWidth/1.7, 150))
     
-    var timeLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/3.2, 40))
-    var timeButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/3, 40))
-    var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+60, screenWidth/1.7, 150))
+    var timeLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/4, 40))
+    var timeButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+110, screenWidth/4, 40))
+    var timePicker = UIDatePicker(frame: CGRectMake(screenWidth/3, screenHeight-(screenHeight/1.2)+40, screenWidth/1.7, 150))
     
-    var notesTextField = MainTextField(frame: CGRectMake(20, 390, screenWidth-40, 50))
+    var notesTextField = MainTextField(frame: CGRectMake(20, screenHeight/2, screenWidth-40, 100))
     var submitButton = SubmitButton(frame: CGRectMake(80, screenHeight-100, screenWidth-160, 40))
     
     var invitedFriends : NSMutableArray = []
@@ -90,36 +90,13 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Looks for single or multiple taps.
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        view.addGestureRecognizer(tap)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
         
-        searchLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 20)
-        searchLabel.text = "Search Preference"
-        self.view.addSubview(searchLabel)
-        
-        myPrefLabel.textAlignment = NSTextAlignment.Left
-        myPrefLabel.text = "My Saved Preferences"
-        //myPrefLabel.font = UIFont(name: "HelveticaNeue", size: 30)
-        myPrefLabel.adjustsFontSizeToFitWidth = true
-        view.addSubview(self.myPrefLabel)
-        friendsPrefLabel.textAlignment = NSTextAlignment.Left
-        friendsPrefLabel.text = "Friend Preferences"
-        //friendsPrefLabel.font = UIFont(name: "HelveticaNeue", size: 30)
-        friendsPrefLabel.adjustsFontSizeToFitWidth = true
-        view.addSubview(self.friendsPrefLabel)
-        
-        myPrefSwitch.on = false
-        myPrefSwitch.setOn(false, animated: false)
-        myPrefSwitch.addTarget(self, action: #selector(self.myPref), forControlEvents: .ValueChanged)
-        self.view.addSubview(myPrefSwitch)
-        friendsPrefSwitch.on = true
-        friendsPrefSwitch.setOn(true, animated: false)
-        friendsPrefSwitch.addTarget(self, action: #selector(self.friendPref), forControlEvents: .ValueChanged);
-        self.view.addSubview(friendsPrefSwitch)
-        searchQSwitch.on = false
-        searchQSwitch.setOn(false, animated: false)
-        searchQSwitch.addTarget(self, action: #selector(self.customPref), forControlEvents: .ValueChanged)
-        self.view.addSubview(searchQSwitch)
 
         cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(self.cancelClicked))
         nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: #selector(AddEventViewController.nextPressed))
@@ -140,10 +117,10 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         navBar.items = [navigationItem]
         self.view.addSubview(navBar)
         
-        inviteToList.text = "To:"
+        inviteToList.text = "invite:"
         //inviteToList.attributedPlaceholder=inviteTo
         //inviteToList.delegate = self
-        inviteToList.backgroundColor = darkBlue.colorWithAlphaComponent(0.5)
+        inviteToList.backgroundColor = UIColor.grayColor()
         inviteToList.layer.cornerRadius = 5
         self.view.addSubview(inviteToList)
         
@@ -151,11 +128,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         eventNameTextField.attributedPlaceholder=name
         eventNameTextField.delegate = self
         self.view.addSubview(eventNameTextField)
-        
-        let search=NSAttributedString(string: "Custom Search...", attributes:    [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
-        searchQueryTextField.attributedPlaceholder=search
-        searchQueryTextField.delegate = self
-        self.view.addSubview(searchQueryTextField)
         
         dateButton.addTarget(self, action: #selector(self.selectDate), forControlEvents: UIControlEvents.TouchUpInside)
         dateButton.backgroundColor = UIColor.clearColor()
@@ -428,15 +400,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         names?.removeAllObjects()
         images?.removeAllObjects()
         
-        if myPrefSwitch.on == true {
-            Users.sharedInstance().query = Users.sharedInstance().food_pref
-        }
-        if friendsPrefSwitch.on == true {
-            Users.sharedInstance().query = "go_with_group"
-        }
-        if searchQSwitch.on == true {
-            Users.sharedInstance().query = searchQueryTextField.text
-        }
+        
+        Users.sharedInstance().query = "go_with_group"
         
         RequestInfo.sharedInstance().postReq("999000")
         { (success, errorString) -> Void in
@@ -549,7 +514,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         dateButton.hidden = false
         timeLabel.hidden = false
         timeButton.hidden = false
-        //notesTextField.hidden = false
+        notesTextField.hidden = false
         submitButton.hidden = false
         cancelButton.enabled = false
         cancelButton.tintColor = UIColor.clearColor()
@@ -649,5 +614,11 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
                 self.view.frame.origin.y += keyboardSize.height
             }
         }
+    }
+    
+    //Calls this function when the tap is recognized.
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
     }
 }

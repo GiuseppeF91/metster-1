@@ -29,6 +29,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>HanekeSwift.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-Metsterios.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -52,6 +57,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>2C2B1953A91633859BF7AD238FF567A0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>404EE043C7E580CAEA95F9A357C81415</key>
 		<dict>
 			<key>primary</key>
@@ -67,7 +77,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8EA317CA14057C18C3D0B9765406614B</key>
+		<key>9CA42401B1AE7DC4C117AA0A25AB29E6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -77,12 +87,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CD89AC26D2C1741ABED17E60F77EC2C4</key>
+		<key>DF366EF4D6300913D42E22A972CD8A30</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E83D715251F0EEE82A33D3A087D87F73</key>
+		<key>E0B17E668649488723C4026AB492A56B</key>
 		<dict>
 			<key>primary</key>
 			<true/>

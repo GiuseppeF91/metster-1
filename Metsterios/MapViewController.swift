@@ -10,7 +10,7 @@ import UIKit
 import Mapbox
 import Firebase
 
-class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate {
+class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate {
 
     @IBOutlet var mapView: MGLMapView!
     var hostedPlaces = [Place]()
@@ -21,6 +21,17 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
     
     var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 42, 0, 0))
 
+    // list attbrs
+    var names : NSMutableArray? = []
+    var images : NSMutableArray? = []
+    var categories : NSMutableArray? = []
+    var snippets : NSMutableArray? = []
+    var details : NSMutableArray? = []
+    var dictionary = NSDictionary()
+    
+    var placesTableView : UITableView = UITableView()
+    
+    var tap :UITapGestureRecognizer?
     
     @IBOutlet var pickerView: UIPickerView!
     
@@ -37,8 +48,15 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         
         //full screen size
         let screenSize: CGRect = UIScreen.mainScreen().bounds
-        let screenWidth = screenSize.width;
+        
+        //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
+        
+        placesTableView.dataSource = self
+        placesTableView.delegate = self
+        placesTableView.rowHeight = 100
+        self.view.addSubview(self.placesTableView)
+        placesTableView.hidden = true
         
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -54,8 +72,11 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         
         // close keyboard
         //Looks for single or multiple taps.
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
-        view.addGestureRecognizer(tap)
+        tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        view.addGestureRecognizer(tap!)
+        
+        //view.removeGestureRecognizer(tap)
+        
         
          self.pickerView.dataSource = self;
         
@@ -67,6 +88,7 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
         mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: 40.7326808,
             longitude: -73.9843407),
                                     zoomLevel: 12, animated: false)
+
         
         // Set the delegate property of our map view to self after instantiating it.
         mapView.delegate = self
@@ -164,8 +186,12 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
                 //self.mapView.showAnnotations(self.pinAnnotations, animated: false)
                 //self.mapView.selectAnnotation((self.mapView.annotations?.first)!, animated: true)
                 self.pickerView.reloadAllComponents();
-                self.pickerView.hidden = false
+                self.pickerView.hidden = true
                 self.loadingact.stopAnimating()
+                
+                self.placesTableView.hidden = false
+                self.placesTableView.reloadData()
+                self.placesTableView.bringSubviewToFront(self.view)
             }
         }
         
@@ -176,6 +202,11 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
     func dismissKeyboard() {
         //Causes the view (or one of its embedded text fields) to resign the first responder status.
         view.endEditing(true)
+        self.view.removeGestureRecognizer(self.tap!)
+    }
+    
+    func keyboardWasShown(notification: NSNotification) {
+       self.view.addGestureRecognizer(self.tap!)
     }
     
     // action for query bar
@@ -226,6 +257,8 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
             let point1 = MGLPointAnnotation()
             let lat = Double(location.coordinate.latitude)
             let lon = Double(location.coordinate.longitude)
+            Users.sharedInstance().lat = lat
+            Users.sharedInstance().long = lon
             point1.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             mapView.centerCoordinate = point1.coordinate
             // new location update present location : TODO
@@ -315,7 +348,100 @@ class MapViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UIPi
        print(att)
        print (row)
     }
+    
+    override func viewDidLayoutSubviews() {
+        placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, (screenHeight/2)-50)
+    }
+    
+    
+    //MARK : Table View delegate & data source methods
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        var count:Int?
+  
+        if tableView == placesTableView  {
+            if Users.sharedInstance().places == nil {
+                count = 0
+            } else {
+                count = Users.sharedInstance().places!.count
+            }
+        }
+        return count!
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        //let friendCell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        let cell = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        
+        if Users.sharedInstance().places != nil {
+            
+            for item in newValues! {
+                print ("frame")
+                // print (item)
+                /*
+                 address, category, coordinates, image, name, phone, ratings, review_count, snippet
+                */
+                let newName = item.valueForKey("name")
+                self.names?.addObject(newName!)
+                
+                let newImage = item.valueForKey("image_url")
+                self.images?.addObject(newImage!)
+                
+                let category = item.valueForKey("category")
+                self.categories?.addObject(category!)
+                // placeDescpLabel
+                
+                let snippet = item.valueForKey("snippet")
+                let ratings = item.valueForKey("ratings")
+                // let review_count = item.valueForKey("review_count")
+                let details = ratings!
+                self.details?.addObject(details)
+                self.snippets?.addObject(snippet!)
+                
+                
+            }
+            Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
+            
+            // setup cell values here...
+            cell.placeNameLabel!.text = names![indexPath.row] as? String
+            cell.placeDescpLabel!.text = categories![indexPath.row] as? String
+            cell.placeSnippetLabel!.text = snippets![indexPath.row] as? String
+            cell.placedetailsLabel!.text = details![indexPath.row] as? String
+            
+            let url = NSURL(string: images![indexPath.row] as! String)!
+            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.placeImage!.image = UIImage(data: data)
+                    })
+                }
+            }
+            task.resume()
+        }
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        print("comer gere")
+        
+            Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
+            print(Users.sharedInstance().place_id)
+            let item = newValues![indexPath.row]
+            print ("selected.")
+            print (item)
+        
+        let att = pinAnnotations[indexPath.row]
+        mapView.selectAnnotation(att, animated: true) // set att
+        /*
+         mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
+         longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
+         */
+        print(att)
+    }
 
+    
+    
     /*
     // MARK: - Navigation
 

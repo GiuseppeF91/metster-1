@@ -36,10 +36,11 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
+    
         self.view.backgroundColor = UIColor.whiteColor()
         self.view.backgroundColor = UIColor(patternImage: image).colorWithAlphaComponent(0.9)
         self.view.opaque = true
-        
+        /*
         stripeLogo.frame = CGRectMake(0, screenHeight/3, screenWidth, screenHeight/6)
         stripeLogo.backgroundColor = UIColor(red:255.0, green:255.0, blue:255.0, alpha:0.5)
         stripeLogo.center = self.view.center
@@ -50,7 +51,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         logoView.contentMode = UIViewContentMode.ScaleAspectFit
         logoView.center = self.view.center
         view.addSubview(logoView)
- 
+ */
         locManager.delegate = self
         
         let loginView : FBSDKLoginButton = FBSDKLoginButton()

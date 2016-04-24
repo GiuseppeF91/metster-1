@@ -26,6 +26,7 @@ class userevents {
     var eventdate: String
     var eventtime: String
     var eventhostname : String
+    
     init(eid: String, ename: String, ehost: String, edesp: String, edate: String, etime: String, ehostname: String) {
         self.eventid = eid
         self.eventname = ename

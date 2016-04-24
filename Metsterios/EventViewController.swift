@@ -38,6 +38,8 @@ class EventViewController:BaseVC, MGLMapViewDelegate, UIPickerViewDataSource, UI
         let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
         
+        
+        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()

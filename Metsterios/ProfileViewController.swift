@@ -10,6 +10,7 @@ import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 import Firebase
+import Haneke
 
 class ProfileViewController: BaseVC {
     
@@ -65,6 +66,7 @@ class ProfileViewController: BaseVC {
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
+        let cache = Shared.dataCache
         let access = Users.sharedInstance().fbid as! String
         let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
         
@@ -73,20 +75,35 @@ class ProfileViewController: BaseVC {
         profImage?.layer.borderWidth = 0.3
         profImage?.layer.masksToBounds = false
         profImage?.layer.borderColor = UIColor.blackColor().CGColor
-        profImage?.layer.cornerRadius = profImage!.frame.height/2
+        profImage?.layer.cornerRadius = profImage!.frame.width/2
         profImage?.clipsToBounds = true
         self.view.addSubview(profImage!)
         //
         
-        let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-        ) { (responseData, responseUrl, error) -> Void in
-            if let data = responseData{
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.profImage!.image = UIImage(data: data)
-                })
+        //---- cache image management
+        cache.fetch(key: "profile_image.jpg").onFailure { data in
+            
+            print ("data was not found in cache")
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+            ) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        self.profImage!.image = UIImage(data: data)
+                        let image : UIImage = UIImage(data: data)!
+                        cache.set(value: image.asData(), key: "profile_image.jpg")
+                    })
+                }
             }
+            task.resume()
+            
         }
-        task.resume()
+        
+        cache.fetch(key: "profile_image.jpg").onSuccess { data in
+            print ("data was found in cache")
+            let image : UIImage = UIImage(data: data)!
+            self.profImage!.image = image
+        }
+        //-----
         
         nameLabel.textAlignment = NSTextAlignment.Center
         nameLabel.text = Users.sharedInstance().name as? String

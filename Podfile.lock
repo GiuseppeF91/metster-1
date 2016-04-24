@@ -12,6 +12,7 @@ PODS:
   - FBSDKShareKit (4.10.1):
     - FBSDKCoreKit
   - Firebase (2.5.1)
+  - HanekeSwift (0.10.1)
   - Mapbox-iOS-SDK (3.2.0)
 
 DEPENDENCIES:
@@ -19,6 +20,7 @@ DEPENDENCIES:
   - FBSDKLoginKit
   - FBSDKShareKit
   - Firebase (>= 2.5.1)
+  - HanekeSwift
   - Mapbox-iOS-SDK
 
 SPEC CHECKSUMS:
@@ -27,8 +29,9 @@ SPEC CHECKSUMS:
   FBSDKLoginKit: 699ff169080e3072de4b9b0faca90bf23dc36deb
   FBSDKShareKit: 2fd887cce0056bdda91f99b2021d724a4fed8e88
   Firebase: 3565ea88b830f28f2c77ecc524622bc71a20d085
+  HanekeSwift: 08e47d3d0f2899ec58e5d257beba0de619aca9e8
   Mapbox-iOS-SDK: 3b9e8d0f77098494cc236384fde2a26eb6683f3d
 
-PODFILE CHECKSUM: d9856c256b99a146c8347a67dd09794c56181389
+PODFILE CHECKSUM: 2ed329d302ab02ab9a89c2be2b1a665580571777
 
 COCOAPODS: 1.0.0.beta.6
