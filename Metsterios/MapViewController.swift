@@ -10,16 +10,16 @@ import UIKit
 import Mapbox
 import Firebase
 
-class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, UIPickerViewDataSource, UIPickerViewDelegate, CLLocationManagerDelegate {
+class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, CLLocationManagerDelegate {
 
     @IBOutlet var mapView: MGLMapView!
     var hostedPlaces = [Place]()
     var pinAnnotations = [MGLPointAnnotation]()
+    var attndictionary:Dictionary<String, String>?
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = []
-    var pickerDataSource = ["White", "Red", "Green", "Blue"];
     
-    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 42, 0, 0))
+    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 75, 0, 0))
 
     // list attbrs
     var names : NSMutableArray? = []
@@ -32,8 +32,6 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var placesTableView : UITableView = UITableView()
     
     var tap :UITapGestureRecognizer?
-    
-    @IBOutlet var pickerView: UIPickerView!
     
     var popTime = dispatch_time(DISPATCH_TIME_NOW,
                                 Int64(4.0 * Double(NSEC_PER_SEC)))
@@ -77,71 +75,26 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         //view.removeGestureRecognizer(tap)
         
-        
-         self.pickerView.dataSource = self;
-        
-         self.pickerView.delegate = self;
-        
-        pickerView.hidden = true
-        
         // set the map's center coordinate
         mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: 40.7326808,
-            longitude: -73.9843407),
+                                    longitude: -73.9843407),
                                     zoomLevel: 12, animated: false)
 
         
         // Set the delegate property of our map view to self after instantiating it.
         mapView.delegate = self
         
-        // Do any additional setup after loading the view.
-        /*
-        self.hostedPlaces = []
-        let event_ref = Firebase(url:"https://metsterios.firebaseio.com/10103884620845432--event--18/places")
-        // Read data and react to changes
-        event_ref.observeEventType(.Value, withBlock: { snapshot in
-            
-            //Loads hosts places from Firebase...
-            if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
-                for snap in snapshots {
-                    if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
-                        let key = snap.key
-                        let place = Place(key: key, dictionary: postDictionary)
-                        print (place.address )
-                        self.add_annot(place.latitude, lon: place.longitude, name: place.name)
-                        self.hostedPlaces.insert(place, atIndex: 0)
-                    }
-                }
-            }
-            // TableView updates when there is new data.
-            
-            }, withCancelBlock: { error in
-                self.alertMessage("Error", message: "Something went wrong.")
-        })
-        
-        
-        for hostedPlace in self.hostedPlaces {
-            let latitude = Double(hostedPlace.latitude)
-            let longitude = Double(hostedPlace.longitude)
-            print(latitude)
-            print(longitude)
-            print(hostedPlace.address)
-        }
- */
-        
     }
     
     
     
     func findFood(query : String, eventid : String) {
-        if ( mapView.annotations?.count > 0 ) {
-            clean_map()
-        }
         loadingact.startAnimating()
         
         newValues?.removeAllObjects()
         
         Users.sharedInstance().query = query
-        Users.sharedInstance().event_id = eventid
+        Users.sharedInstance().event_id = "email-"+(Users.sharedInstance().email! as! String)
         print (Users.sharedInstance().query)
         print (Users.sharedInstance().event_id)
         
@@ -169,26 +122,24 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     }
                 }
                 
-                self.pickerDataSource.removeAll()
                 // newValues will have the data
                 for value in self.newValues! {
                     print ("----")
+                    print (value)
                     let latitude = value.valueForKey("latitude") as! String
                     let longitude = value.valueForKey("longitude") as! String
                     let name = value.valueForKey("name") as! String
                     let address = value.valueForKey("address") as! String
+                    let drivedistance = value.valueForKey("drivedistance") as! String
                     print(latitude)
                     print(longitude)
-                    self.add_annot(latitude, lon: longitude, name: name, address: address)
-                    self.pickerDataSource.append(name)
+                    print(drivedistance)
+                    self.add_annot(latitude, lon: longitude, name: name, address: address, dis: drivedistance)
                 }
                 //self.mapView.addAnnotations(self.pinAnnotations)
                 //self.mapView.showAnnotations(self.pinAnnotations, animated: false)
                 //self.mapView.selectAnnotation((self.mapView.annotations?.first)!, animated: true)
-                self.pickerView.reloadAllComponents();
-                self.pickerView.hidden = true
                 self.loadingact.stopAnimating()
-                
                 self.placesTableView.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
@@ -217,23 +168,39 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         let query = sender.text
         let eventid = "10103884620845432--event--18"
         
+        
+        //-- clean data of previous search
+        clean_data()
+        
         findFood(query!, eventid: eventid)
         
     }
     
-    func clean_map(){
-        let annt = mapView.annotations
-        for at in annt!{
-            mapView.removeAnnotation(at)
+    func clean_data(){
+        
+        if ( mapView.annotations?.count > 0 ) {
+            let annt = mapView.annotations
+            for at in annt!{
+                mapView.removeAnnotation(at)
+            }
+
         }
-        pickerView.hidden = true
+        attndictionary?.removeAll()
+        pinAnnotations.removeAll()
+        self.newValues?.removeAllObjects()
+        self.names?.removeAllObjects()
+        self.images?.removeAllObjects()
+        self.categories?.removeAllObjects()
+        self.snippets?.removeAllObjects()
+        self.details?.removeAllObjects()
+        
     }
     
-    func add_annot(lat : String, lon : String, name : String, address : String){
+    func add_annot(lat : String, lon : String, name : String, address : String, dis: String){
         let lpoint = MGLPointAnnotation()
         lpoint.coordinate = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
         lpoint.title = name
-        lpoint.subtitle = address + "\n" + "Hello"
+        lpoint.subtitle = address
         mapView.addAnnotation(lpoint)
         
         // fit the map to the annotation(s)
@@ -242,6 +209,17 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         // pop-up the callout view
         // mapView.selectAnnotation(lpoint, animated: true)
         pinAnnotations.append(lpoint)
+        // attndictionary.setValue(dis, forKey: name as String)
+        
+        if (attndictionary == nil) {
+            attndictionary = [name: dis]
+        }
+        else if var foofoo = attndictionary {
+            foofoo[name] = dis
+            attndictionary = foofoo
+        }
+        
+        //attndictionary.
         // fit the map to the annotation(s)
 
     }
@@ -272,10 +250,13 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     
     func mapView(mapView: MGLMapView, leftCalloutAccessoryViewForAnnotation annotation: MGLAnnotation) -> UIView? {
-        let label = UILabel(frame: CGRectMake(0, 0, 60, 50))
+        let label = UILabel(frame: CGRectMake(0, 0, 50, 50))
         label.textAlignment = .Right
         label.textColor = UIColor(red: 0.81, green: 0.71, blue: 0.23, alpha: 1)
-        label.text = "金閣寺"
+        label.font = UIFont.systemFontOfSize(18)
+        let dis = attndictionary![annotation.title!!]
+        label.numberOfLines = 0;
+        label.text = dis! + "\nmins"
         return label
         
     }
@@ -320,34 +301,11 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     */
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerDataSource.count;
-    }
-    
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return pickerDataSource[row]
-    }
-    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
-    {
-       let att = pinAnnotations[row]
-       mapView.selectAnnotation(att, animated: true) // set att
-       /*
-       mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
-            longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
-       */
-       print(att)
-       print (row)
-    }
     
     override func viewDidLayoutSubviews() {
         placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, (screenHeight/2)-50)
@@ -376,7 +334,6 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         if Users.sharedInstance().places != nil {
             
             for item in newValues! {
-                print ("frame")
                 // print (item)
                 /*
                  address, category, coordinates, image, name, phone, ratings, review_count, snippet
@@ -397,7 +354,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 let details = ratings!
                 self.details?.addObject(details)
                 self.snippets?.addObject(snippet!)
-                
+                print("---->")
+                print(newName)
                 
             }
             Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String

@@ -9,7 +9,6 @@
             <connections>
                 <outlet property="MapView" destination="i5M-Pr-FkT" id="37T-e8-YYS"/>
                 <outlet property="loadingact" destination="0G6-b5-3Rz" id="J3F-vn-2I7"/>
-                <outlet property="pickerView" destination="aUa-Dc-mXW" id="ncB-DV-Ega"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -30,11 +29,6 @@
                     <rect key="frame" x="142" y="282" width="37" height="37"/>
                     <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                 </activityIndicatorView>
-                <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aUa-Dc-mXW">
-                    <rect key="frame" x="0.0" y="376" width="320" height="151"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </pickerView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <accessibility key="accessibilityConfiguration">
@@ -46,7 +40,7 @@
                 <userDefinedRuntimeAttribute type="number" keyPath="zoomLevel">
                     <real key="value" value="12"/>
                 </userDefinedRuntimeAttribute>
-                <userDefinedRuntimeAttribute type="boolean" keyPath="showsUserLocation" value="NO"/>
+                <userDefinedRuntimeAttribute type="boolean" keyPath="showsUserLocation" value="YES"/>
             </userDefinedRuntimeAttributes>
             <point key="canvasLocation" x="352" y="262"/>
         </view>

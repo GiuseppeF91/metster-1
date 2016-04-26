@@ -20,6 +20,7 @@ class Place {
     private var _latitude: String!
     private var _longitude: String!
     private var _name: String!
+    private var _drivedistance: String!
     //private var _phone: String!
     //private var _rank: String!
     //private var _ratings: String!
@@ -53,6 +54,10 @@ class Place {
     
     var name: String {
         return _name
+    }
+    
+    var drivedistance: String {
+        return _drivedistance
     }
     
     var eventid: String {
@@ -98,6 +103,10 @@ class Place {
         
         if let name = dictionary["name"] as? String {
             self._name = name
+        }
+        
+        if let drivedistance = dictionary["drivedistance"] as? String {
+            self._drivedistance = drivedistance
         }
         
         if let eventid = dictionary["eventid"] as? String {

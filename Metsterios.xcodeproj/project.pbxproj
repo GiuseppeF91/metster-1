@@ -13,6 +13,7 @@
 		5747C4A61CCC13720031F541 /* EventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4A51CCC13720031F541 /* EventViewController.swift */; };
 		5747C4AA1CCC20CE0031F541 /* Eventinfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4A91CCC20CE0031F541 /* Eventinfo.swift */; };
 		5747C4AC1CCC4DCA0031F541 /* PlaceTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */; };
+		576AEB6E1CCEF48600D74F04 /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 576AEB6D1CCEF48600D74F04 /* BackButton.swift */; };
 		57C3A0AF1CC2D81500D5E335 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */; };
 		57C3A0B01CC2D81500D5E335 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */; };
 		57DA91EE1CC754670021834A /* userevents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DA91ED1CC754670021834A /* userevents.swift */; };
@@ -70,6 +71,7 @@
 		5747C4A51CCC13720031F541 /* EventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventViewController.swift; sourceTree = "<group>"; };
 		5747C4A91CCC20CE0031F541 /* Eventinfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Eventinfo.swift; sourceTree = "<group>"; };
 		5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaceTableViewCell.swift; sourceTree = "<group>"; };
+		576AEB6D1CCEF48600D74F04 /* BackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
 		57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		57DA91ED1CC754670021834A /* userevents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userevents.swift; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 				6964A96B1CBB230C0090EC4C /* EventTableViewCell.swift */,
 				5747C4A31CCC0F9B0031F541 /* EventViewController.xib */,
 				5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */,
+				576AEB6D1CCEF48600D74F04 /* BackButton.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -529,6 +532,7 @@
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
 				695AEE761CAE1325006B4D6D /* RequestInfo.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,
+				576AEB6E1CCEF48600D74F04 /* BackButton.swift in Sources */,
 				690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */,
 				69DE751D1CA7CF4200AA35D2 /* ProfileViewController.swift in Sources */,
 				5747C4AA1CCC20CE0031F541 /* Eventinfo.swift in Sources */,

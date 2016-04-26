@@ -109,7 +109,7 @@ class RequestInfo {
         
         if oper == "997000" { //insert venue info to firebase
             //TODO: THIS IS NOT WORKING
-            dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!, "place_info": Users.sharedInstance().place_info!]
+            dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!, "email": Users.sharedInstance().email!,"place_info": Users.sharedInstance().place_info!]
         }
         
         if oper == "121002" {
@@ -186,9 +186,14 @@ class RequestInfo {
             
             if oper == "999000" {
                 do {
+                    print ("999000 req start")
                     let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
                     
                     if responseData.valueForKey("status") as! String == "success" {
+                        
+                        // clean data of previous search
+                        Users.sharedInstance().place_ids?.removeAllObjects()
+                        Users.sharedInstance().places?.removeAllObjects()
                         
                         let allValues : NSMutableArray? = []
                         let allKeys : NSMutableArray? = []
@@ -256,6 +261,7 @@ class RequestInfo {
                     
                 }catch {
                     print("there was an error")
+                    // got to error screen
                 }
             }
         })
