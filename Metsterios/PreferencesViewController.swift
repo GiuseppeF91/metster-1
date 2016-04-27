@@ -26,7 +26,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("====== ENTER PREFERENCE View Controller =====")
         saveButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Save, target: self, action: #selector(PreferencesViewController.saveClicked))
         reorderButton =  UIBarButtonItem(title: "Reorder", style: .Plain, target: self, action: #selector(self.reorderItems))
         

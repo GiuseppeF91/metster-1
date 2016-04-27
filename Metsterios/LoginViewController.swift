@@ -25,12 +25,11 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     var metsLogo = UIImage(named: "logo")
     var stripeLogo = UILabel()
     
-    let ref = Firebase(url: "https://metsterios.firebaseio.com/")
     let facebookLogin = FBSDKLoginManager()
     
     override func viewDidLoad() {
+        print("====== ENTER Login View Controller =====")
         super.viewDidLoad()
-        
         UIGraphicsBeginImageContext(self.view.frame.size)
         UIImage(named: "homebackground")?.drawInRect(self.view.bounds)
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -40,18 +39,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         self.view.backgroundColor = UIColor.whiteColor()
         self.view.backgroundColor = UIColor(patternImage: image).colorWithAlphaComponent(0.9)
         self.view.opaque = true
-        /*
-        stripeLogo.frame = CGRectMake(0, screenHeight/3, screenWidth, screenHeight/6)
-        stripeLogo.backgroundColor = UIColor(red:255.0, green:255.0, blue:255.0, alpha:0.5)
-        stripeLogo.center = self.view.center
-        view.addSubview(stripeLogo)
-        
-        let logoView = UIImageView(image: metsLogo)
-        logoView.frame = CGRect(x: screenWidth, y: screenHeight, width: screenWidth, height: screenHeight)
-        logoView.contentMode = UIViewContentMode.ScaleAspectFit
-        logoView.center = self.view.center
-        view.addSubview(logoView)
- */
+
         locManager.delegate = self
         
         let loginView : FBSDKLoginButton = FBSDKLoginButton()
@@ -109,7 +97,6 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
             self.locManager.startUpdatingLocation()
             print("user data returned")
             
-            returnUserFriends()
             returnUserData({ (success, errorString) in
                 guard success else {
                     dispatch_async(dispatch_get_main_queue(), {
@@ -119,26 +106,37 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                     return
                 }
                 dispatch_async(dispatch_get_main_queue(), {
-                    print("success")
                     Users.sharedInstance().lat = ""
                     Users.sharedInstance().long = ""
                     self.findAccount()
                 })
             })
+            
+            returnUserFriends()
         }
     }
     
     func loginButtonDidLogOut(loginButton: FBSDKLoginButton!) {
+        FBSDKAccessToken.setCurrentAccessToken(nil)
+        FBSDKProfile.setCurrentProfile(nil)
+        facebookLogin.logOut()
+        let deletepermission = FBSDKGraphRequest(graphPath: "me/permissions/", parameters: nil, HTTPMethod: "DELETE")
+        deletepermission.startWithCompletionHandler({(connection,result,error)-> Void in
+            print("the delete permission is \(result)")
+            
+        })
         print("User Logged Out")
     }
     
+    // get all user friends
     func returnUserFriends() {
-        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me/taggable_friends", parameters: ["fields": "name, email"])
+    print("enter returnUserFriends ----->")
+        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me/friends", parameters: ["fields": "name, email"])
         graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
             //TO DO: THIS NEEDS TO BE IMPLEMENTED TO RETURN ONLY AUTHORIZED APP USERS. Also needs to return the EMAILS of each listed user.
+            print (result)
             if error == nil {
                 print("Friends are : \(result)")
-                print("OKOKOKOKOKOKOK")
                 let data = result.valueForKey("data")
                 //print(data?.valueForKey("email"))
                 
@@ -146,13 +144,15 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 Users.sharedInstance().user_friends = friends as? NSArray
             } else {
                 print("Error Getting Friends \(error)")
-                Users.sharedInstance().user_friends = ["User Friend", "User Friend"]
+                Users.sharedInstance().user_friends = []
             }
         })
+        print("exit returnUserFriends ----->")
     }
     
     func returnUserData(completionHandler: (success: Bool, errorString: String?) -> Void) {
-        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "email, name"])
+        print("enter returnUserData ----->")
+        let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "email, name, gender"])
         graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
             
             if ((error) != nil) {
@@ -169,11 +169,15 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                     Users.sharedInstance().email = result.valueForKey("email") as! NSString
                 }
                 Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
+                Users.sharedInstance().gender = result.valueForKey("gender") as! NSString
+                
             }
         })
+        print("exit returnUserData ----->")
     }
 
     func createAccount() {
+        print("enter createAccount ----->")
         RequestInfo.sharedInstance().postReq("111000")
         { (success, errorString) -> Void in
             guard success else {
@@ -190,9 +194,11 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 self.presentViewController(TabBarViewController(), animated: true, completion: nil)
             })
         }
+        print("exit createAccount ----->")
     }
 
     func findAccount() {
+        print("enter findAccount ----->")
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
@@ -205,6 +211,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
             print("This user exists")
             self.presentViewController(TabBarViewController(), animated: true, completion: nil)
         }
+        print("exit findAccount ----->")
     }
     
     func locRequest() {

@@ -454,7 +454,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 myRootRef.setValue(to_fb)
                 
                 
-                
             case .Cancel:
                 print("cancel")
                 

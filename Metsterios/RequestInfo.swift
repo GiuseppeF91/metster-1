@@ -105,56 +105,66 @@ class RequestInfo {
     
     func postReq(oper: String, completionHandler: (success: Bool, errorString: String?) -> Void) {
         print("req started")
-        print(oper)
         
         if oper == "997000" { //insert venue info to firebase
             //TODO: THIS IS NOT WORKING
+             print("insert req for firebase")
             dictionary = ["event_id": Users.sharedInstance().event_id!, "place_id": Users.sharedInstance().place_id!, "email": Users.sharedInstance().email!,"place_info": Users.sharedInstance().place_info!]
         }
         
         if oper == "121002" {
+            print("find req for event")
             dictionary = ["event_id": Users.sharedInstance().event_id!]
         }
         
         if oper == "111003" { // update account pref
+            print("update req for account")
             if (Users.sharedInstance().movie_pref == nil ){
-                Users.sharedInstance().movie_pref = 0
+                Users.sharedInstance().movie_pref = "abcdefghijkl"
             }
             if(Users.sharedInstance().food_pref == nil) {
-                Users.sharedInstance().food_pref = 0
+                Users.sharedInstance().food_pref = "abcdefghijkl"
             }
             dictionary = ["email": Users.sharedInstance().email!, "latitude": Users.sharedInstance().lat!,"longitude": Users.sharedInstance().long!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
         }
         
         if oper == "111002" { // find in account
+            print("find req in account")
             dictionary = ["email": Users.sharedInstance().email!]
         }
         
         if oper == "999000" { // find fooood
+            print("api req for food")
             dictionary = ["query": Users.sharedInstance().query! , "event_id": Users.sharedInstance().event_id!]
         }
         
         if oper == "111000" { // insert to account
-            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!, "longitude": Users.sharedInstance().long!, "food_pref": "abcdefghijl", "movie_pref": "abcdefghijl"]
+            print("insert req into account")
+            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!,"gender": Users.sharedInstance().gender!, "longitude": Users.sharedInstance().long!, "food_pref": "abcdefghijl", "movie_pref": "abcdefghijl"]
             }
             
         if oper == "121000" { // insert to events
+            print("insert req into events")
             dictionary = ["host_email": Users.sharedInstance().email!, "event_name": Users.sharedInstance().eventName!, "event_date": Users.sharedInstance().event_date!, "event_time": Users.sharedInstance().event_time!, "event_notes": Users.sharedInstance().event_notes!, "event_members": Users.sharedInstance().invited_members!]
             }
             
         if oper == "998000" { // accept invite
+            print("api req for accept invite")
             dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
             }
         
-        if oper == "998001" { // senddd invite
+        if oper == "998001" { // send invite
+            print("api req for send invite")
             dictionary = ["from_email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!, "to_email": Users.sharedInstance().invited_members!]
         }
         
         if oper == "121001" { // delete in events
+             print("del req in events")
             dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
         }
         
         if oper == "998002" { // reject invite
+            print("api req to reject invite")
             dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
         }
         
@@ -166,6 +176,7 @@ class RequestInfo {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "content-type")
         
         let jsonData = try! NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.init(rawValue: 0))
+        
         guard error == nil else {
             print("can't get data into the right form")
             return
@@ -223,8 +234,11 @@ class RequestInfo {
             } else {
                 do {
                     let responseData = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as! NSDictionary
-                    //print(responseData)
-                    print("response got here")
+                    print("------------ Server resp  -----")
+                    print(oper)
+                    print("-----------")
+                    print(responseData)
+                    print("-------------------------------")
                     if oper == "111000" {
                         if responseData.valueForKey("status") as! String == "success" {
                             completionHandler(success: true, errorString: nil)

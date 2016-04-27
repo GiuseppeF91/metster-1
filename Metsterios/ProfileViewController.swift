@@ -32,7 +32,7 @@ class ProfileViewController: BaseVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+         print("====== ENTER Profile View Controller =====")
         aboutButton.setTitle("About", forState: .Normal)
         self.view.addSubview(aboutButton)
         
@@ -113,6 +113,8 @@ class ProfileViewController: BaseVC {
     }
     
     func logoutClicked() {
+        let cache = Shared.dataCache
+        cache.removeAll()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
 }

@@ -89,7 +89,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print("====== ENTER ADD EVENT View Controller =====")
         //Looks for single or multiple taps.
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         view.addGestureRecognizer(tap)

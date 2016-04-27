@@ -41,6 +41,7 @@ class Users: NSObject {
     var hosted : NSArray?
     var joined : NSArray?
     var pending : NSArray?
+    var gender : AnyObject?
     
     var event_dic =  [String: AnyObject?]()
     

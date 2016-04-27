@@ -24,7 +24,7 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        print("====== ENTER TABBAR View Controller =====")
         view.backgroundColor = UIColor.whiteColor()
         
         profileVC = ProfileViewController()

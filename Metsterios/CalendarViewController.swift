@@ -47,6 +47,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("====== ENTER Calender View Controller =====")
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -247,17 +248,20 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         mapView?.scrollEnabled = true
         // mapView?.setRegion(region, animated: true)
         self.view.addSubview(mapView!)
-        
+        print("comes till here")
         // Delay 2 seconds
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2.0 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) { () -> Void in
             
             if self.yesEventsButton.selected == true {
+                print("yes event selected")
                 self.yesEventsClicked()
             }
             if self.myEventsButton.selected == true {
+                print("my event selected")
                 self.myEventsClicked()
            
             } else {
+                print("pending event selected")
                 self.pendingEventsClicked()
             }
         }
