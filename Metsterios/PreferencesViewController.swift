@@ -20,9 +20,10 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     var tableView : UITableView = UITableView()
     
     var moviesArray = ["Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Horror", "Romance", "Sci-fi", "Thriller", "War"]
+    var foodArray = ["American", "Japanese", "British", "Chinese", "Indian", "Thai", "Mexican", "Fast Food", "French", "Italian", "Mediterranean", "Vietnamese", "Pizza"]
     
     var food_pref : String?
-    var food_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"]
+    var food_array = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,7 +73,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
     //MARK : Table View delegate & data source methods
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if restaurantButton.selected == true {
-            return 12
+            return 13
         } else {
             return moviesArray.count
         }
@@ -87,44 +88,49 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
             //food_array = food_pref!.characters.map { String($0) }
             //food_array = [Character](food_pref!.characters)
             food_pref = Users.sharedInstance().food_pref as? String
-            
-            let item = food_array[indexPath.row]
+            let letters = food_pref!.characters.map { String($0) }
+            print("table view")
+            print(letters)
+            let item = letters[indexPath.row]
             
             if item == "a" {
                 cell.textLabel!.text = "American"
             }
             if item == "b" {
-                cell.textLabel!.text = "British"
+                cell.textLabel!.text = "Japanese"
             }
             if item == "c" {
-                cell.textLabel!.text  = "Chinese"
+                cell.textLabel!.text  = "British"
             }
             if item == "d" {
-                cell.textLabel!.text  = "Greek"
+                cell.textLabel!.text  = "Chinese"
             }
             if item == "e" {
-                cell.textLabel!.text  = "French"
-            }
-            if item == "f" {
                 cell.textLabel!.text  = "Indian"
             }
+            if item == "f" {
+                cell.textLabel!.text  = "Thai"
+            }
             if item == "g" {
-                cell.textLabel!.text  = "Italian"
+                cell.textLabel!.text  = "Mexican"
             }
             if item == "h" {
-                cell.textLabel!.text  = "Japanese"
+                cell.textLabel!.text  = "Fast Food"
             }
             if item == "i" {
-                cell.textLabel!.text  = "Mediterranean"
+                cell.textLabel!.text  = "French"
             }
             if item == "j" {
-                cell.textLabel!.text = "Mexican"
+                cell.textLabel!.text = "Italian"
             }
             if item == "k" {
-                cell.textLabel!.text  = "Thai"
+                cell.textLabel!.text  = "Mediterranean"
             }
             if item == "l" {
                 cell.textLabel!.text  = "Vietnamese"
+            }
+            if item == "m" {
+                cell.textLabel!.text  = "Pizza"
             }
             
         } else {
@@ -137,7 +143,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
         let itemToMove = food_array[fromIndexPath.row]
         food_array.removeAtIndex(fromIndexPath.row)
         food_array.insert(itemToMove, atIndex: toIndexPath.row)
-        print(food_array)
+        //print(food_array)
     }
     
     func reorderItems() {
@@ -154,6 +160,7 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
             
             let lettersString  = food_array.joinWithSeparator("")
             Users.sharedInstance().food_pref = lettersString
+            print(Users.sharedInstance().food_pref!)
             print(Users.sharedInstance().food_pref)
             Users.sharedInstance().what = "food_pref"
             tableView.setEditing(false, animated: true)

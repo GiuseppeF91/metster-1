@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import Haneke
 
 class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
     
@@ -16,19 +17,8 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     var backButton : UIBarButtonItem!
     var inviteToList = MainLabel(frame: CGRectMake(0, (screenHeight/12)+25, screenWidth, screenHeight/15))
     var friendsTableView : UITableView = UITableView()
-    var placesTableView : UITableView = UITableView()
     
     var eventNameTextField = MainTextField(frame: CGRectMake(20, screenHeight-(screenHeight/1.2), screenWidth-40, 50))
-    var moviesButton = SelectionButton(frame: CGRectMake(20, 100, ((screenWidth)/2)-30, 40))
-    var restaurantButton = SelectionButton(frame: CGRectMake((screenWidth/2)+10, 100, (screenWidth/2)-30, 40))
-    
-    var searchLabel = UILabel(frame: CGRectMake(20, screenHeight-260, screenWidth, 30))
-    var myPrefLabel = UILabel(frame: CGRectMake(20, screenHeight-230, screenWidth-40, 30))
-    var myPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-230, 0, 0))
-    var friendsPrefLabel = UILabel(frame: CGRectMake(20, screenHeight-190, screenWidth-40, 30))
-    var friendsPrefSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-190, 0, 0))
-    var searchQueryTextField = MainTextField(frame: CGRectMake(20, screenHeight-150, screenWidth-130, 30))
-    var searchQSwitch = UISwitch(frame: CGRectMake(screenWidth-100, screenHeight-150, 0, 0))
     
     var dateLabel = MainLabel(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/4, 40))
     var dateButton = UIButton(frame: CGRectMake(20, screenHeight-(screenHeight/1.2)+60, screenWidth/4, 40))
@@ -91,36 +81,33 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         super.viewDidLoad()
         print("====== ENTER ADD EVENT View Controller =====")
         //Looks for single or multiple taps.
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        /*
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(AddEventViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
-        
+        NSNotificationCenter.defaultCenter().addObserver(self, #selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+        */
 
         cancelButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: self, action: #selector(self.cancelClicked))
         nextButton = UIBarButtonItem(title: "Next", style: .Plain, target: self, action: #selector(AddEventViewController.nextPressed))
         
         friendsTableView.dataSource = self
         friendsTableView.delegate = self
-        friendsTableView.rowHeight = 50
+        friendsTableView.rowHeight = 100
         self.view.addSubview(self.friendsTableView)
-        
-        placesTableView.dataSource = self
-        placesTableView.delegate = self
-        placesTableView.rowHeight = 100
-        self.view.addSubview(self.placesTableView)
         
         navigationItem.rightBarButtonItem = nextButton
         navigationItem.leftBarButtonItem = cancelButton
         navigationItem.title = "New Event"
         navBar.items = [navigationItem]
+        navBar.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(navBar)
         
-        inviteToList.text = "invite:"
+        inviteToList.text = "Add event members: "
         //inviteToList.attributedPlaceholder=inviteTo
         //inviteToList.delegate = self
-        inviteToList.backgroundColor = UIColor.grayColor()
+        inviteToList.backgroundColor = UIColor.whiteColor()
         inviteToList.layer.cornerRadius = 5
         self.view.addSubview(inviteToList)
         
@@ -175,56 +162,19 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         submitButton.addTarget(self, action: #selector(self.newEventCreated), forControlEvents: UIControlEvents.TouchUpInside)
         submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
-        
-        moviesButton.addTarget(self, action: #selector(self.moviesClicked), forControlEvents: UIControlEvents.TouchUpInside)
-        let selectedMovieFontTitle = NSAttributedString(string: "Movie", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(15)])
-        let deselectedMovieFontTitle = NSAttributedString(string: "Movie", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(15)])
-        moviesButton.setAttributedTitle(selectedMovieFontTitle, forState: .Selected)
-        moviesButton.setAttributedTitle(deselectedMovieFontTitle, forState: .Normal)
-        self.view.addSubview(moviesButton)
-        moviesButton.selected = false
-        moviesButton.enabled = false
-        
-        restaurantButton.addTarget(self, action: #selector(self.restaurantClicked), forControlEvents: UIControlEvents.TouchUpInside)
-        let selectedFoodFontTitle = NSAttributedString(string: "Restaurant", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(15)])
-        let deselectedFoodFontTitle = NSAttributedString(string: "Restaurant", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(15)])
-        restaurantButton.setAttributedTitle(selectedFoodFontTitle, forState: .Selected)
-        restaurantButton.setAttributedTitle(deselectedFoodFontTitle, forState: .Normal)
-        self.view.addSubview(restaurantButton)
-        restaurantButton.selected = true
-        
+
         eventNameTextField.hidden = true
-        moviesButton.hidden = true
-        restaurantButton.hidden = true
         dateLabel.hidden = true
         dateButton.hidden = true
         timeLabel.hidden = true
         timeButton.hidden = true
         notesTextField.hidden = true
         submitButton.hidden = true
-        searchQueryTextField.hidden = true
-        searchLabel.hidden = true
-        myPrefSwitch.hidden = true
-        myPrefLabel.hidden = true
-        friendsPrefLabel.hidden = true
-        friendsPrefSwitch.hidden = true
-        
-        placesTableView.hidden = true
+
     }
     
     override func viewDidLayoutSubviews() {
         friendsTableView.frame = CGRectMake(0, ((UIScreen.mainScreen().bounds.height*11)/60)+25, UIScreen.mainScreen().bounds.width, 400)
-        placesTableView.frame = CGRectMake(0, screenHeight/2, screenWidth, (screenHeight/2)-50)
-    }
-
-    func moviesClicked() {
-        restaurantButton.selected = false
-        moviesButton.selected = true
-    }
-    
-    func restaurantClicked() {
-        moviesButton.selected = false
-        restaurantButton.selected = true
     }
     
     //MARK : Table View delegate & data source methods
@@ -235,106 +185,60 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         if tableView == friendsTableView {
             count = (Users.sharedInstance().user_friends?.count)!
         }
-        if tableView == placesTableView  {
-            if Users.sharedInstance().places == nil {
-                count = 0
-            } else {
-                count = Users.sharedInstance().places!.count
-            }
-        }
         return count!
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         //let friendCell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         let cell = EventTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
-        
-        if tableView == friendsTableView {
-            cell.textLabel!.text = Users.sharedInstance().user_friends![indexPath.row] as? String
-        }
-        if tableView == placesTableView && Users.sharedInstance().places != nil {
-            
-            for item in newValues! {
-                let newName = item.valueForKey("name")
-                self.names?.addObject(newName!)
-                
-                let newImage = item.valueForKey("image_url")
-                
-                
-                self.images?.addObject(newImage!)
-            }
-            Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
-            cell.eventNameLabel!.text = names![indexPath.row] as? String
-    
-            let url = NSURL(string: images![indexPath.row] as! String)!
-            let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
-                if let data = responseData{
-                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.userImage!.image = UIImage(data: data)
-                    })
+        let cache = Shared.dataCache
+        cell.eventNameLabel!.text = Users.sharedInstance().user_friends![indexPath.row] as? String
+            //---- cache image management
+        let id = Users.sharedInstance().user_friends_id![indexPath.row]as? String
+
+        cache.fetch(key: id!).onFailure { data in
+                print ("data was not found in cache")
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(id)/picture?type=large")
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!) { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.userImage!.image = UIImage(data: data)
+                            let image : UIImage = UIImage(data: data)!
+                            cache.set(value: image.asData(), key: id!)
+                        })
+                    }
                 }
-            }
-            task.resume()
+                task.resume()
         }
+        
+            print("check cache for image")
+            cache.fetch(key: id! ).onSuccess { data in
+                print ("data was found in cache")
+                let image : UIImage = UIImage(data: data)!
+                cell.userImage!.image = image
+            }
+        
+            //-----
+
         return cell
     }
  
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        //TO DO: Once the app is authorized with FB, the subfield will return user email (can be a hidden field.) This is what will be passed to Users.sharedInstance to send the invite. 
-        if tableView == friendsTableView {
-            let cell = friendsTableView.cellForRowAtIndexPath(indexPath)
-            if cell?.accessoryType == . Checkmark {
-                cell?.accessoryType = .None
-                invitedFriends.removeObjectIdenticalTo(cell!.textLabel!.text!)
-            }
-            else {
-                cell?.accessoryType = .Checkmark
-                invitedFriends.addObject(cell!.textLabel!.text!)
-            }
-        }
-        if tableView == placesTableView {
-            //TO DO : send correct parameters throught to req 997000 aka func pickedLocation() 
-            
-            Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
-            print(Users.sharedInstance().place_id)
-            let item = newValues![indexPath.row]
-
-            dictionary = ["category": item.valueForKey("category")!, "ratings": item.valueForKey("ratings")!, "review_count": item.valueForKey("review_count")!, "name": item.valueForKey("name")!, "latitude": item.valueForKey("latitude")!, "url": "www.yelp.com", "rank": item.valueForKey("rank")!, "snippet": item.valueForKey("snippet")!, "phone": item.valueForKey("phone")!, "image_url": item.valueForKey("image_url")!, "longitude" : item.valueForKey("longitude")!, "address": item.valueForKey("address")!, "coordinate": item.valueForKey("coordinate")!, "eventid": Users.sharedInstance().event_id!, "eventname": Users.sharedInstance().eventName!, "eventdate": Users.sharedInstance().event_date!, "eventtime": Users.sharedInstance().event_time!]
-            
-            print(dictionary)
-            
-            let jsonData = try! NSJSONSerialization.dataWithJSONObject(dictionary, options: NSJSONWritingOptions.init(rawValue: 0))
-            let myString = String(data: jsonData, encoding: NSUTF8StringEncoding)
-    
-            Users.sharedInstance().place_info = myString
-        
-            let alert = UIAlertController(title: "Save Event Location", message: "Is this the location you want to save?", preferredStyle: UIAlertControllerStyle.Alert)
-                alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler: { (action: UIAlertAction!) in
-                    
-                    RequestInfo.sharedInstance().postReq("997000")
-                    { (success, errorString) -> Void in
-                        guard success else {
-                            dispatch_async(dispatch_get_main_queue(), {
-                                self.alertMessage("Error", message: "Unable to connect.")
-                            })
-                            return
-                        }
-                        dispatch_async(dispatch_get_main_queue(), {
-                            print("suucssssss")
-                            //self.alertMessage("Success!", message: "Event Saved")
-                            self.inviteMembers()
-                            self.placesTableView.hidden = true
-                            self.mapView?.hidden = true
-                            self.performSegueWithIdentifier("MapViewController", sender:self)
-                        })
-                    }
-                }))
-            
-            alert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
-                
-            }))
-            self.presentViewController(alert, animated: true, completion: nil)
+        //TO DO: Once the app is authorized with FB, the subfield will return user email (can be a hidden field.) This is what will be passed to Users.sharedInstance to send the invite.
+        let cell = friendsTableView.cellForRowAtIndexPath(indexPath)
+        print(indexPath)
+        if cell?.accessoryType == . Checkmark {
+            cell?.accessoryType = .None
+            print(indexPath.item)
+            let fid = Users.sharedInstance().user_friends_id![indexPath.row]
+            invitedFriends.removeObjectIdenticalTo(fid)
+        } else {
+            cell?.accessoryType = .Checkmark
+            print(indexPath.item)
+            let fid = Users.sharedInstance().user_friends_id![indexPath.row]
+            print(Users.sharedInstance().user_friends_id![indexPath.row])
+            invitedFriends.addObject(fid)
         }
     }
 
@@ -345,24 +249,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func selectTime() {
         timeBool = !timeBool
-    }
-    
-    func myPref() {
-        myPrefSwitch.on = true
-        friendsPrefSwitch.on = false
-        searchQSwitch.on = false
-    }
-    
-    func friendPref() {
-        myPrefSwitch.on = false
-        friendsPrefSwitch.on = true
-        searchQSwitch.on = false
-    }
-    
-    func customPref() {
-        myPrefSwitch.on = false
-        friendsPrefSwitch.on = false
-        searchQSwitch.on = true
     }
     
     func newEventCreated() {
@@ -389,97 +275,14 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
             
             dispatch_async(dispatch_get_main_queue(), {
                 print("suucessssss")
-                self.findFood()
+                //self.alertMessage("Hurray", message: "your event was created.")
+                self.inviteMembers();
+                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+                //self.findFood()
             })
         }
     }
     
-    func findFood() {
-
-        newValues?.removeAllObjects()
-        names?.removeAllObjects()
-        images?.removeAllObjects()
-        
-        
-        Users.sharedInstance().query = "go_with_group"
-        
-        RequestInfo.sharedInstance().postReq("999000")
-        { (success, errorString) -> Void in
-            guard success else {
-                dispatch_async(dispatch_get_main_queue(), {
-                    print("Failed at getting foodz")
-                    self.alertMessage("Error", message: "Unable to connect.")
-                })
-                return
-            }
-            
-            dispatch_after(self.popTime, self.GlobalMainQueue) {
-              
-                for item in Users.sharedInstance().places! {
-                    print(Users.sharedInstance().place_id)
-                    let restaurantData : NSData = (item.dataUsingEncoding(NSUTF8StringEncoding))!
-                    
-                    do {
-                        let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData , options: .AllowFragments) as! NSMutableDictionary
-                        self.newValues!.addObject(restaurantInfo)
-                    } catch {
-                        print(error)
-                    }
-                }
-
-                self.loadMap()
-                self.eventNameTextField.hidden = true
-                self.moviesButton.hidden = true
-                self.restaurantButton.hidden = true
-                self.dateLabel.hidden = true
-                self.dateButton.hidden = true
-                self.timeLabel.hidden = true
-                self.timeButton.hidden = true
-                self.notesTextField.hidden = true
-                self.submitButton.hidden = true
-                self.searchQueryTextField.hidden = true
-                self.searchQSwitch.hidden = true
-                self.searchLabel.hidden = true
-                self.myPrefSwitch.hidden = true
-                self.myPrefLabel.hidden = true
-                self.friendsPrefLabel.hidden = true
-                self.friendsPrefSwitch.hidden = true
-                self.timePicker.hidden = true
-                self.datePicker.hidden = true
-
-                print("Found restauants!")
-                self.placesTableView.hidden = false
-                print(Users.sharedInstance().places)
-                self.placesTableView.reloadData()
-            }
-        }
-    }
-    
-    func loadMap() {
-        mapView = MKMapView(frame: CGRectMake(0, screenHeight/8, screenWidth, screenHeight/2.8))
-        mapView?.delegate = self
-        let span = MKCoordinateSpanMake(4, 4)
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 38.5, longitude: -121.4), span: span)
-        mapView?.zoomEnabled = true
-        mapView?.scrollEnabled = true
-        mapView?.setRegion(region, animated: true)
-        self.view.addSubview(mapView!)
-        view.bringSubviewToFront(friendsTableView)
-        for value in newValues! {
-            let latitude = Double(value.valueForKey("latitude") as! String)
-            let longitude = Double(value.valueForKey("longitude") as! String)
-            print(latitude)
-            print(longitude)
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = CLLocationCoordinate2D(latitude: latitude!, longitude: longitude!)
-            annotation.title = value.valueForKey("name") as? String
-            annotation.subtitle = value.valueForKey("address") as? String
-            self.annotations.removeAll()
-            self.annotations.append(annotation)
-            mapView!.addAnnotations(self.annotations)
-            activityIndicator.stopAnimating()
-        }
-    }
     
     func inviteMembers() { // invites are sent via 998001
         
@@ -508,8 +311,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         inviteToList.hidden = true
         friendsTableView.hidden = true
         eventNameTextField.hidden = false
-        //restaurantButton.hidden = false
-        //moviesButton.hidden = false
         dateLabel.hidden = false
         dateButton.hidden = false
         timeLabel.hidden = false
@@ -519,13 +320,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         cancelButton.enabled = false
         cancelButton.tintColor = UIColor.clearColor()
         nextButton.enabled = false
-        searchQueryTextField.hidden = false
-        searchLabel.hidden = false
-        myPrefSwitch.hidden = false
-        myPrefLabel.hidden = false
-        searchQSwitch.hidden = false
-        friendsPrefLabel.hidden = false
-        friendsPrefSwitch.hidden = false
         nextButton.tintColor = UIColor.clearColor()
         backButton = UIBarButtonItem(title: "Back", style: .Plain, target: self, action: #selector(AddEventViewController.backPressed))
         navigationItem.leftBarButtonItem = backButton
@@ -539,8 +333,6 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func backPressed() {
         eventNameTextField.hidden = true
-        restaurantButton.hidden = true
-        moviesButton.hidden = true
         dateLabel.hidden = true
         dateButton.hidden = true
         timeLabel.hidden = true
@@ -555,18 +347,10 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         cancelButton.enabled = true
         cancelButton.tintColor = UIColor.blackColor()
         nextButton.enabled = true
-        searchLabel.hidden = true
-        searchQSwitch.hidden = true
-        searchQueryTextField.hidden = true
-        friendsPrefSwitch.hidden = true
-        friendsPrefLabel.hidden = true
-        myPrefLabel.hidden = true
-        myPrefSwitch.hidden = true
         mapView?.hidden = true
         datePicker.hidden = true
         timePicker.hidden = true
         nextButton.tintColor = darkBlue
-        placesTableView.hidden = true
     }
     
     //MARK : helpers
@@ -598,22 +382,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func keyboardWillShow(notification: NSNotification) {
         
-        if searchQueryTextField.editing == true {
-            submitButton.enabled = false
-            if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-                self.view.frame.origin.y -= keyboardSize.height
-            }
-        }
+       print("keybord on")
     }
     
     func keyboardWillHide(notification: NSNotification) {
         
-        if searchQueryTextField.editing == true{
-            submitButton.enabled = true 
-            if let keyboardSize = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
-                self.view.frame.origin.y += keyboardSize.height
-            }
-        }
+      print("keybord off")
     }
     
     //Calls this function when the tap is recognized.

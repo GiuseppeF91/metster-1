@@ -21,8 +21,8 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
-    var submitButton = SubmitButton(frame: CGRectMake((screenWidth/2)+10, 100, (screenWidth/2)-30, 40))
-    var gobackButton = BackButton(frame: CGRectMake(10, 100, (screenWidth/2)-30, 40))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-100, 50, 40, 40))
+    var gobackButton = BackButton(frame: CGRectMake(10, 50, 40, 40))
     // list attbrs
     var names : NSMutableArray? = []
     var images : NSMutableArray? = []
@@ -69,7 +69,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         
         submitButton.addTarget(self, action: #selector(self.searchmade), forControlEvents: UIControlEvents.TouchUpInside)
-        submitButton.setTitle("Submit", forState: .Normal)
         self.view.addSubview(submitButton)
         submitButton.hidden = false
         
@@ -165,6 +164,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     
     func findFood(query : String, eventid : String) {
         print ("enter findfood")
+        Users.sharedInstance().search_mode = "group"
         loadingact.hidden = false
         loadingact.startAnimating()
         

@@ -11,6 +11,7 @@ import FBSDKCoreKit
 import FBSDKLoginKit
 import CoreLocation
 import Firebase
+import Haneke
 
 class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDelegate {
     
@@ -45,7 +46,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         let loginView : FBSDKLoginButton = FBSDKLoginButton()
         loginView.frame = CGRectMake(40, screenHeight-70, UIScreen.mainScreen().bounds.width-80, 40)
         self.view.addSubview(loginView)
-        loginView.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_photos"]
+        loginView.readPermissions = ["email", "public_profile", "user_friends", "user_location", "user_photos", "user_about_me"]
         loginView.delegate = self
         
         if (FBSDKAccessToken.currentAccessToken() != nil) {
@@ -93,6 +94,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
             print(ErrorType)
         } else {
             //Start Location Auth
+            //let token:FBSDKAccessToken = result.token
             self.locManager.requestAlwaysAuthorization()
             self.locManager.startUpdatingLocation()
             print("user data returned")
@@ -130,6 +132,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
     
     // get all user friends
     func returnUserFriends() {
+    let cache = Shared.dataCache
     print("enter returnUserFriends ----->")
         let graphRequest : FBSDKGraphRequest = FBSDKGraphRequest(graphPath: "me/friends", parameters: ["fields": "name, email"])
         graphRequest.startWithCompletionHandler({ (connection, result, error) -> Void in
@@ -142,6 +145,40 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 
                 let friends = data?.valueForKey("name")
                 Users.sharedInstance().user_friends = friends as? NSArray
+                
+                let friendsid = data?.valueForKey("id")
+                Users.sharedInstance().user_friends_id = friendsid as? NSArray
+                
+                for id in Users.sharedInstance().user_friends_id! {
+                    let access = id as! String
+                    let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+                    
+                    //---- cache image management
+                    cache.fetch(key: access).onFailure { data in
+                        
+                        print (access)
+                        let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+                        ) { (responseData, responseUrl, error) -> Void in
+                            if let data = responseData{
+                                dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                    let image : UIImage = UIImage(data: data)!
+                                    cache.set(value: image.asData(), key: access)
+                                })
+                            }
+                        }
+                        task.resume()
+                        
+                    }
+                    
+                    cache.fetch(key: access).onSuccess { data in
+                        print ("data was found in cache for a friend")
+                        // let image : UIImage = UIImage(data: data)!
+                        // self.profImage!.image = image
+                    }
+                    //-----
+                    
+                }
+                
             } else {
                 print("Error Getting Friends \(error)")
                 Users.sharedInstance().user_friends = []
@@ -170,6 +207,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 }
                 Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
                 Users.sharedInstance().gender = result.valueForKey("gender") as! NSString
+                print(result.valueForKey("abount_me"))
                 
             }
         })

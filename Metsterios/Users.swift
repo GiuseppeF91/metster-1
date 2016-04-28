@@ -38,12 +38,21 @@ class Users: NSObject {
     var host_email : AnyObject?
     
     var user_friends: NSArray?
+    var user_friends_id: NSArray?
     var hosted : NSArray?
     var joined : NSArray?
     var pending : NSArray?
     var gender : AnyObject?
     
     var event_dic =  [String: AnyObject?]()
+    
+    //-- search
+    var search_mode : AnyObject?
+    
+    //-- tryout
+    var tryout_place_id : AnyObject?
+    var tryout_message : AnyObject?
+    var tryout_people : AnyObject?
     
     class func sharedInstance() -> Users {
         struct Singleton {

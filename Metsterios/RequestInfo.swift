@@ -31,7 +31,9 @@ class RequestInfo {
     }
     
     func parseAccountInfo(responseData: NSDictionary) {
+
         let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
+    
         let bData = String(data: aData!, encoding: NSUTF8StringEncoding)
         let cData = bData!.stringByReplacingOccurrencesOfString("'", withString: "\"", options: NSStringCompareOptions.LiteralSearch, range: nil)
         let ccData = cData.stringByReplacingOccurrencesOfString("u", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
@@ -42,7 +44,7 @@ class RequestInfo {
         let eData = String(data: dData!, encoding: NSUTF8StringEncoding)
         
         let fData : NSData = (eData?.dataUsingEncoding(NSUTF8StringEncoding))!
-        
+ 
         do {
             let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
             
@@ -68,39 +70,34 @@ class RequestInfo {
         }
     }
     
-    func parseEventInfo(responseData: NSDictionary) {
-        let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
-        let bData = String(data: aData!, encoding: NSUTF8StringEncoding)
-        let cData = bData!.stringByReplacingOccurrencesOfString("'", withString: "\"", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let ccData = cData.stringByReplacingOccurrencesOfString("u", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let cccData = ccData.stringByReplacingOccurrencesOfString("(", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let ccccData = cccData.stringByReplacingOccurrencesOfString(")", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let cccccData = ccccData.stringByReplacingOccurrencesOfString("ObjectId", withString: "", options: NSStringCompareOptions.LiteralSearch, range: nil)
-        let dData = (cccccData as NSString).dataUsingEncoding(NSUTF8StringEncoding)
-        let eData = String(data: dData!, encoding: NSUTF8StringEncoding)
-        
-        let fData : NSData = (eData?.dataUsingEncoding(NSUTF8StringEncoding))!
-        
-        do {
-            let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
-            print ("dat here")
-            print (useME)
-            //userevents.init(key: String(useME["mid"]), dictionary: useME as! Dictionary<String, AnyObject>)
-            //userevents.events.update
-            let evnt = userevents(eid: useME["mid"] as! String,
-                       ename: useME["event_name"] as! String,
-                       ehost: useME["host_email"] as! String,
-                       edesp: useME["event_notes"] as! String,
-                       edate: useME["event_date"] as! String,
-                       etime: useME["event_time"] as! String,
-                       ehostname: useME["host_name"] as! String)
-            
-            Users.sharedInstance().event_dic.updateValue(evnt, forKey: useME["mid"] as! String)
-            Users.sharedInstance().host_email = useME["host_email"] as! String
-            
-        } catch {
-            print(ErrorType)
+    
+    func convertStringToDictionary(text: String) -> [String:AnyObject]? {
+        if let data = text.dataUsingEncoding(NSUTF8StringEncoding) {
+            do {
+                let json = try NSJSONSerialization.JSONObjectWithData(data, options: .MutableContainers) as? [String:AnyObject]
+                return json
+            } catch {
+                print("Something went wrong")
+            }
         }
+        return nil
+    }
+    
+    func parseEventInfo(responseData: NSDictionary) {
+        print ("Enter parse event")
+        print(responseData["response"])
+        let useME = responseData["response"]! as! Dictionary<String, String> as Dictionary        // testibg
+
+            let evnt = userevents(eid: useME["mid"]!,
+                       ename: useME["event_name"]!,
+                       ehost: useME["host_email"]!,
+                       edesp: useME["event_notes"]!,
+                       edate: useME["event_date"]!,
+                       etime: useME["event_time"]!,
+                       ehostname: useME["host_name"]!)
+            
+            Users.sharedInstance().event_dic.updateValue(evnt, forKey: useME["mid"]!)
+         print ("Exit parse event")
     }
     
     func postReq(oper: String, completionHandler: (success: Bool, errorString: String?) -> Void) {
@@ -135,7 +132,41 @@ class RequestInfo {
         
         if oper == "999000" { // find fooood
             print("api req for food")
-            dictionary = ["query": Users.sharedInstance().query! , "event_id": Users.sharedInstance().event_id!]
+            print (Users.sharedInstance().search_mode as! String)
+            switch(Users.sharedInstance().search_mode as! String) {
+            case "private"  :
+                dictionary = ["query": Users.sharedInstance().query! ,
+                              "search_mode": Users.sharedInstance().search_mode! ,
+                              "email": Users.sharedInstance().email!]
+                break;
+            case "public"  :
+                dictionary = ["query": Users.sharedInstance().query! ,
+                              "search_mode": Users.sharedInstance().search_mode! ,
+                              "email": Users.sharedInstance().email!]
+                break;
+            case "group"  :
+                dictionary = ["query": Users.sharedInstance().query! ,
+                              "search_mode": Users.sharedInstance().search_mode! ,
+                              "event_id": Users.sharedInstance().event_id!]
+                break;
+                
+            default : /* Optional */
+                dictionary = ["query": Users.sharedInstance().query! ,
+                              "search_mode": "private" ,
+                              "event_id": Users.sharedInstance().event_id!]
+            }
+            
+        }
+        
+        if oper == "997666" { // tryout insert
+            dictionary = ["email": Users.sharedInstance().email! ,
+                          "place_id": Users.sharedInstance().tryout_place_id! ,
+                          "message": Users.sharedInstance().tryout_message!]
+        }
+        
+        if oper == "997667" {
+            dictionary = ["email": Users.sharedInstance().email! ,
+                          "place_id": Users.sharedInstance().tryout_place_id!]
         }
         
         if oper == "111000" { // insert to account
@@ -247,16 +278,17 @@ class RequestInfo {
                         }
                     } else {
                         let status = responseData.valueForKey("status") as! String
-                        let responseStat = responseData.valueForKey("response") as! String
+                        let responseStat = responseData.valueForKey("response")
                         
                         if status == "fail" {
                             completionHandler(success: false, errorString: "that info does not exist")
                         }
                         
+                        /*
                         if responseStat == "update failed" {
                             completionHandler(success: false, errorString: "Unable to update")
                         }
-                        
+                        */
                         if status == "success" {
                             if oper == "121000" {
                                 Users.sharedInstance().event_id = responseData.valueForKey("response")
@@ -267,6 +299,9 @@ class RequestInfo {
                             }
                             if oper == "121002" {
                                 self.parseEventInfo(responseData)
+                            }
+                            if oper == "997667" {
+                                Users.sharedInstance().tryout_people = responseData.valueForKey("response")
                             }
                             
                             completionHandler(success: true, errorString: "info found")

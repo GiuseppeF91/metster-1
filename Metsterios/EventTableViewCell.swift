@@ -18,6 +18,7 @@ class EventTableViewCell: UITableViewCell {
     var eventTimeLabel : UILabel!
     var eventDateLabel : UILabel!
     var userImage : UIImageView?
+    var slideImage : UIImageView?
     
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
@@ -49,6 +50,13 @@ class EventTableViewCell: UITableViewCell {
         eventTimeLabel.textColor = UIColor.grayColor()
         eventTimeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(eventTimeLabel)
+        
+        
+        slideImage = UIImageView()
+        slideImage?.frame = CGRectMake(screenWidth-80, 40, 25, 25)
+        slideImage!.layer.cornerRadius = 8.0
+        slideImage!.clipsToBounds = true
+        contentView.addSubview(slideImage!)
         
         eventDescpLabel = UILabel()
         eventDescpLabel.frame = CGRectMake(90, 30, screenWidth-100, 25)

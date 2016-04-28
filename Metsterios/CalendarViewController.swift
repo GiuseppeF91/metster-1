@@ -48,6 +48,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     override func viewDidLoad() {
         super.viewDidLoad()
         print("====== ENTER Calender View Controller =====")
+        Users.sharedInstance().search_mode = "private"
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -246,6 +247,8 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         
         mapView?.zoomEnabled = true
         mapView?.scrollEnabled = true
+        
+        mapView?.showsUserLocation = true
         // mapView?.setRegion(region, animated: true)
         self.view.addSubview(mapView!)
         print("comes till here")
@@ -508,6 +511,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             cell.eventTimeLabel.text = myHostedevents[Int(indexPath.row)].eventtime
             cell.eventDateLabel.text = myHostedevents[Int(indexPath.row)].eventdate
             cell.eventNameLabel.text = myHostedevents[Int(indexPath.row)].eventname //hostedPlace.eventname
+            
+            let image : UIImage = UIImage(named:"slide")!
+            cell.slideImage!.image = image
             
             // get the user facebook id and get the pic for that.
             //---- cache image management
