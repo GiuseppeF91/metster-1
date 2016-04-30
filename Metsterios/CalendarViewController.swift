@@ -12,7 +12,7 @@ import Firebase
 import Mapbox
 import Haneke
 
-class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate {
+class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, CLLocationManagerDelegate {
     
     var hostedPlaces = [Place]()
     var pendingPlaces = [Place]()
@@ -29,6 +29,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     let cache = Shared.dataCache
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
+    
+    
+    let locationManager = CLLocationManager()
     
     // button ( yes, pending, accepted) styles
     var yesEventsButton = SelectionButton(frame: CGRectMake(0, 20, screenWidth/3, (screenHeight)/16))
@@ -49,6 +52,12 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         super.viewDidLoad()
         print("====== ENTER Calender View Controller =====")
         Users.sharedInstance().search_mode = "private"
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -242,6 +251,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         mapView?.delegate = self
 
         // set the map's center coordinate
+        
         mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: 38.5,
             longitude: -121.4), zoomLevel: 12, animated: false)
         
@@ -716,6 +726,27 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     func mapView(mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
         return true
+    }
+    
+    
+    func locationManager(manager: CLLocationManager,
+                         didUpdateLocations locations: [CLLocation])
+    {
+        let location:CLLocation = locations[locations.count-1]
+        
+        if (location.horizontalAccuracy > 0) {
+            self.locationManager.stopUpdatingLocation()
+            print(location.coordinate)
+            let point1 = MGLPointAnnotation()
+            let lat = Double(location.coordinate.latitude)
+            let lon = Double(location.coordinate.longitude)
+            Users.sharedInstance().lat = lat
+            Users.sharedInstance().long = lon
+            point1.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+            mapView?.setCenterCoordinate(point1.coordinate, animated: true)
+            //mapView?.setCenterCoordinate(point1.coordinate)
+            // new location update present location : TODO
+        }
     }
     
     

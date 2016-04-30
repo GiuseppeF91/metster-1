@@ -30,6 +30,16 @@ class RequestInfo {
         Users.sharedInstance().places = allkeys
     }
     
+    
+    func delay(delay:Double, closure:()->()) {
+        dispatch_after(
+            dispatch_time(
+                DISPATCH_TIME_NOW,
+                Int64(delay * Double(NSEC_PER_SEC))
+            ),
+            dispatch_get_main_queue(), closure)
+    }
+    
     func parseAccountInfo(responseData: NSDictionary) {
 
         let aData = (responseData["response"] as! NSString).dataUsingEncoding(NSUTF8StringEncoding)
@@ -171,7 +181,7 @@ class RequestInfo {
         
         if oper == "111000" { // insert to account
             print("insert req into account")
-            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!,"gender": Users.sharedInstance().gender!, "longitude": Users.sharedInstance().long!, "food_pref": "abcdefghijl", "movie_pref": "abcdefghijl"]
+            dictionary = ["dev_id": "12er34", "email": Users.sharedInstance().email!, "fb_id": Users.sharedInstance().fbid!, "name": Users.sharedInstance().name!, "invites": NSMutableArray(), "hosted": NSMutableArray(), "joined": NSMutableArray(), "latitude": Users.sharedInstance().lat!,"gender": Users.sharedInstance().gender!, "longitude": Users.sharedInstance().long!, "food_pref": "abcdefghijlm", "movie_pref": "abcdefghijlm"]
             }
             
         if oper == "121000" { // insert to events
@@ -197,6 +207,13 @@ class RequestInfo {
         if oper == "998002" { // reject invite
             print("api req to reject invite")
             dictionary = ["email": Users.sharedInstance().email!, "event_id": Users.sharedInstance().event_id!]
+        }
+        
+        
+        //sanity wait of few sec before req to server
+        delay(0.4) {
+            // do stuff
+            print("wait..")
         }
         
         let urlString = "http://104.236.177.93:8888"

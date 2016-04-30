@@ -73,6 +73,7 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
             Users.sharedInstance().long = lon
             point1.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             // new location update present location : TODO
+            print("comes till here..")
             RequestInfo.sharedInstance().postReq("111003")
             { (success, errorString) -> Void in
                 guard success else {

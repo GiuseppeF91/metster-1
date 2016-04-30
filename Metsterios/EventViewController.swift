@@ -21,8 +21,8 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
-    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-100, 50, 40, 40))
-    var gobackButton = BackButton(frame: CGRectMake(10, 50, 40, 40))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-100, 30, 40, 40))
+    var gobackButton = BackButton(frame: CGRectMake(10, 30, 40, 40))
     // list attbrs
     var names : NSMutableArray? = []
     var images : NSMutableArray? = []
@@ -67,6 +67,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
+        Users.sharedInstance().places?.removeAllObjects()
         
         submitButton.addTarget(self, action: #selector(self.searchmade), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(submitButton)
@@ -127,8 +128,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         
     }
-    
-    
     
     func didSwipe(recognizer: UIGestureRecognizer) {
         if recognizer.state == UIGestureRecognizerState.Ended {
@@ -334,9 +333,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 print("destructive")
             }
         }))
-
-
-        
     }
     
     override func didReceiveMemoryWarning() {
@@ -500,7 +496,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         let delete = UITableViewRowAction(style: .Normal, title: "Delete") { action, index in
             print("delete button tapped")
             print(Users.sharedInstance().event_id)
-
         }
         delete.backgroundColor = darkBlue
    

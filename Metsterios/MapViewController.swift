@@ -18,7 +18,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var attndictionary:Dictionary<String, String>?
     var attkdictionary:Dictionary<String, String>?
     let locationManager = CLLocationManager()
-    let newValues : NSMutableArray? = []
+    let newValues : NSMutableArray? = [] // holds all places for a given query
+    let newValuespeople : NSMutableArray? = [] // we need to update this for a given place.
     var modeImage : UIImageView?
     
     var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 75, 0, 0))
@@ -117,6 +118,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             self.modeImage!.image = image
             Users.sharedInstance().search_mode = "public"
         }
+        
+        self.placesTableView.reloadData()
     }
     
     func findFood(query : String, eventid : String) {
@@ -147,7 +150,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     
                     do {
                         let restaurantInfo = try NSJSONSerialization.JSONObjectWithData(restaurantData , options: .AllowFragments) as! NSMutableDictionary
-                        self.newValues!.addObject(restaurantInfo)
+                        self.newValues!.addObject(restaurantInfo) // adding place info here
+                        
                     } catch {
                         print(error)
                     }
@@ -161,6 +165,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     let latitude = value.valueForKey("latitude") as! String
                     let longitude = value.valueForKey("longitude") as! String
                     let name = value.valueForKey("name") as! String
+                    
                     let address = value.valueForKey("address") as! String
                     let drivedistance = value.valueForKey("drivedistance") as! String
                     print(latitude)
@@ -297,7 +302,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         label.text = dis! + "\nmins"
         
         // make find people req
-        if(Users.sharedInstance().search_mode as! String == "public") {
+        if(Users.sharedInstance().search_mode as! String == "private") {
+            print("finding people")
             findpeople(annotation.title!!)
         }
         
@@ -368,10 +374,13 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             dispatch_async(dispatch_get_main_queue(), {
                 print("Found people")
                 print(Users.sharedInstance().tryout_people)
+                self.newValuespeople!.addObject(Users.sharedInstance().tryout_people!)
             })
         }
     
     }
+    
+
     
     func tryout(title : String) {
         Users.sharedInstance().tryout_message = "Would love to try out this place!!"
@@ -437,14 +446,23 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         var count:Int?
   
-        if tableView == placesTableView  {
-            if Users.sharedInstance().places == nil {
+        if (Users.sharedInstance().search_mode as! String == "private") {
+        
+            if tableView == placesTableView  {
+                if Users.sharedInstance().places == nil {
+                    count = 0
+                } else {
+                    count = Users.sharedInstance().places!.count
+                }
+            }
+        } else {
+            if(Users.sharedInstance().tryout_people == nil){
                 count = 0
             } else {
-                count = Users.sharedInstance().places!.count
+                let people = Users.sharedInstance().tryout_people as! NSDictionary
+                count = people.allKeys.count
             }
         }
-
         return count!
     }
     
@@ -453,36 +471,37 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         
         let cell = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
-        let cell2 = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
-        
-        if Users.sharedInstance().places != nil {
-            
-            for item in newValues! {
-                // print (item)
+        if (Users.sharedInstance().search_mode as! String == "private") {
+
+            if Users.sharedInstance().places != nil {
+                
+                for item in newValues! {
+                    print ("item ----")
+                    print (item)
                 /*
                  address, category, coordinates, image, name, phone, ratings, review_count, snippet
                 */
-                let newName = item.valueForKey("name")
-                self.names?.addObject(newName!)
+                    let newName = item.valueForKey("name")
+                    self.names?.addObject(newName!)
                 
-                let newImage = item.valueForKey("image_url")
-                self.images?.addObject(newImage!)
+                    let newImage = item.valueForKey("image_url")
+                    self.images?.addObject(newImage!)
                 
-                let category = item.valueForKey("category")
-                self.categories?.addObject(category!)
-                // placeDescpLabel
+                    let category = item.valueForKey("category")
+                    self.categories?.addObject(category!)
+                    // placeDescpLabel
                 
-                let snippet = item.valueForKey("snippet")
-                let ratings = item.valueForKey("ratings")
-                // let review_count = item.valueForKey("review_count")
-                let details = ratings!
-                self.details?.addObject(details)
-                self.snippets?.addObject(snippet!)
-                print("---->")
-                print(newName)
+                    let snippet = item.valueForKey("snippet")
+                    let ratings = item.valueForKey("ratings")
+                    // let review_count = item.valueForKey("review_count")
+                    let details = ratings!
+                    self.details?.addObject(details)
+                    self.snippets?.addObject(snippet!)
+                    print("---->")
+                    print(newName)
                 
-            }
-            Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
+                }
+                Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
             
             // setup cell values here...
             cell.placeNameLabel!.text = names![indexPath.row] as? String
@@ -490,22 +509,45 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             cell.placeSnippetLabel!.text = snippets![indexPath.row] as? String
             cell.placedetailsLabel!.text = details![indexPath.row] as? String
             
-            cell2.placeNameLabel!.text = names![indexPath.row] as? String
-            cell2.placeDescpLabel!.text = categories![indexPath.row] as? String
-            cell2.placeSnippetLabel!.text = snippets![indexPath.row] as? String
-            cell2.placedetailsLabel!.text = details![indexPath.row] as? String
             
             let url = NSURL(string: images![indexPath.row] as! String)!
             let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         cell.placeImage!.image = UIImage(data: data)
-                        cell2.placeImage!.image = UIImage(data: data)
                     })
                 }
             }
             task.resume()
         }
+            
+        } else if (Users.sharedInstance().search_mode as! String == "public") {
+        
+            
+            if(Users.sharedInstance().tryout_people != nil){
+            
+            let people = Users.sharedInstance().tryout_people as! NSDictionary
+            let keys = people.allKeys
+            for key in keys {
+                
+                let payload = people.valueForKey(key as! String)
+                let data: NSData = payload!.dataUsingEncoding(NSUTF8StringEncoding)!
+                
+                do {
+                    let jsonR = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
+                    print (jsonR.valueForKey("name") as! String)
+                    cell.placeNameLabel!.text = jsonR.valueForKey("name") as? String
+                    
+                } catch let error as NSError {
+                    print("error: \(error.localizedDescription)")
+                }
+                
+            }
+        }
+        
+        }
+        
+        
         return cell
     }
     
