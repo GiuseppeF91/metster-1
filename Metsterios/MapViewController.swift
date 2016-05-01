@@ -321,8 +321,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         // hide the callout view
         //mapView.deselectAnnotation(annotation, animated: false)
         
-        if(Users.sharedInstance().search_mode as! String == "private") {
-           print("private")
+        if(Users.sharedInstance().search_mode as! String == "public") {
+           print("public")
         } else {
         
         let alert = UIAlertController(title: annotation.title!!,
@@ -332,6 +332,11 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         alert.addAction(UIAlertAction(title: "No",
                                       style: UIAlertActionStyle.Default,
                                       handler: nil))
+            
+        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
+                textField.placeholder = "message"
+                textField.secureTextEntry = true
+            })
             
         self.presentViewController(alert,
                                    animated: true,
@@ -345,6 +350,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                                                     print("default")
                                                     print(Users.sharedInstance().email!)
                                                     self.tryout(annotation.title!!)
+                                                    
                                             case .Cancel:
                                                     print("cancel")
                 
@@ -538,6 +544,23 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     print (jsonR.valueForKey("name") as! String)
                     cell.placeNameLabel!.text = jsonR.valueForKey("name") as? String
                     
+                    print(jsonR.valueForKey("fb_id") as? String)
+                    
+                    let access = jsonR.valueForKey("fb_id") as! String
+                    let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+                    let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+                    ) { (responseData, responseUrl, error) -> Void in
+                        if let data = responseData{
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                cell.placeImage!.image = UIImage(data: data)
+                                //let image : UIImage = UIImage(data: data)!
+                                //cache.set(value: image.asData(), key: "profile_image.jpg")
+                            })
+                        }
+                    }
+                    task.resume()
+
+                    
                 } catch let error as NSError {
                     print("error: \(error.localizedDescription)")
                 }
@@ -546,7 +569,6 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         }
         
         }
-        
         
         return cell
     }
