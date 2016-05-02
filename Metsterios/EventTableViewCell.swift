@@ -69,6 +69,7 @@ class EventTableViewCell: UITableViewCell {
         eventHostLabel.textColor = UIColor.grayColor()
         eventHostLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
         contentView.addSubview(eventHostLabel)
+        
     }
     
     override func awakeFromNib() {

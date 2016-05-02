@@ -55,6 +55,9 @@ class Users: NSObject {
     var tryout_people : AnyObject?
     var tryout_people_list : NSArray?
     
+    //-- publish
+    var publish_place : AnyObject?
+    
     class func sharedInstance() -> Users {
         struct Singleton {
             static var sharedInstance = Users()

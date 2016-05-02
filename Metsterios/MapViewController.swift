@@ -22,8 +22,12 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     let newValuespeople : NSMutableArray? = [] // we need to update this for a given place.
     var modeImage : UIImageView?
     
-    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, 75, 0, 0))
+    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, (screenHeight/2)+65, 0, 0))
 
+    
+    // publish button
+    
+    let publishbutton = UIButton(frame: CGRectMake(5, (screenHeight/2)+65, 70, 30))
 
     // list attbrs
     var names : NSMutableArray? = []
@@ -70,10 +74,22 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         publishSwitch.setOn(true, animated: false)
         //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
         self.view.addSubview(publishSwitch)
-        publishSwitch.hidden = false
+        publishSwitch.hidden = true
+        publishbutton.hidden = true
         
-        //
-        modeImage = UIImageView(frame:CGRectMake(screenWidth-100, 75, 40, 40))
+        
+        
+        publishbutton.backgroundColor = UIColor.whiteColor()
+        publishbutton.layer.cornerRadius = 5
+        publishbutton.layer.borderWidth = 1
+        publishbutton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        publishbutton.setTitle("Publish", forState: UIControlState.Normal)
+        publishbutton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        publishbutton.addTarget(self, action: #selector(MapViewController.publishpressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(publishbutton)
+        
+        //0, (screenHeight/2)+100
+        modeImage = UIImageView(frame:CGRectMake(screenWidth-100, (screenHeight/2)+65, 40, 40))
         modeImage?.layer.masksToBounds = false
         modeImage?.layer.cornerRadius = modeImage!.frame.width/2
         modeImage?.clipsToBounds = true
@@ -81,6 +97,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         let image : UIImage = UIImage(named:"place")!
         self.modeImage!.image = image
+        self.modeImage?.hidden = true
         Users.sharedInstance().search_mode = "private"
         //
         
@@ -105,6 +122,17 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     
     
+    func publishpressed(sender:UIButton) {
+        print ("publish")
+        
+        if (Users.sharedInstance().publish_place == nil ) {
+            publish_this_place("none")
+            
+        } else {
+            print (Users.sharedInstance().publish_place)
+            publish_this_place(Users.sharedInstance().publish_place as! String)
+        }
+    }
     
     func switchpressed(switchState: UISwitch) {
         if switchState.on {
@@ -177,6 +205,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 //self.mapView.showAnnotations(self.pinAnnotations, animated: false)
                 //self.mapView.selectAnnotation((self.mapView.annotations?.first)!, animated: true)
                 self.loadingact.stopAnimating()
+                self.publishSwitch.hidden = false
+                self.publishbutton.hidden = false
+                self.modeImage?.hidden = false
                 self.placesTableView.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
@@ -256,9 +287,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             attndictionary = foofoo
         }
         if (attkdictionary == nil) {
-            attkdictionary = [name: placeid]
+            attkdictionary = [placeid: name]
         } else if var foofoo = attkdictionary {
-            foofoo[name] = placeid
+            foofoo[placeid] = name
             attkdictionary = foofoo
         }
         
@@ -301,12 +332,6 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         label.numberOfLines = 0;
         label.text = dis! + "\nmins"
         
-        // make find people req
-        if(Users.sharedInstance().search_mode as! String == "private") {
-            print("finding people")
-            findpeople(annotation.title!!)
-        }
-        
         
         return label
         
@@ -325,49 +350,84 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
            print("public")
         } else {
         
-        let alert = UIAlertController(title: annotation.title!!,
-                                      message: "Do you want to post this place? You can meet similar people who are interested to try this place out.",
-                                      preferredStyle: UIAlertControllerStyle.Alert)
-            
-        alert.addAction(UIAlertAction(title: "No",
-                                      style: UIAlertActionStyle.Default,
-                                      handler: nil))
-            
-        alert.addTextFieldWithConfigurationHandler({(textField: UITextField!) in
-                textField.placeholder = "message"
-                textField.secureTextEntry = true
-            })
-            
-        self.presentViewController(alert,
-                                   animated: true,
-                                   completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "Yes",
-                                      style: .Default,
-                                      handler: { action in
-                                        switch action.style {
-                                            case .Default:
-                                                    print("default")
-                                                    print(Users.sharedInstance().email!)
-                                                    self.tryout(annotation.title!!)
-                                                    
-                                            case .Cancel:
-                                                    print("cancel")
-                
-                                            case .Destructive:
-                                                    print("destructive")
-                                        }
-                                        }))
-        
+            print("private")
+            Users.sharedInstance().publish_place = annotation.title as String!!
         }
         
     }
     
     
+    func publish_this_place(place : String) {
+        
+        //refer dictonary and get palce name
+        
+        if(place == "none") {
+        
+            let alert = UIAlertController(title: "place select a place.",
+                                          message: "",
+                                          preferredStyle: UIAlertControllerStyle.Alert)
+            
+            self.presentViewController(alert,
+                                       animated: true,
+                                       completion: nil)
+            
+            alert.addAction(UIAlertAction(title: "OK",
+                style: .Default,
+                handler: { action in
+                    switch action.style {
+                    case .Default:
+                        print("default")
+                        
+                    case .Cancel:
+                        print("cancel")
+                        
+                    case .Destructive:
+                        print("destructive")
+                    }
+            }))
+
+            
+            
+            
+        } else {
+            let name = attkdictionary![place]
+            let alert = UIAlertController(title: name,
+                                      message: "Do you want to post this place? You can meet similar people who are interested to try this place out.",
+                                      preferredStyle: UIAlertControllerStyle.Alert)
+        
+            alert.addAction(UIAlertAction(title: "No",
+                style: UIAlertActionStyle.Default,
+                handler: nil))
+        
+            self.presentViewController(alert,
+                                   animated: true,
+                                   completion: nil)
+        
+            alert.addAction(UIAlertAction(title: "Yes",
+                style: .Default,
+                handler: { action in
+                    switch action.style {
+                        case .Default:
+                            print("default")
+                            print(Users.sharedInstance().email!)
+                            self.tryout(place)
+                    
+                        case .Cancel:
+                            print("cancel")
+                    
+                        case .Destructive:
+                            print("destructive")
+                    }
+            }))
+
+        }
+    }
+    
     func findpeople(title : String) {
-       
-        let key = attkdictionary![title]
-        Users.sharedInstance().tryout_place_id = key!
+        newValuespeople?.removeAllObjects()
+        Users.sharedInstance().tryout_people = []
+        let key = title
+        Users.sharedInstance().tryout_place_id = key
         RequestInfo.sharedInstance().postReq("997667")
         { (success, errorString) -> Void in
             guard success else {
@@ -383,15 +443,17 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 self.newValuespeople!.addObject(Users.sharedInstance().tryout_people!)
             })
         }
+        
+        
     
     }
     
 
     
     func tryout(title : String) {
-        Users.sharedInstance().tryout_message = "Would love to try out this place!!"
-        let key = attkdictionary![title]
-        Users.sharedInstance().tryout_place_id = key!
+        Users.sharedInstance().tryout_message = "I Would love to try out this place!!"
+        let key = title
+        Users.sharedInstance().tryout_place_id = key
         RequestInfo.sharedInstance().postReq("997666")
         { (success, errorString) -> Void in
             guard success else {
@@ -584,7 +646,18 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             print (item)
         
         let att = pinAnnotations[indexPath.row]
-        mapView.selectAnnotation(att, animated: true) // set att
+        
+        update_map_focus(att)
+    
+        Users.sharedInstance().publish_place = Users.sharedInstance().place_id as! String
+        
+        
+        // make find people req
+        if(Users.sharedInstance().search_mode as! String == "private") {
+            print("finding people")
+            findpeople(Users.sharedInstance().publish_place as! String)
+        }
+        
         /*
          mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
          longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
@@ -592,6 +665,23 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         print(att)
     }
 
+    
+    func update_map_focus(att : MGLPointAnnotation) {
+        
+        let point1 = MGLPointAnnotation()
+        point1.coordinate = att.coordinate
+        //mapView.flyToCamera(<#T##camera: MGLMapCamera##MGLMapCamera#>, completionHandler: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+        
+        // set the map's center coordinate
+        mapView.setCenterCoordinate(point1.coordinate,
+                                    zoomLevel: 12, animated: true)
+        
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.mapView.selectAnnotation(att, animated: true) // set att
+        }
+        
+    }
     
     
     /*

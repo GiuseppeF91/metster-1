@@ -34,13 +34,16 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     let locationManager = CLLocationManager()
     
     // button ( yes, pending, accepted) styles
-    var yesEventsButton = SelectionButton(frame: CGRectMake(0, 20, screenWidth/3, (screenHeight)/16))
+    var yesEventsButton = SelectionButton(frame: CGRectMake(0,
+                                                            (screenHeight/2)-((screenHeight)/16),
+                                                            screenWidth/3,
+                                                            (screenHeight)/16))
     var myEventsButton = SelectionButton(frame: CGRectMake(screenWidth/3,
-                                                           20,
+                                                           (screenHeight/2)-((screenHeight)/16),
                                                            screenWidth/3,
                                                            (screenHeight)/16))
     var pendingEventsButton = SelectionButton(frame: CGRectMake(screenWidth*(2/3),
-                                                                20,
+                                                                (screenHeight/2-((screenHeight)/16)),
                                                                 screenWidth/3,
                                                                 (screenHeight)/16))
 
@@ -141,6 +144,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                     Users.sharedInstance().event_id = item
                     self.getInvitedEvent(item as! String)
                 }
+                
                 
                 self.loadMap()
                 completionHandler(success: true, errorString: nil)
@@ -247,7 +251,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         /*
         mapView = MGLMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2), styleURL: MGLStyle.lightStyleURL())
          */
-        mapView = MGLMapView(frame: CGRectMake(0, (20+screenHeight/20), screenWidth, screenHeight/2))
+        mapView = MGLMapView(frame: CGRectMake(0, 0, screenWidth, screenHeight/2))
         mapView?.delegate = self
 
         // set the map's center coordinate
@@ -267,6 +271,12 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             
             if self.yesEventsButton.selected == true {
                 print("yes event selected")
+                // find upcoming event and put on map
+                for event in self.myJoinedevents {
+                    print("my joined event")
+                    print(event.eventtime)
+                    print(event.eventdate)
+                }
                 self.yesEventsClicked()
             }
             if self.myEventsButton.selected == true {
@@ -319,11 +329,19 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             // get he next closest pending event and add to map
             
         }
+        //self.loadMap()
          print ("exit pendingEventsClicked")
     }
     
     func yesEventsClicked() {
         print ("enter yesEventsClicked")
+        
+        //-- finding next confirmed event
+        for event in self.myJoinedevents{
+            print(event.eventdate)
+        }
+        //---
+        
         yesEventsButton.selected = true
         pendingEventsButton.selected = false
         myEventsButton.selected = false
@@ -351,11 +369,32 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             mapView?.setCenterCoordinate(CLLocationCoordinate2D(latitude: latitude!,
                 longitude: longitude!), zoomLevel: 12, animated: false)
         }
+        //self.loadMap()
         print ("exit yesEventsClicked")
     }
     
     func myEventsClicked() {
         print ("enter myEventsClicked")
+        
+        //-- finding next confirmed event
+        for event in self.myHostedevents{
+            let aString: String = event.eventdate as String
+            let newDate = aString.stringByReplacingOccurrencesOfString("/", withString: "-")
+            print(newDate)
+            print(event.eventtime)
+            //let dateString = event.eventdate as String // change to your date format
+            
+            let dateString = "2014-07-15T00:30:00.000Z" // change to your date format
+            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            
+            let date = dateFormatter.dateFromString(dateString)
+            print(date)
+        }
+        //---
+
+        
         yesEventsButton.selected = false
         pendingEventsButton.selected = false
         myEventsButton.selected = true
@@ -394,6 +433,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             print("hosted places")
             print (ev)
         }
+        //self.loadMap()
         print ("exit myEventsClicked")
     }
 //------------------

@@ -163,6 +163,8 @@ class PreferencesViewController: BaseVC, UITableViewDataSource, UITableViewDeleg
             print(Users.sharedInstance().food_pref!)
             print(Users.sharedInstance().food_pref)
             Users.sharedInstance().what = "food_pref"
+            Users.sharedInstance().lat = "37.40979875856781"
+            Users.sharedInstance().long = "-122.0975197813783"
             tableView.setEditing(false, animated: true)
             
             RequestInfo.sharedInstance().postReq("111003")
