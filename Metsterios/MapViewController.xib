@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="MapView" destination="i5M-Pr-FkT" id="37T-e8-YYS"/>
                 <outlet property="loadingact" destination="0G6-b5-3Rz" id="J3F-vn-2I7"/>
+                <outlet property="searchbar" destination="O2Y-Jn-o70" id="Lea-xH-Y5n"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -18,7 +19,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="search" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="O2Y-Jn-o70">
-                    <rect key="frame" x="8" y="42" width="304" height="30"/>
+                    <rect key="frame" x="56" y="42" width="218" height="30"/>
                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                     <textInputTraits key="textInputTraits"/>
                     <connections>

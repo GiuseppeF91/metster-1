@@ -38,20 +38,20 @@ class PlaceTableViewCell: UITableViewCell {
         placeNameLabel.font = UIFont(name: "GILLSANSCE-ROMAN-Bold", size: 35)
         contentView.addSubview(placeNameLabel)
         
-        placeDescpLabel = UILabel()
+        placeDescpLabel = UILabel() // rate
         placeDescpLabel.frame = CGRectMake(90, 30, screenWidth-100, 25)
         placeDescpLabel.textColor = UIColor.grayColor()
         placeDescpLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(placeDescpLabel)
         
         placedetailsLabel = UILabel()
-        placedetailsLabel.frame = CGRectMake(90, 48, screenWidth-100, 25)
+        placedetailsLabel.frame = CGRectMake(200, 30, screenWidth-100, 25)
         placedetailsLabel.textColor = UIColor.grayColor()
         placedetailsLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
         contentView.addSubview(placedetailsLabel)
         
         placeSnippetLabel = UILabel()
-        placeSnippetLabel.frame = CGRectMake(90, 68, screenWidth-100, 20)
+        placeSnippetLabel.frame = CGRectMake(90, 48, screenWidth-100, 25)
         placeSnippetLabel.textColor = UIColor.grayColor()
         placeSnippetLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
         contentView.addSubview(placeSnippetLabel)

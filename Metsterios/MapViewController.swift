@@ -12,6 +12,10 @@ import Firebase
 
 class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, CLLocationManagerDelegate {
 
+    
+    @IBOutlet var searchbar: UITextField!
+    
+    
     @IBOutlet var mapView: MGLMapView!
     var hostedPlaces = [Place]()
     var pinAnnotations = [MGLPointAnnotation]()
@@ -20,11 +24,11 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = [] // holds all places for a given query
     let newValuespeople : NSMutableArray? = [] // we need to update this for a given place.
-    var modeImage : UIImageView?
     
-    var publishSwitch = UISwitch(frame:CGRectMake(screenWidth-60, (screenHeight/2)+65, 0, 0))
+    var publishSwitch = UISwitch(frame:CGRectMake(2, 40, 40, 40))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 38, 38, 38))
 
-    
+    var toggle_mode = "places"
     // publish button
     
     let publishbutton = UIButton(frame: CGRectMake(5, (screenHeight/2)+65, 70, 30))
@@ -55,6 +59,39 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //full screen size
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
+        
+        
+        
+        //-----
+        /*
+        // Create the navigation bar
+        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 50)) // Offset by 20 pixels vertically to take the status bar into account
+        
+        navigationBar.backgroundColor = UIColor.whiteColor()
+        //navigationBar.delegate = self
+        
+        // Create a navigation item with a title
+        let navigationItem = UINavigationItem()
+        navigationItem.title = "Search"
+        
+        // Create left and right button for navigation item
+        let leftButton =  UIBarButtonItem(title: "Back", style:   UIBarButtonItemStyle.Plain, target: self, action: #selector(self.searchmade))
+        //let rightButton = UIBarButtonItem(title: "Right", style: UIBarButtonItemStyle.Plain, target: self, action: nil)
+        
+        // Create two buttons for the navigation item
+        navigationItem.leftBarButtonItem = leftButton
+        //navigationItem.rightBarButtonItem = rightButton
+        
+        // Assign the navigation item to the navigation bar
+        navigationBar.items = [navigationItem]
+        
+        // Make the navigation bar a subview of the current view controller
+        self.view.addSubview(navigationBar)
+        
+        
+        //-----
+        */
+        
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
         
@@ -63,6 +100,12 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         placesTableView.rowHeight = 100
         self.view.addSubview(self.placesTableView)
         placesTableView.hidden = true
+        placesTableView.userInteractionEnabled = true
+        placesTableView.bringSubviewToFront(self.view)
+        
+        
+        //self.placesTableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTableView"))
+        //placesTableView.gestureRecognizers?.last!.delegate = self
  
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -74,30 +117,26 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         publishSwitch.setOn(true, animated: false)
         //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
         self.view.addSubview(publishSwitch)
-        publishSwitch.hidden = true
+        publishSwitch.hidden = false
         publishbutton.hidden = true
         
         
+        
+        searchbar.placeholder = "search private: e.g sushi, pizza..."
         
         publishbutton.backgroundColor = UIColor.whiteColor()
         publishbutton.layer.cornerRadius = 5
         publishbutton.layer.borderWidth = 1
         publishbutton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        publishbutton.setTitle("Publish", forState: UIControlState.Normal)
+        publishbutton.setTitle("f people", forState: UIControlState.Normal)
         publishbutton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
-        publishbutton.addTarget(self, action: #selector(MapViewController.publishpressed), forControlEvents: UIControlEvents.TouchUpInside)
+        publishbutton.addTarget(self, action: #selector(MapViewController.findpeoplepressed), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(publishbutton)
         
-        //0, (screenHeight/2)+100
-        modeImage = UIImageView(frame:CGRectMake(screenWidth-100, (screenHeight/2)+65, 40, 40))
-        modeImage?.layer.masksToBounds = false
-        modeImage?.layer.cornerRadius = modeImage!.frame.width/2
-        modeImage?.clipsToBounds = true
-        self.view.addSubview(modeImage!)
+        submitButton.addTarget(self, action: #selector(self.searchmade), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(submitButton)
+        submitButton.hidden = false
         
-        let image : UIImage = UIImage(named:"place")!
-        self.modeImage!.image = image
-        self.modeImage?.hidden = true
         Users.sharedInstance().search_mode = "private"
         //
         
@@ -108,7 +147,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         tap = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
         view.addGestureRecognizer(tap!)
         
-        //view.removeGestureRecognizer(tap)
+        //view.removeGestureRecognizer(tap!)
         
         // set the map's center coordinate
         mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: 40.7326808,
@@ -122,9 +161,22 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     
     
-    func publishpressed(sender:UIButton) {
-        print ("publish")
+    func findpeoplepressed(sender:UIButton) {
+        print ("find people")
         
+        if(self.toggle_mode == "people" ){
+           self.toggle_mode = "places"// flip
+           self.placesTableView.reloadData() // loads places
+           self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+            
+        } else {
+           self.toggle_mode = "people" // flip
+           self.placesTableView.reloadData() // loads people
+           self.publishbutton.setTitle("f places", forState: UIControlState.Normal)
+        }
+        
+        // this logic needs to moved
+        /*
         if (Users.sharedInstance().publish_place == nil ) {
             publish_this_place("none")
             
@@ -132,25 +184,38 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             print (Users.sharedInstance().publish_place)
             publish_this_place(Users.sharedInstance().publish_place as! String)
         }
+ */
     }
     
     func switchpressed(switchState: UISwitch) {
         if switchState.on {
             print("The Switch is On")
-            let image : UIImage = UIImage(named:"place")!
-            self.modeImage!.image = image
             Users.sharedInstance().search_mode = "private"
+            self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+            searchbar.placeholder = "search private: e.g sushi, pizza..."
         } else {
             print("The Switch is Off")
-            let image : UIImage = UIImage(named:"people")!
-            self.modeImage!.image = image
             Users.sharedInstance().search_mode = "public"
+            searchbar.placeholder = "search public: e.g sushi, pizza..."
         }
         
-        self.placesTableView.reloadData()
     }
     
     func findFood(query : String, eventid : String) {
+        
+        //mapView = MGLMapView(frame: CGRectMake(0, 0, screenWidth, screenHeight/2))
+        //self.mapView.sendSubviewToBack(self.view)
+        //self.mapView.resignFirstResponder()
+        //self.mapView.frame = CGRectMake(0, 0, screenWidth, screenHeight/2)
+        self.toggle_mode = "places" // reset mode to places when search made
+        self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+        
+        if (Users.sharedInstance().search_mode as! String == "public") {
+            // publish this search
+        }
+        
+        self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+        
         loadingact.startAnimating()
         
         newValues?.removeAllObjects()
@@ -207,7 +272,6 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 self.loadingact.stopAnimating()
                 self.publishSwitch.hidden = false
                 self.publishbutton.hidden = false
-                self.modeImage?.hidden = false
                 self.placesTableView.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
@@ -240,7 +304,11 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //-- clean data of previous search
         clean_data()
         
-        findFood(query!, eventid: eventid)
+        if(self.searchbar.hasText()) {
+            findFood(query!, eventid: eventid)
+        } else {
+            print("no text")
+        }
         
     }
     
@@ -262,6 +330,25 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         self.categories?.removeAllObjects()
         self.snippets?.removeAllObjects()
         self.details?.removeAllObjects()
+        
+    }
+    
+    
+    func searchmade(){
+        
+        print ("searching")
+        
+        let query = searchbar.text
+        let eventid = "10103884620845432--event--18"
+        
+        
+        //-- clean data of previous search
+        clean_data()
+        if(self.searchbar.hasText()) {
+            findFood(query!, eventid: eventid)
+        } else {
+            print("no text")
+        }
         
     }
     
@@ -505,7 +592,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     
     
     override func viewDidLayoutSubviews() {
-        placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, (screenHeight/2)-50)
+        placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, 148)
     }
     
     
@@ -514,7 +601,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         var count:Int?
   
-        if (Users.sharedInstance().search_mode as! String == "private") {
+        // to do clean Users.sharedInstance().places in event view controller
+        if (self.toggle_mode == "places") {
         
             if tableView == placesTableView  {
                 if Users.sharedInstance().places == nil {
@@ -539,7 +627,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         
         let cell = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
-        if (Users.sharedInstance().search_mode as! String == "private") {
+        if (self.toggle_mode == "places") {
 
             if Users.sharedInstance().places != nil {
                 
@@ -589,7 +677,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             task.resume()
         }
             
-        } else if (Users.sharedInstance().search_mode as! String == "public") {
+        } else if (self.toggle_mode == "people") {
         
             
             if(Users.sharedInstance().tryout_people != nil){
@@ -665,6 +753,33 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         print(att)
     }
 
+    func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+    }
+    
+    func tableView(tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        
+        // myInvitedevents[Int(indexPath.row)]
+        
+        print ("drag section..")
+        
+        let save = UITableViewRowAction(style: .Normal, title: "Accept") { action, index in
+            print(Users.sharedInstance().event_id)
+            print("save button tapped")
+            
+            //SAVE TO CONFIRMED EVENTSSSSSS
+
+        }
+        save.backgroundColor = lightBlue
+        
+
+        return [save]
+    }
+
+    
     
     func update_map_focus(att : MGLPointAnnotation) {
         

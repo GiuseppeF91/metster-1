@@ -60,6 +60,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+    
         
     }
     
@@ -95,6 +96,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 
                 self.tableView.reloadData()
                 self.tableView.bringSubviewToFront(self.tableView)
+                
             })
         })
     }
@@ -628,6 +630,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             
             let hostedPlace = myHostedevents[indexPath.row]
             Users.sharedInstance().event_id = hostedPlace.eventid
+            Users.sharedInstance().selected_event_name = hostedPlace.eventname
             let mapViewVC = EventViewController()
             let controller: UIViewController = UIViewController()
             controller.view.backgroundColor = UIColor.whiteColor()

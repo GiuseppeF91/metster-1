@@ -16,13 +16,15 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     var hostedPlaces = [Place]()
     var pinAnnotations = [MGLPointAnnotation]()
     var attndictionary:Dictionary<String, String>?
+    var attvdictionary:Dictionary<String, String>?
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = []
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
-    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-100, 30, 40, 40))
-    var gobackButton = BackButton(frame: CGRectMake(10, 30, 40, 40))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 52, 40, 40))
+    var voteButton = UIButton(frame: CGRectMake(5, (screenHeight/2)+65, 70, 30))
+
     // list attbrs
     var names : NSMutableArray? = []
     var images : NSMutableArray? = []
@@ -51,6 +53,49 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         //full screen size
         // let screenSize: CGRect = UIScreen.mainScreen().bounds
         
+        
+        //-----
+        
+        // Create the navigation bar
+        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 50)) // Offset by 20 pixels vertically to take the status bar into account
+        
+        navigationBar.backgroundColor = UIColor.whiteColor()
+        //navigationBar.delegate = self
+        
+        // Create a navigation item with a title
+        let navigationItem = UINavigationItem()
+        let event_name = Users.sharedInstance().selected_event_name as! String
+        navigationItem.title = event_name
+        
+        // Create left and right button for navigation item
+        let leftButton =  UIBarButtonItem(title: "Back", style:   UIBarButtonItemStyle.Plain, target: self, action: #selector(self.backPressed))
+        //let rightButton = UIBarButtonItem(title: "Right", style: UIBarButtonItemStyle.Plain, target: self, action: nil)
+        
+        // Create two buttons for the navigation item
+        navigationItem.leftBarButtonItem = leftButton
+        //navigationItem.rightBarButtonItem = rightButton
+        
+        // Assign the navigation item to the navigation bar
+        navigationBar.items = [navigationItem]
+        
+        // Make the navigation bar a subview of the current view controller
+        self.view.addSubview(navigationBar)
+
+        
+        //-----
+        
+        
+        voteButton.backgroundColor = UIColor.whiteColor()
+        voteButton.layer.cornerRadius = 5
+        voteButton.layer.borderWidth = 1
+        voteButton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        voteButton.setTitle("Vote up", forState: UIControlState.Normal)
+        voteButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        voteButton.addTarget(self, action: #selector(EventViewController.votepressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(voteButton)
+        voteButton.hidden = true
+        
+        
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
         
@@ -73,10 +118,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         self.view.addSubview(submitButton)
         submitButton.hidden = false
         
-        gobackButton.addTarget(self, action: #selector(self.backPressed), forControlEvents: UIControlEvents.TouchUpInside)
-        gobackButton.setTitle("Back", forState: .Normal)
-        self.view.addSubview(gobackButton)
-        gobackButton.hidden = false
         loadingact.hidden = true
         // close keyboard
         //Looks for single or multiple taps.
@@ -105,8 +146,15 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             if let postDictionary = snap.value as? Dictionary<String, AnyObject> {
                 let key = snap.key
                 let place = Place(key: key, dictionary: postDictionary)
-                print (place.address )
-                self.add_annot(place.latitude, lon: place.longitude, name: place.name, address: place.address, dis: "34")
+                print (place.name )
+                var vote_count = "1"
+                print (place)
+                if(place.votes.count > 0) {
+                    vote_count = String(place.votes.count)
+                } else {
+                    vote_count = "1"
+                }
+                self.add_annot(place.latitude, lon: place.longitude, name: place.name, address: place.address, votes: vote_count, place_id: key)
                 self.hostedPlaces.insert(place, atIndex: 0)
              }
             }
@@ -116,16 +164,38 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
          }, withCancelBlock: { error in
          self.alertMessage("Error", message: "Something went wrong.")
          })
-         
+        
+        var mlat = 0.0
+        var mlon = 0.0
          
          for hostedPlace in self.hostedPlaces {
             let latitude = Double(hostedPlace.latitude)
             let longitude = Double(hostedPlace.longitude)
+            mlat = mlat + latitude!
+            mlon = mlon + longitude!
             print(latitude)
             print(longitude)
             print(hostedPlace.address)
          }
         
+        if (self.hostedPlaces.count > 0 ){
+            mlat = mlat / Double(hostedPlaces.count)
+            mlon = mlon / Double(hostedPlaces.count)
+            print ("move to ")
+            print(mlat)
+            mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: mlat,
+                                    longitude: mlon),
+                                    zoomLevel: 12, animated: true)
+        } else {
+         // print Users.sharedInstance().lat
+            /* seems to be working on phone lets ignore for now
+            let lati = Users.sharedInstance().lat as! Double
+            let longi = Users.sharedInstance().long as! Double
+            mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: lati,
+                                        longitude: longi),
+                                        zoomLevel: 12, animated: true)
+             */
+        }
         
     }
     
@@ -147,7 +217,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         self.dismissViewControllerAnimated(true, completion: {});
     }
     
-    
     func searchmade() {
         print ("search made enter")
         let query = "sushi"
@@ -159,6 +228,11 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         findFood(query, eventid: eventid as! String)
         print ("search made leave")
         
+    }
+    
+    
+    func votepressed(){
+        print("vote pressed")
     }
     
     func findFood(query : String, eventid : String) {
@@ -215,6 +289,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 self.loadingact.stopAnimating()
                 self.loadingact.hidden = true
                 self.placesTableView.hidden = false
+                self.voteButton.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
             }
@@ -233,6 +308,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             
         }
         attndictionary?.removeAll()
+        attvdictionary?.removeAll()
         pinAnnotations.removeAll()
         self.newValues?.removeAllObjects()
         self.names?.removeAllObjects()
@@ -243,7 +319,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
     }
     
-    func add_annot(lat : String, lon : String, name : String, address : String, dis: String){
+    func add_annot(lat : String, lon : String, name : String, address : String, votes: String, place_id : String){
         let lpoint = MGLPointAnnotation()
         lpoint.coordinate = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
         lpoint.title = name
@@ -259,15 +335,44 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         // attndictionary.setValue(dis, forKey: name as String)
         
         if (attndictionary == nil) {
-            attndictionary = [name: dis]
+            attndictionary = [name: votes]
         }
         else if var foofoo = attndictionary {
-            foofoo[name] = dis
+            foofoo[name] = votes
             attndictionary = foofoo
         }
         
+        if (attvdictionary == nil) {
+            attvdictionary = [name: place_id]
+        }
+        else if var foofoo = attndictionary {
+            foofoo[name] = place_id
+            attvdictionary = foofoo
+        }
+        
+        update_map_focus(lpoint)
+        
         //attndictionary.
         // fit the map to the annotation(s)
+        
+    }
+    
+    
+    
+    func update_map_focus(att : MGLPointAnnotation) {
+        
+        let point1 = MGLPointAnnotation()
+        point1.coordinate = att.coordinate
+        //mapView.flyToCamera(<#T##camera: MGLMapCamera##MGLMapCamera#>, completionHandler: <#T##(() -> Void)?##(() -> Void)?##() -> Void#>)
+        
+        // set the map's center coordinate
+        mapView.setCenterCoordinate(point1.coordinate,
+                                    zoomLevel: 12, animated: true)
+        
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC)))
+        dispatch_after(delayTime, dispatch_get_main_queue()) {
+            self.mapView.selectAnnotation(att, animated: true) // set att
+        }
         
     }
     
@@ -282,8 +387,8 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             let point1 = MGLPointAnnotation()
             let lat = Double(location.coordinate.latitude)
             let lon = Double(location.coordinate.longitude)
-            Users.sharedInstance().lat = lat
-            Users.sharedInstance().long = lon
+            Users.sharedInstance().lat = lat as Double
+            Users.sharedInstance().long = lon as Double
             point1.coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             mapView.centerCoordinate = point1.coordinate
             // new location update present location : TODO
@@ -303,20 +408,20 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         label.font = UIFont.systemFontOfSize(18)
         let dis = attndictionary![annotation.title!!]
         label.numberOfLines = 0;
-        label.text = dis! + "\nmins"
+        label.text = dis! + "\nvote"
         return label
         
     }
     
     func mapView(mapView: MGLMapView, rightCalloutAccessoryViewForAnnotation annotation: MGLAnnotation) -> UIView? {
         // return UIButton(type: .DetailDisclosure)
-        return UIButton(type: .InfoDark)
+        return UIButton(type: .ContactAdd)
     }
     
     func mapView(mapView: MGLMapView, annotation: MGLAnnotation, calloutAccessoryControlTapped control: UIControl) {
         // hide the callout view
         //mapView.deselectAnnotation(annotation, animated: false)
-        
+        let evnt = Users.sharedInstance().event_id as! String
         let alert = UIAlertController(title: "name", message: "Do you want to vote up this location?", preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
@@ -326,6 +431,16 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             case .Default:
                 print("default")
                 print(Users.sharedInstance().email!)
+                
+                
+                //-- vote up
+                let placeid = self.attvdictionary![annotation.title!!]! as String
+                print("\(self.ref)/\(evnt)/places/\(placeid)/")
+                let myRootRef = Firebase(url: "\(self.ref)/\(evnt)/places/\(placeid)/votes/")
+                let eid = Users.sharedInstance().email as! String
+                let users = ["2": eid]
+                myRootRef.setValue(users)
+                
             case .Cancel:
                 print("cancel")
                 
@@ -441,7 +556,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 if pinned dont pin again just add it as a vote
                 if someone chooses to upvote add vote
                  */
-                
                 
                 var to_fb = item as! Dictionary<String, AnyObject>
                 to_fb["votes"] = [Users.sharedInstance().email as! String]

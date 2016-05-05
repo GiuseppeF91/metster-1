@@ -11,6 +11,7 @@ import Foundation
 class Users: NSObject {
     
     var name : AnyObject?
+    var gid : AnyObject?
     var email : AnyObject?
     var profpic : AnyObject?
     var fbid : AnyObject?
@@ -54,9 +55,13 @@ class Users: NSObject {
     var tryout_message : AnyObject?
     var tryout_people : AnyObject?
     var tryout_people_list : NSArray?
+    var tryout_search : AnyObject?
     
     //-- publish
     var publish_place : AnyObject?
+    
+    //-- seleccted event
+    var selected_event_name : AnyObject?
     
     class func sharedInstance() -> Users {
         struct Singleton {

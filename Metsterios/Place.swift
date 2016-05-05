@@ -31,6 +31,7 @@ class Place {
     private var _eventdate: String!
     private var _eventname: String!
     private var _eventtime: String!
+    private var _votes: NSArray?
     
     var placeKey: String {
         return _placeKey
@@ -80,6 +81,10 @@ class Place {
         return _image_url
     }
     
+    var votes: NSArray {
+        return _votes!
+    }
+    
     // Initialize
     init(key: String, dictionary: Dictionary<String, AnyObject>) {
         self._placeKey = key
@@ -127,6 +132,10 @@ class Place {
         
         if let image_url = dictionary["image_url"] as? String {
             self._image_url = image_url
+        }
+        
+        if let votes = dictionary["votes"] as? NSArray {
+            self._votes = votes
         }
     }
 }

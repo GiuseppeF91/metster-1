@@ -65,10 +65,12 @@ class RequestInfo {
             let invites  = useME["invites"]
             let food_pref = useME["food_pref"]
             let movie_pref = useME["movie_pref"]
+            let gid = useME["gid"]
             //let email = useME["email"]
             //let name = useME["name"]
             //Users.sharedInstance().email = email
             //Users.sharedInstance().name = name
+            Users.sharedInstance().gid = gid
             Users.sharedInstance().hosted = hosted as? NSArray
             Users.sharedInstance().joined = joined as? NSArray
             Users.sharedInstance().pending = invites as? NSArray

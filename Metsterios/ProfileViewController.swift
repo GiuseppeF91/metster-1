@@ -26,6 +26,7 @@ class ProfileViewController: BaseVC {
     var addressButton = ProfileButton(frame: CGRectMake(0, screenHeight/2, screenWidth, screenHeight/14.5))
     
     var nameLabel = UILabel(frame: CGRectMake(20, screenHeight/2.5, screenWidth-40, 40))
+    var gidLabel = UILabel(frame: CGRectMake(20, (screenHeight/2.5) + 20, screenWidth-40, 40))
     var profImage : UIImageView?
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
@@ -110,6 +111,14 @@ class ProfileViewController: BaseVC {
         nameLabel.font = UIFont(name: "HelveticaNeue", size: 20)
         nameLabel.adjustsFontSizeToFitWidth = true
         view.addSubview(self.nameLabel)
+    
+        gidLabel.textAlignment = NSTextAlignment.Center
+        gidLabel.text = Users.sharedInstance().gid as? String
+        gidLabel.font = UIFont(name: "HelveticaNeue", size: 20)
+        gidLabel.textColor = UIColor.lightGrayColor()
+        gidLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.gidLabel)
+        
     }
     
     func logoutClicked() {
