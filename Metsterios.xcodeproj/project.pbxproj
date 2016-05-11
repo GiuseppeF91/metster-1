@@ -18,6 +18,8 @@
 		57C3A0AF1CC2D81500D5E335 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */; };
 		57C3A0B01CC2D81500D5E335 /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */; };
 		57DA91EE1CC754670021834A /* userevents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DA91ED1CC754670021834A /* userevents.swift */; };
+		57EFBA761CE03F3200AA8E59 /* findpeopleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EFBA751CE03F3200AA8E59 /* findpeopleButton.swift */; };
+		57EFBA781CE03F4F00AA8E59 /* findplacesButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57EFBA771CE03F4F00AA8E59 /* findplacesButton.swift */; };
 		690288711CA7F2F2009C5B16 /* MainTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288701CA7F2F2009C5B16 /* MainTextField.swift */; };
 		690288731CA7F7F9009C5B16 /* SubmitButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288721CA7F7F9009C5B16 /* SubmitButton.swift */; };
 		690288751CA87F48009C5B16 /* MainLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 690288741CA87F48009C5B16 /* MainLabel.swift */; };
@@ -77,6 +79,8 @@
 		57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		57C3A0AE1CC2D81500D5E335 /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
 		57DA91ED1CC754670021834A /* userevents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userevents.swift; sourceTree = "<group>"; };
+		57EFBA751CE03F3200AA8E59 /* findpeopleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = findpeopleButton.swift; sourceTree = "<group>"; };
+		57EFBA771CE03F4F00AA8E59 /* findplacesButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = findplacesButton.swift; sourceTree = "<group>"; };
 		690288701CA7F2F2009C5B16 /* MainTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTextField.swift; sourceTree = "<group>"; };
 		690288721CA7F7F9009C5B16 /* SubmitButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubmitButton.swift; sourceTree = "<group>"; };
 		690288741CA87F48009C5B16 /* MainLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainLabel.swift; sourceTree = "<group>"; };
@@ -189,6 +193,8 @@
 				5747C4AB1CCC4DCA0031F541 /* PlaceTableViewCell.swift */,
 				576AEB6D1CCEF48600D74F04 /* BackButton.swift */,
 				574811411CD1C7AC00CC8F25 /* SearchButton.swift */,
+				57EFBA751CE03F3200AA8E59 /* findpeopleButton.swift */,
+				57EFBA771CE03F4F00AA8E59 /* findplacesButton.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -528,12 +534,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				6964A96C1CBB230C0090EC4C /* EventTableViewCell.swift in Sources */,
+				57EFBA761CE03F3200AA8E59 /* findpeopleButton.swift in Sources */,
 				69DE74ED1CA7CC0600AA35D2 /* LoginViewController.swift in Sources */,
 				5747C4A61CCC13720031F541 /* EventViewController.swift in Sources */,
 				69796BA61CAFBF2300A6378B /* BaseVC.swift in Sources */,
 				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
 				574811421CD1C7AC00CC8F25 /* SearchButton.swift in Sources */,
 				69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */,
+				57EFBA781CE03F4F00AA8E59 /* findplacesButton.swift in Sources */,
 				695AEE761CAE1325006B4D6D /* RequestInfo.swift in Sources */,
 				69DE75191CA7CDC700AA35D2 /* TabBarViewController.swift in Sources */,
 				576AEB6E1CCEF48600D74F04 /* BackButton.swift in Sources */,

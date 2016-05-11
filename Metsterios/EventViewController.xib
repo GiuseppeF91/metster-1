@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="loadingact" destination="nJK-kY-qDM" id="AxV-Wf-Nt1"/>
                 <outlet property="mapView" destination="iN0-l3-epB" id="Hbw-yn-ZAI"/>
+                <outlet property="searchbar" destination="rCy-Rv-fmt" id="qBy-yn-S7A"/>
                 <outlet property="view" destination="iN0-l3-epB" id="A2U-we-vFN"/>
             </connections>
         </placeholder>
@@ -21,6 +22,14 @@
                     <rect key="frame" x="142" y="168" width="37" height="37"/>
                     <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                 </activityIndicatorView>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rCy-Rv-fmt">
+                    <rect key="frame" x="8" y="57" width="264" height="30"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <action selector="searchbar:" destination="-1" eventType="editingDidEndOnExit" id="v1P-CA-JSx"/>
+                    </connections>
+                </textField>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>

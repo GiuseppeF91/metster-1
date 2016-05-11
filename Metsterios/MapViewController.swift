@@ -27,11 +27,12 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     
     var publishSwitch = UISwitch(frame:CGRectMake(2, 40, 40, 40))
     var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 38, 38, 38))
+    
+    var findpeopleBtn = findpeopleButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
+    var findplacesBtn = findplacesButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
 
     var toggle_mode = "places"
     // publish button
-    
-    let publishbutton = UIButton(frame: CGRectMake(5, (screenHeight/2)+65, 70, 30))
 
     // list attbrs
     var names : NSMutableArray? = []
@@ -41,6 +42,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var details : NSMutableArray? = []
     var dictionary = NSDictionary()
     
+    var lineView : UIView?
     var placesTableView : UITableView = UITableView()
     
     var tap :UITapGestureRecognizer?
@@ -118,24 +120,27 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //switchDemo.addTarget(self, action: "switchValueDidChange:", forControlEvents: .ValueChanged);
         self.view.addSubview(publishSwitch)
         publishSwitch.hidden = false
-        publishbutton.hidden = true
         
         
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 1.0))
+        lineView!.layer.borderWidth = 1.0
+        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        self.view.addSubview(lineView!)
+        lineView!.hidden = true
         
         searchbar.placeholder = "search private: e.g sushi, pizza..."
-        
-        publishbutton.backgroundColor = UIColor.whiteColor()
-        publishbutton.layer.cornerRadius = 5
-        publishbutton.layer.borderWidth = 1
-        publishbutton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        publishbutton.setTitle("f people", forState: UIControlState.Normal)
-        publishbutton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
-        publishbutton.addTarget(self, action: #selector(MapViewController.findpeoplepressed), forControlEvents: UIControlEvents.TouchUpInside)
-        self.view.addSubview(publishbutton)
         
         submitButton.addTarget(self, action: #selector(self.searchmade), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(submitButton)
         submitButton.hidden = false
+        
+        findpeopleBtn.addTarget(self, action: #selector(self.findpeoplepressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(findpeopleBtn)
+        findpeopleBtn.hidden = true
+        
+        findplacesBtn.addTarget(self, action: #selector(self.findpeoplepressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(findplacesBtn)
+        findplacesBtn.hidden = true
         
         Users.sharedInstance().search_mode = "private"
         //
@@ -167,12 +172,14 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         if(self.toggle_mode == "people" ){
            self.toggle_mode = "places"// flip
            self.placesTableView.reloadData() // loads places
-           self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+           self.findplacesBtn.hidden = true
+           self.findpeopleBtn.hidden = false
             
         } else {
            self.toggle_mode = "people" // flip
            self.placesTableView.reloadData() // loads people
-           self.publishbutton.setTitle("f places", forState: UIControlState.Normal)
+            self.findplacesBtn.hidden = false
+            self.findpeopleBtn.hidden = true
         }
         
         // this logic needs to moved
@@ -191,7 +198,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         if switchState.on {
             print("The Switch is On")
             Users.sharedInstance().search_mode = "private"
-            self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+            self.findplacesBtn.hidden = true
+            self.findpeopleBtn.hidden = false
             searchbar.placeholder = "search private: e.g sushi, pizza..."
         } else {
             print("The Switch is Off")
@@ -208,13 +216,15 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //self.mapView.resignFirstResponder()
         //self.mapView.frame = CGRectMake(0, 0, screenWidth, screenHeight/2)
         self.toggle_mode = "places" // reset mode to places when search made
-        self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
         
         if (Users.sharedInstance().search_mode as! String == "public") {
             // publish this search
         }
         
-        self.publishbutton.setTitle("f people", forState: UIControlState.Normal)
+        /*
+        self.findplacesBtn.hidden = true
+        self.findpeopleBtn.hidden = false
+        */
         
         loadingact.startAnimating()
         
@@ -271,8 +281,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 //self.mapView.selectAnnotation((self.mapView.annotations?.first)!, animated: true)
                 self.loadingact.stopAnimating()
                 self.publishSwitch.hidden = false
-                self.publishbutton.hidden = false
+                self.findpeopleBtn.hidden = false
                 self.placesTableView.hidden = false
+                self.lineView!.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
             }

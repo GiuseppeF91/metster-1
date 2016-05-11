@@ -31,7 +31,7 @@ class Place {
     private var _eventdate: String!
     private var _eventname: String!
     private var _eventtime: String!
-    private var _votes: NSArray?
+    private var _votes: NSObject?
     
     var placeKey: String {
         return _placeKey
@@ -81,7 +81,7 @@ class Place {
         return _image_url
     }
     
-    var votes: NSArray {
+    var votes: NSObject {
         return _votes!
     }
     
@@ -134,7 +134,7 @@ class Place {
             self._image_url = image_url
         }
         
-        if let votes = dictionary["votes"] as? NSArray {
+        if let votes = dictionary["votes"] as? NSObject {
             self._votes = votes
         }
     }

@@ -26,8 +26,9 @@ class userevents {
     var eventdate: String
     var eventtime: String
     var eventhostname : String
+    var eventmembers: String
     
-    init(eid: String, ename: String, ehost: String, edesp: String, edate: String, etime: String, ehostname: String) {
+    init(eid: String, ename: String, ehost: String, edesp: String, edate: String, etime: String, ehostname: String, emembers: String) {
         self.eventid = eid
         self.eventname = ename
         self.eventhost = ehost
@@ -35,5 +36,6 @@ class userevents {
         self.eventdate = edate
         self.eventtime = etime
         self.eventhostname = ehostname
+        self.eventmembers = emembers
     }
 }

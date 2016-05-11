@@ -12,6 +12,7 @@ class Users: NSObject {
     
     var name : AnyObject?
     var gid : AnyObject?
+    var aboutme : AnyObject?
     var email : AnyObject?
     var profpic : AnyObject?
     var fbid : AnyObject?
@@ -60,8 +61,16 @@ class Users: NSObject {
     //-- publish
     var publish_place : AnyObject?
     
+    //--voteup
+    var vote_place_id : AnyObject?
+    var vote_event_id : AnyObject?
+    
     //-- seleccted event
     var selected_event_name : AnyObject?
+    var selected_event_data : userevents?
+    
+    //-- member
+    var mfbid : AnyObject?
     
     class func sharedInstance() -> Users {
         struct Singleton {

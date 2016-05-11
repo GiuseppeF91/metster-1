@@ -615,6 +615,13 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         if(self.pendingEventsButton.selected == true) {
          
             let pendingPlace = myInvitedevents[Int(indexPath.row)]
+            Users.sharedInstance().event_id = pendingPlace.eventid
+            Users.sharedInstance().selected_event_name = pendingPlace.eventname
+            Users.sharedInstance().selected_event_data = pendingPlace
+            let mapViewVC = EventViewController()
+            let controller: UIViewController = UIViewController()
+            controller.view.backgroundColor = UIColor.whiteColor()
+            self.presentViewController(mapViewVC, animated: true, completion: nil)
             print (pendingPlace)
             
         }
@@ -622,6 +629,13 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         if(self.yesEventsButton.selected == true) {
          
             let confirmedPlace = myJoinedevents[indexPath.row]
+            Users.sharedInstance().event_id = confirmedPlace.eventid
+            Users.sharedInstance().selected_event_name = confirmedPlace.eventname
+            Users.sharedInstance().selected_event_data = confirmedPlace
+            let mapViewVC = EventViewController()
+            let controller: UIViewController = UIViewController()
+            controller.view.backgroundColor = UIColor.whiteColor()
+            self.presentViewController(mapViewVC, animated: true, completion: nil)
             print (confirmedPlace)
         }
         
@@ -631,6 +645,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             let hostedPlace = myHostedevents[indexPath.row]
             Users.sharedInstance().event_id = hostedPlace.eventid
             Users.sharedInstance().selected_event_name = hostedPlace.eventname
+            Users.sharedInstance().selected_event_data = hostedPlace
             let mapViewVC = EventViewController()
             let controller: UIViewController = UIViewController()
             controller.view.backgroundColor = UIColor.whiteColor()

@@ -59,18 +59,20 @@ class RequestInfo {
             let useME : NSDictionary = try NSJSONSerialization.JSONObjectWithData(fData, options: .AllowFragments) as! NSDictionary
             
             print("Parsed data in req info")
-            // print(useME)
+            print(useME)
             let hosted = useME["hosted"]
             let joined = useME["joined"]
             let invites  = useME["invites"]
             let food_pref = useME["food_pref"]
             let movie_pref = useME["movie_pref"]
             let gid = useME["gid"]
+            let me = useME["ame"]
             //let email = useME["email"]
             //let name = useME["name"]
             //Users.sharedInstance().email = email
             //Users.sharedInstance().name = name
             Users.sharedInstance().gid = gid
+            Users.sharedInstance().aboutme = me
             Users.sharedInstance().hosted = hosted as? NSArray
             Users.sharedInstance().joined = joined as? NSArray
             Users.sharedInstance().pending = invites as? NSArray
@@ -106,7 +108,8 @@ class RequestInfo {
                        edesp: useME["event_notes"]!,
                        edate: useME["event_date"]!,
                        etime: useME["event_time"]!,
-                       ehostname: useME["host_name"]!)
+                       ehostname: useME["host_name"]!,
+                       emembers: useME["event_members"]!)
             
             Users.sharedInstance().event_dic.updateValue(evnt, forKey: useME["mid"]!)
          print ("Exit parse event")
@@ -134,12 +137,13 @@ class RequestInfo {
             if(Users.sharedInstance().food_pref == nil) {
                 Users.sharedInstance().food_pref = "abcdefghijkl"
             }
-            dictionary = ["email": Users.sharedInstance().email!, "latitude": Users.sharedInstance().lat!,"longitude": Users.sharedInstance().long!, "movie_pref": Users.sharedInstance().movie_pref!, "food_pref": Users.sharedInstance().food_pref!]
+            dictionary = ["email": Users.sharedInstance().email!, "latitude": Users.sharedInstance().lat!,"longitude": Users.sharedInstance().long!, "movie_pref": Users.sharedInstance().movie_pref!,"ame": Users.sharedInstance().aboutme!, "food_pref": Users.sharedInstance().food_pref!]
         }
         
         if oper == "111002" { // find in account
             print("find req in account")
-            dictionary = ["email": Users.sharedInstance().email!]
+            dictionary = ["email": Users.sharedInstance().email!,
+                          "fid": Users.sharedInstance().mfbid!]
         }
         
         if oper == "999000" { // find fooood
@@ -179,6 +183,12 @@ class RequestInfo {
         if oper == "997667" {
             dictionary = ["email": Users.sharedInstance().email! ,
                           "place_id": Users.sharedInstance().tryout_place_id!]
+        }
+        
+        if oper == "997670" {
+            dictionary = ["email": Users.sharedInstance().email! ,
+                          "event_id": Users.sharedInstance().vote_event_id!,
+                          "place_id": Users.sharedInstance().vote_place_id!]
         }
         
         if oper == "111000" { // insert to account

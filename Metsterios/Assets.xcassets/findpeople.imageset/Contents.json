@@ -6,11 +6,11 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "preference_icon.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
+      "filename" : "findpeople.png",
       "scale" : "3x"
     }
   ],

@@ -20,10 +20,119 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = []
     
+    var view_mode = "members"
+    
+    @IBOutlet var searchbar: UITextField!
+   
+    
+    
+    // testing class object
+    
+    /*
+     * usage 
+     var point = Pinned( name: String,
+                        address: String,
+                        category: String,
+                        latitude: Double,
+                        longitude: Double,
+                        image_url: String,
+                        phone: String,
+                        ratings: String,
+                        reviewcount: String,
+                        snippet: String,
+                        votes: String)
+     */
+    
+    class Pinned {
+        var name: String
+        var address : String
+        var category : String
+        var latitude : Double
+        var longitude : Double
+        var image_url : String
+        var phone : String
+        var ratings : String
+        var reviewcount : String
+        var snippet : String
+        var votes : String
+        
+        init(name: String,
+             address: String,
+             category: String,
+             latitude: Double,
+             longitude: Double,
+             image_url: String,
+             phone: String,
+             ratings: String,
+             reviewcount: String,
+             snippet: String,
+             votes: String) {
+            self.name = name
+            self.address = address
+            self.category = category
+            self.latitude = latitude
+            self.longitude = longitude
+            self.image_url = image_url
+            self.phone = phone
+            self.ratings = ratings
+            self.reviewcount = reviewcount
+            self.snippet = snippet
+            self.votes = votes
+        }
+    }
+    
+    
+    class member {
+        var name: String
+        var address : String
+        var category : String
+        var latitude : Double
+        var longitude : Double
+        var image_url : String
+        var phone : String
+        var ratings : String
+        var reviewcount : String
+        var snippet : String
+        var votes : String
+        
+        init(name: String,
+             address: String,
+             category: String,
+             latitude: Double,
+             longitude: Double,
+             image_url: String,
+             phone: String,
+             ratings: String,
+             reviewcount: String,
+             snippet: String,
+             votes: String) {
+            self.name = name
+            self.address = address
+            self.category = category
+            self.latitude = latitude
+            self.longitude = longitude
+            self.image_url = image_url
+            self.phone = phone
+            self.ratings = ratings
+            self.reviewcount = reviewcount
+            self.snippet = snippet
+            self.votes = votes
+        }
+    }
+    
+    
+    
+    var pinnedPlaces = [Pinned]()
+    
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
     var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 52, 40, 40))
     var voteButton = UIButton(frame: CGRectMake(5, (screenHeight/2)+65, 70, 30))
+    
+    var showmembersButton = UIButton(frame: CGRectMake(0, (screenHeight)-50, (screenWidth/3), 50))
+    var showpinnedButton = UIButton(frame: CGRectMake((screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
+    var showunpinnedButton = UIButton(frame: CGRectMake(2*(screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
+
 
     // list attbrs
     var names : NSMutableArray? = []
@@ -65,6 +174,14 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         // Create a navigation item with a title
         let navigationItem = UINavigationItem()
         let event_name = Users.sharedInstance().selected_event_name as! String
+        let event_data = Users.sharedInstance().selected_event_data! as userevents
+        
+        
+        print("------ Event data -----")
+        print(event_data.eventname)
+        print(event_data.eventdate)
+        print("-----------------------")
+        
         navigationItem.title = event_name
         
         // Create left and right button for navigation item
@@ -84,17 +201,40 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         //-----
         
+        /*
+         showmembersButton.backgroundColor = UIColor.whiteColor()
+         showpinnedButton.backgroundColor = UIColor.whiteColor()
+         showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        */
+        showmembersButton.backgroundColor = UIColor.whiteColor()
+        showmembersButton.layer.borderWidth = 1
+        showmembersButton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        showmembersButton.setTitle("members", forState: UIControlState.Normal)
+        showmembersButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        showmembersButton.addTarget(self, action: #selector(EventViewController.showmemberpressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(showmembersButton)
+        showmembersButton.hidden = false
         
-        voteButton.backgroundColor = UIColor.whiteColor()
-        voteButton.layer.cornerRadius = 5
-        voteButton.layer.borderWidth = 1
-        voteButton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        voteButton.setTitle("Vote up", forState: UIControlState.Normal)
-        voteButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
-        voteButton.addTarget(self, action: #selector(EventViewController.votepressed), forControlEvents: UIControlEvents.TouchUpInside)
-        self.view.addSubview(voteButton)
-        voteButton.hidden = true
+        showpinnedButton.backgroundColor = UIColor.whiteColor()
+        showpinnedButton.layer.borderWidth = 1
+        showpinnedButton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        showpinnedButton.setTitle("pinned", forState: UIControlState.Normal)
+        showpinnedButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        showpinnedButton.addTarget(self, action: #selector(EventViewController.showpinnedpressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(showpinnedButton)
+        showpinnedButton.hidden = false
         
+        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        showunpinnedButton.layer.borderWidth = 1
+        showunpinnedButton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        showunpinnedButton.setTitle("nearby", forState: UIControlState.Normal)
+        showunpinnedButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        showunpinnedButton.addTarget(self, action: #selector(EventViewController.showplacespressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(showunpinnedButton)
+        showunpinnedButton.hidden = false
+        
+        
+        self.searchbar.placeholder = "search: e.g sushi, pizza..."
         
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
@@ -138,7 +278,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         self.hostedPlaces.removeAll()
         let eid = Users.sharedInstance().event_id as! String
         
-        let event_ref = Firebase(url: "\(self.ref)/\(eid)/places")
+         let event_ref = Firebase(url: "\(self.ref)/\(eid)/places")
          // Read data and react to changes
          event_ref.observeEventType(.Value, withBlock: { snapshot in
          if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
@@ -147,15 +287,29 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 let key = snap.key
                 let place = Place(key: key, dictionary: postDictionary)
                 print (place.name )
-                var vote_count = "1"
-                print (place)
-                if(place.votes.count > 0) {
-                    vote_count = String(place.votes.count)
-                } else {
-                    vote_count = "1"
-                }
+                print (place.votes)
+                var vote_count = String(0)
+                let votes = place.votes as! String
+                let vot = votes.characters.split{$0 == "-"}.map(String.init)
+                vote_count = String (vot.count)
                 self.add_annot(place.latitude, lon: place.longitude, name: place.name, address: place.address, votes: vote_count, place_id: key)
                 self.hostedPlaces.insert(place, atIndex: 0)
+                
+                
+                //these are pinned location get them in a list
+                let point = Pinned( name: place.name,
+                                    address: place.address,
+                                    category: place.category,
+                                    latitude: Double(place.longitude)!,
+                                    longitude: Double(place.longitude)!,
+                                    image_url: place.image_url,
+                                    phone: "",
+                                    ratings: "",
+                                    reviewcount: "",
+                                    snippet: "",
+                                    votes: place.votes as! String)
+                self.pinnedPlaces.append(point)
+                
              }
             }
          }
@@ -164,6 +318,25 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
          }, withCancelBlock: { error in
          self.alertMessage("Error", message: "Something went wrong.")
          })
+        
+        print("---- event memebers")
+        let event_mref = Firebase(url: "\(self.ref)/\(eid)/users")
+        print("\(self.ref)/\(eid)/users")
+        // Read data and react to changes
+        event_mref.observeEventType(.Value, withBlock: { snapshot in
+            if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
+                for snap in snapshots {
+                    print("here")
+                    print(snap.value)
+                }
+            }
+            // TableView updates when there is new data.
+            
+            }, withCancelBlock: { error in
+                self.alertMessage("Error", message: "Something went wrong.")
+        })
+        print("---- event memebers")
+        
         
         var mlat = 0.0
         var mlon = 0.0
@@ -217,6 +390,38 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         self.dismissViewControllerAnimated(true, completion: {});
     }
     
+    
+    func showmemberpressed(){
+        self.view_mode = "members"
+ 
+        showmembersButton.backgroundColor = UIColor.lightGrayColor()
+        showpinnedButton.backgroundColor = UIColor.whiteColor()
+        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        
+        self.placesTableView.reloadData()
+    }
+    
+    func showpinnedpressed(){
+        self.view_mode = "pinned"
+        showmembersButton.backgroundColor = UIColor.whiteColor()
+        showpinnedButton.backgroundColor = UIColor.lightGrayColor()
+        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        self.placesTableView.reloadData()
+        for pin in self.pinnedPlaces {
+            print(pin.name)
+        }
+        //---
+        // reload the table and check the mode there
+    }
+    
+    func showplacespressed(){
+        self.view_mode = "places"
+        showmembersButton.backgroundColor = UIColor.whiteColor()
+        showpinnedButton.backgroundColor = UIColor.whiteColor()
+        showunpinnedButton.backgroundColor = UIColor.lightGrayColor()
+        self.placesTableView.reloadData()
+    }
+    
     func searchmade() {
         print ("search made enter")
         let query = "sushi"
@@ -231,12 +436,11 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     }
     
     
-    func votepressed(){
-        print("vote pressed")
-    }
-    
     func findFood(query : String, eventid : String) {
         print ("enter findfood")
+        
+        print(searchbar.text)
+        
         Users.sharedInstance().search_mode = "group"
         loadingact.hidden = false
         loadingact.startAnimating()
@@ -422,7 +626,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         // hide the callout view
         //mapView.deselectAnnotation(annotation, animated: false)
         let evnt = Users.sharedInstance().event_id as! String
-        let alert = UIAlertController(title: "name", message: "Do you want to vote up this location?", preferredStyle: UIAlertControllerStyle.Alert)
+        let alert = UIAlertController(title: "Vote up", message: "Do you want to vote up this location?", preferredStyle: UIAlertControllerStyle.Alert)
         alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Default, handler: nil))
         self.presentViewController(alert, animated: true, completion: nil)
         
@@ -432,14 +636,71 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 print("default")
                 print(Users.sharedInstance().email!)
                 
-                
                 //-- vote up
                 let placeid = self.attvdictionary![annotation.title!!]! as String
-                print("\(self.ref)/\(evnt)/places/\(placeid)/")
-                let myRootRef = Firebase(url: "\(self.ref)/\(evnt)/places/\(placeid)/votes/")
-                let eid = Users.sharedInstance().email as! String
-                let users = ["2": eid]
-                myRootRef.setValue(users)
+                Users.sharedInstance().vote_event_id = evnt as String
+                Users.sharedInstance().vote_place_id = placeid as String
+                
+                let event_ref = Firebase(url: "\(self.ref)/\(evnt as String)/places/\(placeid as String)")
+                // Read data and react to changes
+                print("here")
+                print("\(self.ref)/\(evnt as String)/places/\(placeid as String)")
+                event_ref.observeEventType(.Value, withBlock: { snapshot in
+                    if let snapshots = snapshot.children.allObjects as? [FDataSnapshot] {
+                        for snap in snapshots {
+                            if(snap.key == "votes") {
+                                    let vot = snap.value as! String
+                                    print (vot)
+                                    let votes = vot.characters.split{$0 == "-"}.map(String.init)
+                                    if votes.contains(Users.sharedInstance().email as! String) {
+                                        print ("vote already counted")
+                                        // notice
+                                        let alert = UIAlertController(title: "vote up", message: "Your vote is already counted.", preferredStyle: UIAlertControllerStyle.Alert)
+                                        self.presentViewController(alert, animated: true, completion: nil)
+                                        
+                                        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { action in
+                                            switch action.style{
+                                            case .Default:
+                                                print("default")
+                                                
+                                            case .Cancel:
+                                                print("cancel")
+                                                
+                                            case .Destructive:
+                                                print("destructive")
+                                            }
+                                        }))
+                                        
+                                    } else {
+                                        //Vote to a place in event
+                                        
+                                         RequestInfo.sharedInstance().postReq("997670")
+                                         { (success, errorString) -> Void in
+                                         guard success else {
+                                         dispatch_async(dispatch_get_main_queue(), {
+                                         print("Failed at saving")
+                                         self.alertMessage("Error", message: "Unable to connect.")
+                                         })
+                                         return
+                                         }
+                                         dispatch_async(dispatch_get_main_queue(), {
+                                         print("suucssssss")
+                                         //self.alertMessage("Success!", message: "Event Confirmed")
+                                         })
+                                         }
+                                        
+                                    }
+                                
+                            }
+      
+                        }
+                    }
+                    // TableView updates when there is new data.
+                    
+                    }, withCancelBlock: { error in
+                        self.alertMessage("Error", message: "Something went wrong.")
+                })
+                
                 
             case .Cancel:
                 print("cancel")
@@ -457,7 +718,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     
     
     override func viewDidLayoutSubviews() {
-        placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, (screenHeight/2)-50)
+        placesTableView.frame = CGRectMake(0, (screenHeight/2)+100, screenWidth, 145)
     }
     
     
@@ -466,12 +727,29 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         var count:Int?
         
+        print ("table view count")
+        print (self.view_mode as String)
+        
+        if(self.view_mode == "places") {
+        
         if tableView == placesTableView  {
             if Users.sharedInstance().places == nil {
                 count = 0
             } else {
                 count = Users.sharedInstance().places!.count
             }
+         }
+            
+        }
+        
+        if(self.view_mode == "members") {
+            // return members
+            count = 0 // temp
+        }
+        
+        if(self.view_mode == "pinned"){
+            // return pinned count
+            count = self.pinnedPlaces.count
         }
         return count!
     }
@@ -479,6 +757,9 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         //let friendCell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         let cell = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        
+        
+        if(self.view_mode == "places") {
         
         if Users.sharedInstance().places != nil {
             
@@ -525,6 +806,65 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             }
             task.resume()
         }
+        }
+        
+        if(self.view_mode == "members"){
+            
+        }
+        
+        if(self.view_mode == "pinned"){
+            
+            
+            
+            if self.pinnedPlaces.count != 0 {
+                
+                for pin in self.pinnedPlaces {
+                    // print (item)
+                    /*
+                     address, category, coordinates, image, name, phone, ratings, review_count, snippet
+                     */
+                    let newName = pin.name
+                    self.names?.addObject(newName)
+                    
+                    let newImage = pin.image_url
+                    self.images?.addObject(newImage)
+                    
+                    let category = pin.category
+                    self.categories?.addObject(category)
+                    // placeDescpLabel
+                    
+                    let snippet = pin.snippet
+                    let ratings = pin.ratings
+                    // let review_count = item.valueForKey("review_count")
+                    let details = ratings
+                    self.details?.addObject(details)
+                    self.snippets?.addObject(snippet)
+                    print("---->")
+                    print(newName)
+                    
+                }
+                Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
+                
+                // setup cell values here...
+                cell.placeNameLabel!.text = names![indexPath.row] as? String
+                cell.placeDescpLabel!.text = categories![indexPath.row] as? String
+                cell.placeSnippetLabel!.text = snippets![indexPath.row] as? String
+                cell.placedetailsLabel!.text = details![indexPath.row] as? String
+                
+                let url = NSURL(string: images![indexPath.row] as! String)!
+                let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.placeImage!.image = UIImage(data: data)
+                        })
+                    }
+                }
+                task.resume()
+            }
+            
+            
+        }
+        
         return cell
     }
     
@@ -558,7 +898,8 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                  */
                 
                 var to_fb = item as! Dictionary<String, AnyObject>
-                to_fb["votes"] = [Users.sharedInstance().email as! String]
+                let vt = Users.sharedInstance().email as! String + "-"
+                to_fb["votes"] = vt
                 
                 let myRootRef = Firebase(url: "\(self.ref)/\(evnt)/places/\(placeid as! String)/")
                 myRootRef.setValue(to_fb)

@@ -16,7 +16,7 @@ class ProfileButton: UIButton {
         super.backgroundColor = UIColor.whiteColor()
         super.setTitleColor(UIColor.grayColor(), forState: .Normal)
         super.layer.borderWidth = 1
-        super.layer.borderColor = UIColor.lightGrayColor().CGColor
+        super.layer.borderColor = UIColor.whiteColor().CGColor
     }
     
     required init?(coder aDecoder: NSCoder) {

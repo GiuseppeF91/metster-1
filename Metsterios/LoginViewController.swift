@@ -36,11 +36,21 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-    
         self.view.backgroundColor = UIColor.whiteColor()
-        self.view.backgroundColor = UIColor(patternImage: image).colorWithAlphaComponent(0.9)
+        self.view.backgroundColor = hexStringToUIColor("#fd5c63")
         self.view.opaque = true
-
+        
+        stripeLogo.frame = CGRectMake(0, screenHeight/3, screenWidth, screenHeight/6)
+        stripeLogo.backgroundColor = UIColor.clearColor()
+        stripeLogo.center = self.view.center
+        view.addSubview(stripeLogo)
+        
+        let logoView = UIImageView(image: metsLogo)
+        logoView.frame = CGRect(x: screenWidth, y: screenHeight, width: screenWidth, height: screenHeight)
+        logoView.contentMode = UIViewContentMode.ScaleAspectFit
+        logoView.center = self.view.center
+        view.addSubview(logoView)
+        
         locManager.delegate = self
         
         let loginView : FBSDKLoginButton = FBSDKLoginButton()
@@ -76,6 +86,28 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
         } else {
             print("not logged in")
         }
+    }
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        if ((cString.characters.count) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -237,6 +269,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
 
     func findAccount() {
         print("enter findAccount ----->")
+        Users.sharedInstance().mfbid = "123"
         RequestInfo.sharedInstance().postReq("111002")
         { (success, errorString) -> Void in
             guard success else {
