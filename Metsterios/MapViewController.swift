@@ -364,14 +364,14 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         print ("searching")
         
-        let query = searchbar.text
+        let query = searchbar.text! as String
         let eventid = "10103884620845432--event--18"
         
         
         //-- clean data of previous search
         clean_data()
         if(self.searchbar.hasText()) {
-            findFood(query!, eventid: eventid)
+            findFood(query, eventid: eventid)
         } else {
             print("no text")
         }
