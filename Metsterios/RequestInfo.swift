@@ -146,6 +146,12 @@ class RequestInfo {
                           "fid": Users.sharedInstance().mfbid!]
         }
         
+        if oper == "998100" {
+            print("public search")
+            dictionary = ["email": Users.sharedInstance().email!,
+                          "query": Users.sharedInstance().query!]
+        }
+        
         if oper == "999000" { // find fooood
             print("api req for food")
             print (Users.sharedInstance().search_mode as! String)
@@ -329,7 +335,7 @@ class RequestInfo {
                             if oper == "121002" {
                                 self.parseEventInfo(responseData)
                             }
-                            if oper == "997667" {
+                            if oper == "998100" {
                                 Users.sharedInstance().tryout_people = responseData.valueForKey("response")
                             }
                             

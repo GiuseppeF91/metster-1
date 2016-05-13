@@ -21,7 +21,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     let newValues : NSMutableArray? = []
     
     var view_mode = "members"
-    
+    var lineView : UIView?
     @IBOutlet var searchbar: UITextField!
    
     
@@ -238,12 +238,18 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
+        // 0, (screenHeight/2)+100, screenWidth, 145
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+99, screenWidth, 1.0))
+        lineView!.layer.borderWidth = 1.0
+        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        self.view.addSubview(lineView!)
+        lineView!.hidden = false
         
         placesTableView.dataSource = self
         placesTableView.delegate = self
         placesTableView.rowHeight = 100
         self.view.addSubview(self.placesTableView)
-        placesTableView.hidden = true
+        placesTableView.hidden = false
         var recognizer = UISwipeGestureRecognizer(target: self, action: Selector("didSwipe"))
         placesTableView.addGestureRecognizer(recognizer)
         

@@ -78,7 +78,6 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                         Users.sharedInstance().lat = ""
                         Users.sharedInstance().long = ""
                         self.findAccount()
-                        self.presentViewController(TabBarViewController(), animated: true, completion: nil)
                         self.activityIndicator.stopAnimating()
                     })
                 })
@@ -239,7 +238,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 }
                 Users.sharedInstance().fbid = result.valueForKey("id") as! NSString
                 Users.sharedInstance().gender = result.valueForKey("gender") as! NSString
-                print(result.valueForKey("abount_me"))
+                print(result.valueForKey("about_me")) // typo here
                 
             }
         })
@@ -248,6 +247,8 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
 
     func createAccount() {
         print("enter createAccount ----->")
+        Users.sharedInstance().movie_pref = "abcdefghijkl"
+        Users.sharedInstance().food_pref = "abcdefhijkl"
         RequestInfo.sharedInstance().postReq("111000")
         { (success, errorString) -> Void in
             guard success else {
@@ -260,8 +261,7 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
             dispatch_async(dispatch_get_main_queue(), {
                 print("account is hereeeee")
                 self.findAccount()
-                
-                self.presentViewController(TabBarViewController(), animated: true, completion: nil)
+
             })
         }
         print("exit createAccount ----->")

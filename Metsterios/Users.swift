@@ -50,6 +50,7 @@ class Users: NSObject {
     
     //-- search
     var search_mode : AnyObject?
+    var public_query : AnyObject?
     
     //-- tryout
     var tryout_place_id : AnyObject?

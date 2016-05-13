@@ -14,7 +14,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
 
     
     @IBOutlet var searchbar: UITextField!
-    
+
+    var notice = UILabel(frame: CGRectMake(0, (screenHeight/2)+70, screenWidth-40, 40))
     
     @IBOutlet var mapView: MGLMapView!
     var hostedPlaces = [Place]()
@@ -39,7 +40,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var images : NSMutableArray? = []
     var categories : NSMutableArray? = []
     var snippets : NSMutableArray? = []
-    var details : NSMutableArray? = []
+    var ratings : NSMutableArray? = []
+    var reviewcount : NSMutableArray? = []
     var dictionary = NSDictionary()
     
     var lineView : UIView?
@@ -105,6 +107,13 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         placesTableView.userInteractionEnabled = true
         placesTableView.bringSubviewToFront(self.view)
         
+
+        notice.textAlignment = NSTextAlignment.Left
+        notice.text = ""
+        notice.font = UIFont(name: "HelveticaNeue-Bold", size: 10)
+        notice.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.notice)
+        notice.hidden = true
         
         //self.placesTableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "tapTableView"))
         //placesTableView.gestureRecognizers?.last!.delegate = self
@@ -167,7 +176,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     
     
     func findpeoplepressed(sender:UIButton) {
-        print ("find people")
+        print ("toggle button pressed")
         
         if(self.toggle_mode == "people" ){
            self.toggle_mode = "places"// flip
@@ -200,10 +209,12 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             Users.sharedInstance().search_mode = "private"
             self.findplacesBtn.hidden = true
             self.findpeopleBtn.hidden = false
+            searchbar.text = ""
             searchbar.placeholder = "search private: e.g sushi, pizza..."
         } else {
             print("The Switch is Off")
             Users.sharedInstance().search_mode = "public"
+            searchbar.text = ""
             searchbar.placeholder = "search public: e.g sushi, pizza..."
         }
         
@@ -286,6 +297,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 self.lineView!.hidden = false
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
+                
+                
+                self.findpeople()
             }
         }
         
@@ -340,7 +354,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         self.images?.removeAllObjects()
         self.categories?.removeAllObjects()
         self.snippets?.removeAllObjects()
-        self.details?.removeAllObjects()
+        self.ratings?.removeAllObjects()
+        self.reviewcount?.removeAllObjects()
         
     }
     
@@ -444,6 +459,32 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         // hide the callout view
         //mapView.deselectAnnotation(annotation, animated: false)
         
+        UIPasteboard.generalPasteboard().string = annotation.subtitle!
+        
+        let alert = UIAlertController(title: "address copied to clipboard.",
+                                      message: " Go to your favorite navigation app and paste the address to navigate.",
+                                      preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert,
+                                   animated: true,
+                                   completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK",
+            style: .Default,
+            handler: { action in
+                switch action.style {
+                case .Default:
+                    print("default")
+                    
+                case .Cancel:
+                    print("cancel")
+                    
+                case .Destructive:
+                    print("destructive")
+                }
+        }))
+
+        
         if(Users.sharedInstance().search_mode as! String == "public") {
            print("public")
         } else {
@@ -521,12 +562,12 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         }
     }
     
-    func findpeople(title : String) {
+    func findpeople() {
         newValuespeople?.removeAllObjects()
         Users.sharedInstance().tryout_people = []
         let key = title
         Users.sharedInstance().tryout_place_id = key
-        RequestInfo.sharedInstance().postReq("997667")
+        RequestInfo.sharedInstance().postReq("998100")
         { (success, errorString) -> Void in
             guard success else {
                 dispatch_async(dispatch_get_main_queue(), {
@@ -537,13 +578,14 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             }
             dispatch_async(dispatch_get_main_queue(), {
                 print("Found people")
-                print(Users.sharedInstance().tryout_people)
+                let peoplenb = Users.sharedInstance().tryout_people as! NSArray
+                print(peoplenb.count)
+                for person in peoplenb {
+                    print(person)
+                }
                 self.newValuespeople!.addObject(Users.sharedInstance().tryout_people!)
             })
         }
-        
-        
-    
     }
     
 
@@ -626,8 +668,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             if(Users.sharedInstance().tryout_people == nil){
                 count = 0
             } else {
-                let people = Users.sharedInstance().tryout_people as! NSDictionary
-                count = people.allKeys.count
+                let people = Users.sharedInstance().tryout_people as! NSArray
+                count = people.count
             }
         }
         return count!
@@ -637,7 +679,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //let friendCell = UITableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         
         
-        let cell = PlaceTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
+        let cell = MapviewTableViewCell(frame: CGRectMake(0,0, self.view.frame.width, 50))
         if (self.toggle_mode == "places") {
 
             if Users.sharedInstance().places != nil {
@@ -660,9 +702,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 
                     let snippet = item.valueForKey("snippet")
                     let ratings = item.valueForKey("ratings")
-                    // let review_count = item.valueForKey("review_count")
-                    let details = ratings!
-                    self.details?.addObject(details)
+                    let review_count = item.valueForKey("review_count")
+                    self.ratings?.addObject(ratings!)
+                    self.reviewcount?.addObject(review_count!)
                     self.snippets?.addObject(snippet!)
                     print("---->")
                     print(newName)
@@ -671,17 +713,18 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
             
             // setup cell values here...
-            cell.placeNameLabel!.text = names![indexPath.row] as? String
-            cell.placeDescpLabel!.text = categories![indexPath.row] as? String
-            cell.placeSnippetLabel!.text = snippets![indexPath.row] as? String
-            cell.placedetailsLabel!.text = details![indexPath.row] as? String
+            cell.itemTitle!.text = names![indexPath.row] as? String
+            cell.itemline1seg1!.text = categories![indexPath.row] as? String
+            cell.itemdescp!.text = snippets![indexPath.row] as? String
+            cell.itemline1seg2!.text = ratings![indexPath.row] as? String
+            cell.itemline1seg3!.text = reviewcount![indexPath.row] as? String
             
             
             let url = NSURL(string: images![indexPath.row] as! String)!
             let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (responseData, responseUrl, error) -> Void in
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                        cell.placeImage!.image = UIImage(data: data)
+                        cell.itemImage!.image = UIImage(data: data)
                     })
                 }
             }
@@ -690,11 +733,41 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             
         } else if (self.toggle_mode == "people") {
         
-            
+            self.notice.text = "people who are also looking for "
             if(Users.sharedInstance().tryout_people != nil){
             
-            let people = Users.sharedInstance().tryout_people as! NSDictionary
-            let keys = people.allKeys
+            let people = Users.sharedInstance().tryout_people as! NSArray
+            //let keys = people.allKeys
+                
+                print (people.count)
+                let person = people[indexPath.row]
+                print (person["p_name"])
+                let name = person["p_name"] as! String
+                cell.itemTitle!.text = name
+                cell.itemline1seg1!.text = person["p_gid"] as? String
+                cell.itemdescp!.text = person["p_aboutme"] as? String
+                cell.itemline1seg2!.text = person["p_fmatch"] as? String
+                cell.itemline1seg3!.text = person["p_mmatch"] as? String
+                var notice = person["poston"] as? String
+                notice = "also searched for \(Users.sharedInstance().query!) \(notice!)"
+                cell.itemdetail!.text = notice
+                    
+                let access = person["p_fbid"] as! String
+                let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+                let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!)
+                { (responseData, responseUrl, error) -> Void in
+                        if let data = responseData{
+                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                                cell.itemImage!.image = UIImage(data: data)
+                                //let image : UIImage = UIImage(data: data)!
+                                //cache.set(value: image.asData(), key: "profile_image.jpg")
+                            })
+                        }
+                    }
+                    task.resume()
+                }
+                
+             /*
             for key in keys {
                 
                 let payload = people.valueForKey(key as! String)
@@ -726,8 +799,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     print("error: \(error.localizedDescription)")
                 }
                 
-            }
-        }
+                }
+                
+                */
         
         }
         
@@ -749,13 +823,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         update_map_focus(att)
     
         Users.sharedInstance().publish_place = Users.sharedInstance().place_id as! String
-        
-        
-        // make find people req
-        if(Users.sharedInstance().search_mode as! String == "private") {
-            print("finding people")
-            findpeople(Users.sharedInstance().publish_place as! String)
-        }
+    
         
         /*
          mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
