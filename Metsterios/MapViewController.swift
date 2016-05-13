@@ -812,6 +812,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         print("comer gere")
         
+        if (self.toggle_mode == "places") {
             Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
             print(Users.sharedInstance().place_id)
             let item = newValues![indexPath.row]
@@ -823,13 +824,16 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         update_map_focus(att)
     
         Users.sharedInstance().publish_place = Users.sharedInstance().place_id as! String
-    
+        } else if (self.toggle_mode == "people") {
+            let people = Users.sharedInstance().tryout_people as! NSArray
+            let person = people[indexPath.row]
+            print (person)
+        }
         
         /*
          mapView.setCenterCoordinate(CLLocationCoordinate2D(latitude: att.coordinate.latitude,
          longitude: att.coordinate.longitude), zoomLevel: 12, animated: false)
          */
-        print(att)
     }
 
     func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
