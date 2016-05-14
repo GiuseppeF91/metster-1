@@ -152,6 +152,12 @@ class RequestInfo {
                           "query": Users.sharedInstance().query!]
         }
         
+        
+        if oper == "998101" {
+            dictionary = ["email": Users.sharedInstance().email!,
+                          "event_id": Users.sharedInstance().event_id!]
+        }
+        
         if oper == "999000" { // find fooood
             print("api req for food")
             print (Users.sharedInstance().search_mode as! String)
@@ -338,7 +344,9 @@ class RequestInfo {
                             if oper == "998100" {
                                 Users.sharedInstance().tryout_people = responseData.valueForKey("response")
                             }
-                            
+                            if oper == "998101" {
+                                Users.sharedInstance().event_people = responseData.valueForKey("response")
+                            }
                             completionHandler(success: true, errorString: "info found")
                         }
                     }

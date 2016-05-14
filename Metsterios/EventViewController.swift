@@ -180,6 +180,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         print("------ Event data -----")
         print(event_data.eventname)
         print(event_data.eventdate)
+        self.view_mode = "members"
         print("-----------------------")
         
         navigationItem.title = event_name
@@ -215,6 +216,13 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         self.view.addSubview(showmembersButton)
         showmembersButton.hidden = false
         
+        //--- view members first
+        self.view_mode = "members"
+        showmembersButton.backgroundColor = UIColor.lightGrayColor()
+        showpinnedButton.backgroundColor = UIColor.whiteColor()
+        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        //----
+        
         showpinnedButton.backgroundColor = UIColor.whiteColor()
         showpinnedButton.layer.borderWidth = 1
         showpinnedButton.layer.borderColor = UIColor.lightGrayColor().CGColor
@@ -244,6 +252,9 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         lineView!.layer.borderColor = UIColor.blueColor().CGColor
         self.view.addSubview(lineView!)
         lineView!.hidden = false
+        
+        
+        findpeople()
         
         placesTableView.dataSource = self
         placesTableView.delegate = self
@@ -280,6 +291,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         mapView.delegate = self
         
         // Do any additional setup after loading the view.
+        
         
         self.hostedPlaces.removeAll()
         let eid = Users.sharedInstance().event_id as! String
@@ -441,6 +453,31 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
     }
     
+    
+    func findpeople() {
+        print ("find people...")
+        Users.sharedInstance().event_people = []
+        RequestInfo.sharedInstance().postReq("998101")
+        { (success, errorString) -> Void in
+            guard success else {
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("Failed to get event info.")
+                    self.alertMessage("Error", message: "Unable to reach server.")
+                })
+                return
+            }
+            dispatch_async(dispatch_get_main_queue(), {
+                print("Found people")
+                let peoplenb = Users.sharedInstance().event_people as! NSArray
+                print(peoplenb.count)
+                for person in peoplenb {
+                    print(person)
+                }
+                self.placesTableView.reloadData()
+            })
+        }
+    }
+
     
     func findFood(query : String, eventid : String) {
         print ("enter findfood")
@@ -750,7 +787,15 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         
         if(self.view_mode == "members") {
             // return members
-            count = 0 // temp
+            if(Users.sharedInstance().event_people == nil){
+                print ("memebrs nil")
+                count = 0
+            } else {
+                let memb = Users.sharedInstance().event_people as! NSArray
+                count = memb.count
+                print ("memeb")
+                print (count)
+            }
         }
         
         if(self.view_mode == "pinned"){
@@ -815,15 +860,43 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         }
         
         if(self.view_mode == "members"){
+         
+            let people = Users.sharedInstance().event_people as! NSArray
+            //let keys = people.allKeys
             
+            print (people.count)
+            let person = people[indexPath.row]
+            print (person["name"])
+            let name = person["name"] as! String
+            cell.placeNameLabel!.text = name
+            //cell.placeDescpLabel!.text = person["p_gid"] as? String
+            cell.placeDescpLabel!.text = person["ame"] as? String
+            cell.placeSnippetLabel!.text = person["gid"] as? String
+            //var notice = person["poston"] as? String
+            //notice = "also searched for \(Users.sharedInstance().query!) \(notice!)"
+            //cell.itemdetail!.text = notice
+            
+            let access = person["fb_id"] as! String
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!)
+            { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        cell.placeImage!.image = UIImage(data: data)
+                        //let image : UIImage = UIImage(data: data)!
+                        //cache.set(value: image.asData(), key: "profile_image.jpg")
+                    })
+                }
+            }
+            task.resume()
         }
         
+
+        
         if(self.view_mode == "pinned"){
-            
-            
-            
+    
             if self.pinnedPlaces.count != 0 {
-                
+    
                 for pin in self.pinnedPlaces {
                     // print (item)
                     /*
@@ -849,7 +922,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                     print(newName)
                     
                 }
-                Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
                 
                 // setup cell values here...
                 cell.placeNameLabel!.text = names![indexPath.row] as? String
@@ -877,6 +949,8 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         print("comer gere")
+        
+        if(self.view_mode == "places") {
         
         Users.sharedInstance().place_id = Users.sharedInstance().place_ids![indexPath.row] as? String
         print(Users.sharedInstance().place_id)
@@ -918,6 +992,24 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 print("destructive")
             }
         }))
+            
+        }
+        
+        
+        if(self.view_mode == "members"){
+            
+            let people = Users.sharedInstance().event_people as! NSArray
+            //let keys = people.allKeys
+            
+            print (people.count)
+            let person = people[indexPath.row]
+            print (person["name"])
+
+        }
+        
+        if(self.view_mode == "pinned"){
+            print ("pinned")
+        }
         
     }
     

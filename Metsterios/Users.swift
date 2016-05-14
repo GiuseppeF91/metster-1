@@ -69,6 +69,7 @@ class Users: NSObject {
     //-- seleccted event
     var selected_event_name : AnyObject?
     var selected_event_data : userevents?
+    var event_people : AnyObject?
     
     //-- member
     var mfbid : AnyObject?
