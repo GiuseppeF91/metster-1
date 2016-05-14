@@ -133,7 +133,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     var showpinnedButton = UIButton(frame: CGRectMake((screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
     var showunpinnedButton = UIButton(frame: CGRectMake(2*(screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
 
-
+    var noticeLabel = UILabel(frame: CGRectMake(0, (screenHeight/2)+85, screenWidth, 12.0))
     // list attbrs
     var names : NSMutableArray? = []
     var images : NSMutableArray? = []
@@ -181,6 +181,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         print(event_data.eventname)
         print(event_data.eventdate)
         self.view_mode = "members"
+        Users.sharedInstance().query = nil
         print("-----------------------")
         
         navigationItem.title = event_name
@@ -247,12 +248,22 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
         // 0, (screenHeight/2)+100, screenWidth, 145
-        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+99, screenWidth, 1.0))
-        lineView!.layer.borderWidth = 1.0
-        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+85, screenWidth, 15.0))
+        lineView!.layer.borderWidth = 15.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineView!.layer.borderColor = color2.CGColor
         self.view.addSubview(lineView!)
-        lineView!.hidden = false
+        lineView!.hidden = true
         
+        
+        
+        noticeLabel.textAlignment = NSTextAlignment.Left
+        noticeLabel.text = "test"
+        noticeLabel.textColor = UIColor.whiteColor()
+        noticeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
+        noticeLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.noticeLabel)
+        noticeLabel.hidden = true
         
         findpeople()
         
@@ -409,12 +420,51 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     }
     
     
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        if ((cString.characters.count) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
     func showmemberpressed(){
         self.view_mode = "members"
  
         showmembersButton.backgroundColor = UIColor.lightGrayColor()
         showpinnedButton.backgroundColor = UIColor.whiteColor()
         showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        
+        var count = 0
+        if(Users.sharedInstance().event_people == nil){
+            count = 0
+        } else {
+            let memb = Users.sharedInstance().event_people as! NSArray
+            count = memb.count
+        }
+        
+        if (count == 1) {
+            noticeLabel.text = "  \(count) member for this event"
+        } else {
+            noticeLabel.text = "  \(count) members for this event"
+        }
+        noticeLabel.hidden = false
+        self.lineView!.hidden = false
         
         self.placesTableView.reloadData()
     }
@@ -428,6 +478,15 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         for pin in self.pinnedPlaces {
             print(pin.name)
         }
+        var count = self.pinnedPlaces.count
+        
+        if (count == 1) {
+            noticeLabel.text = "  \(count) location pinned by a event member"
+        } else {
+            noticeLabel.text = "  \(count) locations pinned by a event members"
+        }
+        noticeLabel.hidden = false
+        self.lineView!.hidden = false
         //---
         // reload the table and check the mode there
     }
@@ -438,11 +497,25 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         showpinnedButton.backgroundColor = UIColor.whiteColor()
         showunpinnedButton.backgroundColor = UIColor.lightGrayColor()
         self.placesTableView.reloadData()
+        
+        var count = 0
+        if (Users.sharedInstance().query == nil ){
+            noticeLabel.text = "  please make search to list places"
+        } else {
+            if Users.sharedInstance().places == nil {
+                count = 0
+            } else {
+                count = Users.sharedInstance().places!.count
+            }
+            let quer = Users.sharedInstance().query as! String
+            noticeLabel.text = "  \(count) places found for search \(quer)"
+            noticeLabel.hidden = false
+        }
     }
     
     func searchmade() {
         print ("search made enter")
-        let query = "sushi"
+        let query = searchbar.text! as String
         let eventid = Users.sharedInstance().event_id
         Users.sharedInstance().query = query as String
         //-- clean data of previous search
@@ -473,6 +546,21 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 for person in peoplenb {
                     print(person)
                 }
+                var count = 0
+                if(Users.sharedInstance().event_people == nil){
+                    count = 0
+                } else {
+                    let memb = Users.sharedInstance().event_people as! NSArray
+                    count = memb.count
+                }
+                
+                if (count == 1) {
+                    self.noticeLabel.text = "  \(count) member for this event"
+                } else {
+                    self.noticeLabel.text = "  \(count) members for this event"
+                }
+                self.noticeLabel.hidden = false
+                self.lineView!.hidden = false
                 self.placesTableView.reloadData()
             })
         }

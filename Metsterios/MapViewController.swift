@@ -26,12 +26,14 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     let newValues : NSMutableArray? = [] // holds all places for a given query
     let newValuespeople : NSMutableArray? = [] // we need to update this for a given place.
     
-    var publishSwitch = UISwitch(frame:CGRectMake(2, 40, 40, 40))
-    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 38, 38, 38))
+    var publishSwitch = UISwitch(frame:CGRectMake(2, 25, 32, 32))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-43, 25, 32, 32))
     
     var findpeopleBtn = findpeopleButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
     var findplacesBtn = findplacesButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
 
+    var noticeLabel = UILabel(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 12.0))
+    
     var toggle_mode = "places"
     // publish button
 
@@ -45,6 +47,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var dictionary = NSDictionary()
     
     var lineView : UIView?
+    var lineViewBanner : UIView?
     var placesTableView : UITableView = UITableView()
     
     var tap :UITapGestureRecognizer?
@@ -63,29 +66,25 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //full screen size
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
-        
-        
-        
         //-----
-        /*
-        // Create the navigation bar
-        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 50)) // Offset by 20 pixels vertically to take the status bar into account
         
-        navigationBar.backgroundColor = UIColor.whiteColor()
+        // Create the navigation bar
+        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 20)) // Offset by 20 pixels vertically to take the status bar into account
+        
+        let color1 = hexStringToUIColor("#fd5c63")
+        navigationBar.backgroundColor = color1
         //navigationBar.delegate = self
         
         // Create a navigation item with a title
         let navigationItem = UINavigationItem()
-        navigationItem.title = "Search"
-        
-        // Create left and right button for navigation item
-        let leftButton =  UIBarButtonItem(title: "Back", style:   UIBarButtonItemStyle.Plain, target: self, action: #selector(self.searchmade))
-        //let rightButton = UIBarButtonItem(title: "Right", style: UIBarButtonItemStyle.Plain, target: self, action: nil)
-        
-        // Create two buttons for the navigation item
-        navigationItem.leftBarButtonItem = leftButton
-        //navigationItem.rightBarButtonItem = rightButton
-        
+        //navigationItem.title = "Search"
+        /*
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 10, width: 38, height: 38))
+        imageView.contentMode = .ScaleAspectFit
+        let image = UIImage(named: "bannerimg")
+        imageView.image = image
+        navigationItem.titleView = imageView
+        */
         // Assign the navigation item to the navigation bar
         navigationBar.items = [navigationItem]
         
@@ -94,7 +93,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         
         //-----
-        */
+        
         
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
@@ -131,11 +130,29 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         publishSwitch.hidden = false
         
         
-        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 1.0))
-        lineView!.layer.borderWidth = 1.0
-        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 15.0))
+        lineView!.layer.borderWidth = 15.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineView!.layer.borderColor = color2.CGColor
         self.view.addSubview(lineView!)
         lineView!.hidden = true
+        
+        noticeLabel.textAlignment = NSTextAlignment.Left
+        noticeLabel.text = "test"
+        noticeLabel.textColor = UIColor.whiteColor()
+        noticeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
+        noticeLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.noticeLabel)
+        noticeLabel.hidden = true
+        
+        /*
+        lineViewBanner = UIView(frame: CGRectMake(0, (screenHeight/2)+97, screenWidth, 3.0))
+        lineViewBanner!.layer.borderWidth = 3.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineViewBanner!.layer.borderColor = color2.CGColor
+        self.view.addSubview(lineViewBanner!)
+        lineViewBanner!.hidden = false
+        */
         
         searchbar.placeholder = "search private: e.g sushi, pizza..."
         
@@ -175,6 +192,29 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     
     
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        if ((cString.characters.count) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
     func findpeoplepressed(sender:UIButton) {
         print ("toggle button pressed")
         
@@ -183,12 +223,31 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
            self.placesTableView.reloadData() // loads places
            self.findplacesBtn.hidden = true
            self.findpeopleBtn.hidden = false
+           let count = Users.sharedInstance().places!.count
+           let quer = Users.sharedInstance().query as! String
+           noticeLabel.text = "  \(count) places found for search \(quer)"
+           noticeLabel.hidden = false
             
         } else {
            self.toggle_mode = "people" // flip
            self.placesTableView.reloadData() // loads people
             self.findplacesBtn.hidden = false
             self.findpeopleBtn.hidden = true
+            var count = 0
+            if(Users.sharedInstance().tryout_people == nil){
+                count = 0
+            } else {
+                let people = Users.sharedInstance().tryout_people as! NSArray
+                count = people.count
+            }
+            
+            let quer = Users.sharedInstance().query as! String
+            if (count == 1) {
+                noticeLabel.text = "  \(count) person nearby interested in \(quer)"
+            } else {
+                noticeLabel.text = "  \(count) people nearby interested in \(quer)"
+            }
+            noticeLabel.hidden = false
         }
         
         // this logic needs to moved
@@ -298,6 +357,10 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
                 
+                let count = Users.sharedInstance().places!.count
+                let quer = Users.sharedInstance().query as! String
+                self.noticeLabel.text = "  \(count) places found for search \(quer)"
+                self.noticeLabel.hidden = false
                 
                 self.findpeople()
             }
