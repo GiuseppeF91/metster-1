@@ -44,6 +44,13 @@
 		69DE751F1CA7CF5600AA35D2 /* AddEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */; };
 		69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */; };
 		69FC06861CB4EB8600BED317 /* ProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69FC06851CB4EB8600BED317 /* ProfileButton.swift */; };
+		6AFB0DBE1CE716290079ADA9 /* Quickblox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AFB0DBD1CE716290079ADA9 /* Quickblox.framework */; };
+		6AFB0DC11CE716550079ADA9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFB0DBF1CE716550079ADA9 /* ChatViewController.swift */; };
+		6AFB0DC21CE716550079ADA9 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AFB0DC01CE716550079ADA9 /* Message.swift */; };
+		6AFB0DC41CE718DD0079ADA9 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AFB0DC31CE718DD0079ADA9 /* libxml2.2.tbd */; };
+		6AFB0DC61CE718E90079ADA9 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AFB0DC51CE718E90079ADA9 /* libstdc++.tbd */; };
+		6AFB0DC81CE7192C0079ADA9 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AFB0DC71CE7192C0079ADA9 /* libresolv.tbd */; };
+		7AD4F8FF1FD2F2137FACE504 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54F889C4A320D404C6808342 /* Pods.framework */; };
 		887E8CA110D5C3A1A0A963DB /* Pods_MetsteriosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 024C16154C8235F0710EBF0E /* Pods_MetsteriosUITests.framework */; };
 		C0616BE2FB87AE73DEEFC4D8 /* Pods_MetsteriosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F6107ABB6EBFBE19F7DBD74 /* Pods_MetsteriosTests.framework */; };
 /* End PBXBuildFile section */
@@ -112,6 +119,12 @@
 		69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddEventViewController.swift; sourceTree = "<group>"; };
 		69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		69FC06851CB4EB8600BED317 /* ProfileButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileButton.swift; sourceTree = "<group>"; };
+		6AFB0DBD1CE716290079ADA9 /* Quickblox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quickblox.framework; path = framework/Quickblox.framework; sourceTree = "<group>"; };
+		6AFB0DBF1CE716550079ADA9 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		6AFB0DC01CE716550079ADA9 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		6AFB0DC31CE718DD0079ADA9 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
+		6AFB0DC51CE718E90079ADA9 /* libstdc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.tbd"; path = "usr/lib/libstdc++.tbd"; sourceTree = SDKROOT; };
+		6AFB0DC71CE7192C0079ADA9 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		6F6107ABB6EBFBE19F7DBD74 /* Pods_MetsteriosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MetsteriosTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A8F79F37FC8E536CB47F8F6 /* Pods_Metsterios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Metsterios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BDCC0E9B6E2F214430B475D /* Pods-MetsteriosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MetsteriosTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MetsteriosTests/Pods-MetsteriosTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -125,8 +138,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AFB0DC81CE7192C0079ADA9 /* libresolv.tbd in Frameworks */,
+				6AFB0DC61CE718E90079ADA9 /* libstdc++.tbd in Frameworks */,
+				6AFB0DC41CE718DD0079ADA9 /* libxml2.2.tbd in Frameworks */,
 				6964A96E1CBB43860090EC4C /* MapKit.framework in Frameworks */,
+				6AFB0DBE1CE716290079ADA9 /* Quickblox.framework in Frameworks */,
 				3C423448DAE77A40B0439E3E /* Pods_Metsterios.framework in Frameworks */,
+				7AD4F8FF1FD2F2137FACE504 /* Pods.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +183,8 @@
 		691DEE981CAA5DAB004263F8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				6AFB0DBF1CE716550079ADA9 /* ChatViewController.swift */,
+				6AFB0DC01CE716550079ADA9 /* Message.swift */,
 				69DE751C1CA7CF4200AA35D2 /* ProfileViewController.swift */,
 				69DE75201CA7CF6900AA35D2 /* CalendarViewController.swift */,
 				69DE751E1CA7CF5600AA35D2 /* AddEventViewController.swift */,
@@ -262,6 +282,10 @@
 		6A6CCCC94734D0FCCDA4753A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6AFB0DC71CE7192C0079ADA9 /* libresolv.tbd */,
+				6AFB0DC51CE718E90079ADA9 /* libstdc++.tbd */,
+				6AFB0DC31CE718DD0079ADA9 /* libxml2.2.tbd */,
+				6AFB0DBD1CE716290079ADA9 /* Quickblox.framework */,
 				6964A96D1CBB43860090EC4C /* MapKit.framework */,
 				54F889C4A320D404C6808342 /* Pods.framework */,
 				7A8F79F37FC8E536CB47F8F6 /* Pods_Metsterios.framework */,
@@ -278,12 +302,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 69DE750F1CA7CC0600AA35D2 /* Build configuration list for PBXNativeTarget "Metsterios" */;
 			buildPhases = (
+				E653F3296FAD592D10C0BF5D /* Check Pods Manifest.lock */,
 				EF62A1D9DBE81DD484B64306 /* 📦 Check Pods Manifest.lock */,
 				69DE74E31CA7CC0600AA35D2 /* Sources */,
 				69DE74E41CA7CC0600AA35D2 /* Frameworks */,
 				69DE74E51CA7CC0600AA35D2 /* Resources */,
 				874DAC7F614557B5F52C5704 /* 📦 Embed Pods Frameworks */,
 				798D8D1E1DEFE883A125D891 /* 📦 Copy Pods Resources */,
+				2D09AEAB199D89EEF0DACDCA /* Embed Pods Frameworks */,
+				669EF7F6E56AAF84451F3E98 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -424,6 +451,21 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		2D09AEAB199D89EEF0DACDCA /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		4BDF3ECDCEC39D22A5AB60D5 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -437,6 +479,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		669EF7F6E56AAF84451F3E98 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		798D8D1E1DEFE883A125D891 /* 📦 Copy Pods Resources */ = {
@@ -514,6 +571,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MetsteriosTests/Pods-MetsteriosTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E653F3296FAD592D10C0BF5D /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
 		EF62A1D9DBE81DD484B64306 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -563,6 +635,8 @@
 				57DA91EE1CC754670021834A /* userevents.swift in Sources */,
 				69DE75211CA7CF6900AA35D2 /* CalendarViewController.swift in Sources */,
 				69DE751B1CA7CF2900AA35D2 /* PreferencesViewController.swift in Sources */,
+				6AFB0DC21CE716550079ADA9 /* Message.swift in Sources */,
+				6AFB0DC11CE716550079ADA9 /* ChatViewController.swift in Sources */,
 				5747C4A21CCC08AC0031F541 /* Logoutbutton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -709,9 +783,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Naveen Mysore (LF34276T78)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Naveen Mysore (LF34276T78)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/framework",
+				);
 				INFOPLIST_FILE = Metsterios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -720,9 +797,9 @@
 					"$(PROJECT_DIR)/Pods/Firebase",
 					"$(PROJECT_DIR)/Pods/FBSDKCoreKit",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.chelseagreen.Metsterios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.asterisk.Metsterios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "4366550d-b9fd-4d88-8657-7bbc5ff12245";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -734,9 +811,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Naveen Mysore (LF34276T78)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Naveen Mysore (LF34276T78)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/framework",
+				);
 				INFOPLIST_FILE = Metsterios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -745,9 +825,9 @@
 					"$(PROJECT_DIR)/Pods/Firebase",
 					"$(PROJECT_DIR)/Pods/FBSDKCoreKit",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.chelseagreen.Metsterios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.asterisk.Metsterios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "4366550d-b9fd-4d88-8657-7bbc5ff12245";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 			};
 			name = Release;
