@@ -18,7 +18,7 @@ class PlaceTableViewCell: UITableViewCell {
     var placeNameLabel : UILabel!
     var placeImage : UIImageView?
     var publishbutton : UIButton!
-    
+    var chatButton : UIButton?
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
     }
@@ -55,7 +55,13 @@ class PlaceTableViewCell: UITableViewCell {
         placeSnippetLabel.textColor = UIColor.grayColor()
         placeSnippetLabel.font = UIFont(name: "HelveticaNeue-Light", size: 12)
         contentView.addSubview(placeSnippetLabel)
-                
+        
+        
+        chatButton = UIButton()
+        chatButton?.frame = CGRectMake(screenWidth-50, 40, 25, 25)
+        contentView.addSubview(chatButton!)
+
+        
     }
     
     override func awakeFromNib() {

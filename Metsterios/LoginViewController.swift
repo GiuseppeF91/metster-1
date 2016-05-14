@@ -12,6 +12,7 @@ import FBSDKLoginKit
 import CoreLocation
 import Firebase
 import Haneke
+import Quickblox
 
 class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDelegate {
     
@@ -280,9 +281,40 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 return
             }
             print("This user exists")
+            
+            QBRequest.logInWithUserLogin(Users.sharedInstance().fbid as! String, password: Users.sharedInstance().fbid as! String, successBlock: { (response:QBResponse, user : QBUUser?) in
+                
+                
+                }, errorBlock: { (response: QBResponse) in
+                    let user = QBUUser()
+                    user.password = Users.sharedInstance().fbid as! String
+                    user.login = Users.sharedInstance().fbid as! String
+                    QBRequest.signUp(user, successBlock: { (response: QBResponse, user :QBUUser?) in
+                        
+                        
+                        }, errorBlock: { (request: QBResponse) in
+                            
+                            
+                    })
+                    
+            })
+            
+            
+            
+            
+            self.registerForRemoteNotification()
             self.presentViewController(TabBarViewController(), animated: true, completion: nil)
         }
         print("exit findAccount ----->")
+    }
+    
+    // MARK: Remote notifications
+    
+    func registerForRemoteNotification() {
+        
+        let settings = UIUserNotificationSettings(forTypes: [UIUserNotificationType.Alert, UIUserNotificationType.Badge, UIUserNotificationType.Sound], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(settings)
+        UIApplication.sharedApplication().registerForRemoteNotifications()
     }
     
     func locRequest() {

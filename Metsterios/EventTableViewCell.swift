@@ -19,6 +19,7 @@ class EventTableViewCell: UITableViewCell {
     var eventDateLabel : UILabel!
     var userImage : UIImageView?
     var slideImage : UIImageView?
+    var chatButton : UIButton?
     
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
@@ -57,6 +58,11 @@ class EventTableViewCell: UITableViewCell {
         slideImage!.layer.cornerRadius = 8.0
         slideImage!.clipsToBounds = true
         contentView.addSubview(slideImage!)
+        
+        chatButton = UIButton()
+        chatButton?.frame = CGRectMake(screenWidth-50, 40, 25, 25)
+        contentView.addSubview(chatButton!)
+        
         
         eventDescpLabel = UILabel()
         eventDescpLabel.frame = CGRectMake(90, 30, screenWidth-100, 25)

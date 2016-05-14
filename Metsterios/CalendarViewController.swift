@@ -567,6 +567,9 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
             let image : UIImage = UIImage(named:"slide")!
             cell.slideImage!.image = image
             
+            cell.chatButton?.setImage(UIImage(named: "Chat Bubble Dots"), forState: .Normal)
+            cell.chatButton?.tag = Int(indexPath.row)
+            cell.chatButton?.addTarget(self, action: #selector(CalendarViewController.onTapChat(_:)), forControlEvents: .TouchUpInside)
             // get the user facebook id and get the pic for that.
             //---- cache image management
             let ckey = fid
@@ -807,6 +810,27 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         }
     }
     
+    func onTapChat(sender:UIButton)
+    {
+        
+        
+        Users.sharedInstance().event_id = myHostedevents[Int(sender.tag)].eventid
+        let fbid = Users.sharedInstance().event_id!.componentsSeparatedByString("--")
+        let fid = String(fbid[0])
+        print(Users.sharedInstance().event_id)
+        print(Users.sharedInstance().fbid)
+        print(fid)
+        
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        let chatViewController = mainStoryboard.instantiateViewControllerWithIdentifier("ChatViewController") as! ChatViewController
+        chatViewController.groupId = Users.sharedInstance().event_id as! String
+        chatViewController.sender_id = Users.sharedInstance().fbid  as! String
+        chatViewController.username = Users.sharedInstance().name as! String
+        
+        self.presentViewController(chatViewController, animated: true, completion: nil)
+    }
     
     /*//Links to URL in Safari Browswer
     func mapView(mapView: MKMapView, annotationView: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {

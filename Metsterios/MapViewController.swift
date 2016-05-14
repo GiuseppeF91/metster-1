@@ -739,33 +739,38 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             let people = Users.sharedInstance().tryout_people as! NSArray
             //let keys = people.allKeys
                 
-                print (people.count)
-                let person = people[indexPath.row]
-                print (person["p_name"])
-                let name = person["p_name"] as! String
-                cell.itemTitle!.text = name
-                cell.itemline1seg1!.text = person["p_gid"] as? String
-                cell.itemdescp!.text = person["p_aboutme"] as? String
-                cell.itemline1seg2!.text = person["p_fmatch"] as? String
-                cell.itemline1seg3!.text = person["p_mmatch"] as? String
-                var notice = person["poston"] as? String
-                notice = "also searched for \(Users.sharedInstance().query!) \(notice!)"
-                cell.itemdetail!.text = notice
-                    
-                let access = person["p_fbid"] as! String
-                let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
-                let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!)
-                { (responseData, responseUrl, error) -> Void in
-                        if let data = responseData{
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                cell.itemImage!.image = UIImage(data: data)
-                                //let image : UIImage = UIImage(data: data)!
-                                //cache.set(value: image.asData(), key: "profile_image.jpg")
-                            })
-                        }
+            print (people.count)
+            let person = people[indexPath.row]
+            print (person["p_name"])
+            let name = person["p_name"] as! String
+            cell.itemTitle!.text = name
+            cell.itemline1seg1!.text = person["p_gid"] as? String
+            cell.itemdescp!.text = person["p_aboutme"] as? String
+            cell.itemline1seg2!.text = person["p_fmatch"] as? String
+            cell.itemline1seg3!.text = person["p_mmatch"] as? String
+            var notice = person["poston"] as? String
+            notice = "also searched for \(Users.sharedInstance().query!) \(notice!)"
+            cell.itemdetail!.text = notice
+                
+            let access = person["p_fbid"] as! String
+            let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!)
+            { (responseData, responseUrl, error) -> Void in
+                    if let data = responseData{
+                        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                            cell.itemImage!.image = UIImage(data: data)
+                            //let image : UIImage = UIImage(data: data)!
+                            //cache.set(value: image.asData(), key: "profile_image.jpg")
+                        })
                     }
-                    task.resume()
                 }
+                task.resume()
+            }
+            
+            cell.chatButton?.setImage(UIImage(named: "Chat Bubble Dots"), forState: .Normal)
+            cell.chatButton?.tag = Int(indexPath.row)
+            cell.chatButton?.addTarget(self, action: #selector(CalendarViewController.onTapChat(_:)), forControlEvents: .TouchUpInside)
+            
                 
              /*
             for key in keys {
@@ -881,7 +886,24 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
     }
     
-    
+    func onTapChat(sender:UIButton)
+    {
+        
+        let people = Users.sharedInstance().tryout_people as! NSArray
+        //let keys = people.allKeys
+        
+        print (people.count)
+        let person = people[sender.tag]
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        let chatViewController = mainStoryboard.instantiateViewControllerWithIdentifier("ChatViewController") as! ChatViewController
+        chatViewController.groupId = person["p_fbid"] as! String
+        chatViewController.sender_id = Users.sharedInstance().fbid  as! String
+        chatViewController.username = Users.sharedInstance().name as! String
+        
+        self.presentViewController(chatViewController, animated: true, completion: nil)
+    }
     /*
     // MARK: - Navigation
 
