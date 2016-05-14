@@ -20,7 +20,7 @@ class MapviewTableViewCell: UITableViewCell {
     var itemdetail : UILabel!
     var itemImage : UIImageView?
     var publishbutton : UIButton!
-    
+    var chatButton : UIButton?
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
     }
@@ -70,6 +70,10 @@ class MapviewTableViewCell: UITableViewCell {
         itemdetail.textColor = UIColor.grayColor()
         itemdetail.font = UIFont(name: "HelveticaNeue-Light", size: 12)
         contentView.addSubview(itemdetail)
+        
+        chatButton = UIButton()
+        chatButton?.frame = CGRectMake(screenWidth-50, 40, 25, 25)
+        contentView.addSubview(chatButton!)
         
     }
     

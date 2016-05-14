@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0730"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E0B17E668649488723C4026AB492A56B"
+               BlueprintIdentifier = "270848D90E52B13D97F3FADD313B8C03"
                BuildableName = "Pods_MetsteriosUITests.framework"
                BlueprintName = "Pods-MetsteriosUITests"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E0B17E668649488723C4026AB492A56B"
+            BlueprintIdentifier = "270848D90E52B13D97F3FADD313B8C03"
             BuildableName = "Pods_MetsteriosUITests.framework"
             BlueprintName = "Pods-MetsteriosUITests"
             ReferencedContainer = "container:Pods.xcodeproj">
@@ -60,6 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "270848D90E52B13D97F3FADD313B8C03"
+            BuildableName = "Pods_MetsteriosUITests.framework"
+            BlueprintName = "Pods-MetsteriosUITests"
+            ReferencedContainer = "container:Pods.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

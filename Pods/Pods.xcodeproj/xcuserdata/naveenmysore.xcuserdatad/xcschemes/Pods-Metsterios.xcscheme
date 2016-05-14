@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0730"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "DF366EF4D6300913D42E22A972CD8A30"
+               BlueprintIdentifier = "2404CE6E9E9196803B9814884B1F73C6"
                BuildableName = "Pods_Metsterios.framework"
                BlueprintName = "Pods-Metsterios"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "DF366EF4D6300913D42E22A972CD8A30"
+            BlueprintIdentifier = "2404CE6E9E9196803B9814884B1F73C6"
             BuildableName = "Pods_Metsterios.framework"
             BlueprintName = "Pods-Metsterios"
             ReferencedContainer = "container:Pods.xcodeproj">
@@ -60,6 +60,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "2404CE6E9E9196803B9814884B1F73C6"
+            BuildableName = "Pods_Metsterios.framework"
+            BlueprintName = "Pods-Metsterios"
+            ReferencedContainer = "container:Pods.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
