@@ -9,9 +9,12 @@
 
 import UIKit
 import Firebase
+import Haneke
+
 class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewDataSource,UITableViewDelegate {
     
     var messages = [Message]()
+    var messagepicid = [String]()
     var avatars = Dictionary<String, UIImage>()
     
     var senderImageUrl: String! = ""
@@ -22,6 +25,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
     var username :String!
     var profilephoto :String!
     var sender_id : String!
+    var chatid : String!
     // *** STEP 1: STORE FIREBASE REFERENCES
     var messagesRef: Firebase!
     
@@ -40,6 +44,31 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         
         lblUsername!.text = username;
         
+        print ("Enter chat view controller")
+        print ("FROM : \(Users.sharedInstance().from_chat!)")
+        print ("To: \(Users.sharedInstance().to_chat!)")
+        
+        let f = Users.sharedInstance().from_chat! as! String
+        let t = Users.sharedInstance().to_chat! as! String
+        
+        let a = Int(f as String)
+        let b = Int(t as String)
+        
+        print (a)
+        print (b)
+        
+        print (f.compare(t))
+        let diff = f.compare(t)
+        print(diff.rawValue)
+        
+        chatid = "\(Users.sharedInstance().from_chat!)-\(Users.sharedInstance().to_chat!)"
+        if (diff.rawValue > 0){
+            chatid = "\(Users.sharedInstance().from_chat!)-\(Users.sharedInstance().to_chat!)"
+        } else {
+            chatid = "\(Users.sharedInstance().to_chat!)-\(Users.sharedInstance().from_chat!)"
+        }
+        
+        print(chatid as String)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardShowNotifier:"), name: UIKeyboardWillShowNotification, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardHideNotifier:"), name: UIKeyboardWillHideNotification, object: nil)
@@ -76,7 +105,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
     
     func setupFirebase() {
         // *** STEP 2: SETUP FIREBASE
-        messagesRef = Firebase(url: "https://metster-chat.firebaseio.com/messages/" + self.groupId)
+        messagesRef = Firebase(url: "https://metster-chat.firebaseio.com/messages/" + self.chatid)
         
         // *** STEP 4: RECEIVE MESSAGES FROM FIREBASE (limited to latest 25 messages)
         messagesRef.observeEventType(FEventType.ChildAdded, withBlock: { (snapshot) in
@@ -86,6 +115,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
             
             let message = Message(text: text, sender: sender, imageUrl: imageUrl)
             self.messages.append(message)
+            self.messagepicid.append(sender!)
             if self.timerReload != nil
             {
                 self.timerReload.invalidate()
@@ -132,10 +162,11 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         var wrapperViewHeight = 0.0 as CGFloat
         
         let message = messages[indexPath.row]
+
         
+        
+        // print(usrid)
         let messageString = message.text() as NSString
-        
-        
         let textView: UITextView = UITextView()
         
         
@@ -166,8 +197,6 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
     {
         var cell : UITableViewCell
         
-        
-        
         cell = tableView.dequeueReusableCellWithIdentifier("ChatCell", forIndexPath: indexPath)
         
         for view  in cell.contentView.subviews
@@ -183,19 +212,13 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         
         let message = messages[indexPath.row]
         
+        
         let messageString = message.text() as NSString
         
         let wrapperView: UIView  = UIView()
         let textView: UITextView = UITextView()
-        let imageView:UIImageView  = UIImageView()
+        var imageView:UIImageView  = UIImageView()
         let imageBubble:UIImageView = UIImageView()
-        
-        wrapperView.layer.cornerRadius = 5
-        wrapperView.clipsToBounds = true
-        
-        textView.font = UIFont.systemFontOfSize(14.0)
-        textView.textContainerInset = UIEdgeInsetsZero
-        textView.backgroundColor = UIColor.clearColor()
         
         
         /* Disable scroll and editing */
@@ -215,6 +238,24 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         textView.frame = CGRectMake(15,37, sizeMessage.width, sizeMessage.height)
         imageBubble.frame = CGRectMake(0,0, constraints.width+35, sizeMessage.height+52);
         
+        
+        imageView.frame = CGRectMake(15, 10, 10, 10)
+        imageView.layer.borderWidth = 0.3
+        //profImage?.layer.cornerRadius = 5
+        imageView.layer.masksToBounds = false
+        imageView.layer.borderColor = UIColor.blackColor().CGColor
+        imageView.layer.cornerRadius = imageView.frame.width/2
+        imageView.clipsToBounds = true
+        
+        wrapperView.layer.cornerRadius = 5
+        wrapperView.clipsToBounds = true
+        
+        textView.font = UIFont.systemFontOfSize(14.0)
+        textView.textContainerInset = UIEdgeInsetsZero
+        textView.backgroundColor = UIColor.clearColor()
+        
+        
+        wrapperView.addSubview(imageView)
         wrapperView.addSubview(imageBubble)
         wrapperView.addSubview(textView)
         
@@ -235,6 +276,40 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         
         
         wrapperView.frame  = CGRectMake(wrapperViewX, 7.0, wrapperViewWidth, wrapperViewHeight)
+    
+        
+        let usrid = messagepicid[indexPath.row]
+        
+        let access = usrid
+        let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
+        print("image for ")
+        print("http://graph.facebook.com/\(access)/picture?type=large")
+        //---- cache image management
+        let cache = Shared.dataCache
+        cache.fetch(key: access).onFailure { data in
+            
+            print (access)
+            let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
+            ) { (responseData, responseUrl, error) -> Void in
+                if let data = responseData{
+                    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                        let image : UIImage = UIImage(data: data)!.resizableImageWithCapInsets(UIEdgeInsetsMake(7, 16, 16, 7))
+                        imageView.image = image
+                        cache.set(value: image.asData(), key: access)
+                    })
+                }
+            }
+            task.resume()
+            
+        }
+        
+        cache.fetch(key: access).onSuccess { data in
+            print ("data was found in cache for a friend")
+            let image : UIImage = UIImage(data: data)!
+            imageView.image = image
+        }
+        //imageView.hidden = false
+        //-----
         
         
         let _formatter:NSDateFormatter = NSDateFormatter()

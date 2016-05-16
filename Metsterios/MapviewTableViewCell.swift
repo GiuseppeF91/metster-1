@@ -21,6 +21,7 @@ class MapviewTableViewCell: UITableViewCell {
     var itemImage : UIImageView?
     var publishbutton : UIButton!
     var chatButton : UIButton?
+    var fbButton : UIButton?
     required init(coder aDecorder: NSCoder) {
         fatalError("init(coder:)")
     }
@@ -72,8 +73,12 @@ class MapviewTableViewCell: UITableViewCell {
         contentView.addSubview(itemdetail)
         
         chatButton = UIButton()
-        chatButton?.frame = CGRectMake(screenWidth-50, 40, 25, 25)
+        chatButton?.frame = CGRectMake(screenWidth-30, 40, 25, 25)
         contentView.addSubview(chatButton!)
+        
+        fbButton = UIButton()
+        fbButton?.frame = CGRectMake(screenWidth-60, 40, 25, 25)
+        contentView.addSubview(fbButton!)
         
     }
     

@@ -71,6 +71,12 @@ class Users: NSObject {
     var selected_event_data : userevents?
     var event_people : AnyObject?
     
+    
+    //-- chat section
+    var chat_mode : AnyObject?
+    var from_chat : AnyObject?
+    var to_chat : AnyObject?
+    
     //-- member
     var mfbid : AnyObject?
     
