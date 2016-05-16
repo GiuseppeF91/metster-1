@@ -35,6 +35,8 @@ class ProfileViewController: BaseVC {
     var gidLabel = UILabel(frame: CGRectMake(20, (screenHeight/2.5) + 20, screenWidth-40, 40))
     var profImage : UIImageView?
     
+    var imageView : UIImageView?
+    
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
     override func viewDidLoad() {
@@ -60,6 +62,9 @@ class ProfileViewController: BaseVC {
         publishButton.hidden = true
         publishSwitch.hidden = true 
         
+        imageView  = UIImageView(frame:CGRectMake((screenWidth/2)-30, (screenHeight)-(screenHeight/15)-110, 50, 50));
+        imageView!.image = UIImage(named:"bannerimg.jpg")
+        self.view.addSubview(imageView!)
         
         let notes=NSAttributedString(string: "About me:", attributes:    [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
         notesTextField.attributedPlaceholder=notes

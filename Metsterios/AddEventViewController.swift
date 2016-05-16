@@ -97,9 +97,26 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
         friendsTableView.rowHeight = 100
         self.view.addSubview(self.friendsTableView)
         
+        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 20)) // Offset by 20 pixels vertically to take
+    
+        //navigationBar.delegate = self
+        
+        // Create a navigation item with a title
+        let navigationItem = UINavigationItem()
+        //navigationItem.title = "Search"
+        /*
+         let imageView = UIImageView(frame: CGRect(x: 0, y: 10, width: 38, height: 38))
+         imageView.contentMode = .ScaleAspectFit
+         let image = UIImage(named: "bannerimg")
+         imageView.image = image
+         navigationItem.titleView = imageView
+         */
+        // Assign the navigation item to the navigation bar
         navigationItem.rightBarButtonItem = nextButton
         navigationItem.leftBarButtonItem = cancelButton
         navigationItem.title = "New Event"
+        navigationBar.items = [navigationItem]
+        
         navBar.items = [navigationItem]
         navBar.backgroundColor = UIColor.whiteColor()
         self.view.addSubview(navBar)
@@ -174,7 +191,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     }
     
     override func viewDidLayoutSubviews() {
-        friendsTableView.frame = CGRectMake(0, ((UIScreen.mainScreen().bounds.height*11)/60)+25, UIScreen.mainScreen().bounds.width, 400)
+        friendsTableView.frame = CGRectMake(0, ((UIScreen.mainScreen().bounds.height*11)/60)+25, UIScreen.mainScreen().bounds.width, 450)
     }
     
     //MARK : Table View delegate & data source methods
@@ -249,6 +266,12 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     
     func selectTime() {
         timeBool = !timeBool
+    }
+    
+    func exit() {
+        print ("back pressed")
+        navigationController?.popToRootViewControllerAnimated(true)
+        self.dismissViewControllerAnimated(true, completion: {});
     }
     
     func newEventCreated() {
@@ -329,6 +352,7 @@ class AddEventViewController: BaseVC, UINavigationControllerDelegate, UITableVie
     func cancelClicked() {
         // resets invites - removes everyone from the list.
         resetChecks()
+        exit()
     }
     
     func backPressed() {

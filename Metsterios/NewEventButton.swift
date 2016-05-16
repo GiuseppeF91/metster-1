@@ -8,9 +8,9 @@
 
 import UIKit
 
-class SearchButton: UIButton {
+class NewEventButton: UIButton {
     
-    let image = UIImage(named: "privatesearch") as UIImage?
+    let image = UIImage(named: "newicon") as UIImage?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

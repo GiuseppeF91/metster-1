@@ -20,11 +20,16 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = []
     
+    var mode = "edit"
+    var notesTextField = MainTextField(frame: CGRectMake(screenWidth-178, (screenHeight/2)+52, 100, 30))
+    var editButton = UIButton(frame: CGRectMake(screenWidth-75, (screenHeight/2)+52, 70, 30))
+    
     var view_mode = "members"
     var lineView : UIView?
     @IBOutlet var searchbar: UITextField!
    
     
+    var noticeLabel = UILabel(frame: CGRectMake(0, (screenHeight/2)+85, screenWidth, 12.0))
     
     // testing class object
     
@@ -133,7 +138,6 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     var showpinnedButton = UIButton(frame: CGRectMake((screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
     var showunpinnedButton = UIButton(frame: CGRectMake(2*(screenWidth/3), (screenHeight)-50,(screenWidth/3), 50))
 
-
     // list attbrs
     var names : NSMutableArray? = []
     var images : NSMutableArray? = []
@@ -181,6 +185,7 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         print(event_data.eventname)
         print(event_data.eventdate)
         self.view_mode = "members"
+        Users.sharedInstance().query = nil
         print("-----------------------")
         
         navigationItem.title = event_name
@@ -207,36 +212,35 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
          showpinnedButton.backgroundColor = UIColor.whiteColor()
          showunpinnedButton.backgroundColor = UIColor.whiteColor()
         */
+        
+        var bimage = UIImage(named: "people_blue")! as UIImage
+        showmembersButton = UIButton(type: UIButtonType.System) as UIButton
         showmembersButton.backgroundColor = UIColor.whiteColor()
-        showmembersButton.layer.borderWidth = 1
-        showmembersButton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        showmembersButton.setTitle("members", forState: UIControlState.Normal)
-        showmembersButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        showmembersButton.frame = CGRectMake(0, (screenHeight)-50, (screenWidth/3), 50)
+        showmembersButton.setBackgroundImage(bimage, forState: UIControlState.Normal)
         showmembersButton.addTarget(self, action: #selector(EventViewController.showmemberpressed), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(showmembersButton)
         showmembersButton.hidden = false
         
-        //--- view members first
-        self.view_mode = "members"
-        showmembersButton.backgroundColor = UIColor.lightGrayColor()
-        showpinnedButton.backgroundColor = UIColor.whiteColor()
-        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+
         //----
         
+        bimage = UIImage(named: "places_gray")! as UIImage
+        showpinnedButton = UIButton(type: UIButtonType.System) as UIButton
+        showpinnedButton.frame = CGRectMake((screenWidth/3), (screenHeight)-50,(screenWidth/3), 50)
+        showpinnedButton.setBackgroundImage(bimage, forState: UIControlState.Normal)
         showpinnedButton.backgroundColor = UIColor.whiteColor()
-        showpinnedButton.layer.borderWidth = 1
-        showpinnedButton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        showpinnedButton.setTitle("pinned", forState: UIControlState.Normal)
-        showpinnedButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
         showpinnedButton.addTarget(self, action: #selector(EventViewController.showpinnedpressed), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(showpinnedButton)
         showpinnedButton.hidden = false
         
+        
+        
+        bimage = UIImage(named: "nearby_gray")! as UIImage
+        showunpinnedButton = UIButton(type: UIButtonType.System) as UIButton
+        showunpinnedButton.frame = CGRectMake(2*(screenWidth/3), (screenHeight)-50,(screenWidth/3), 50)
         showunpinnedButton.backgroundColor = UIColor.whiteColor()
-        showunpinnedButton.layer.borderWidth = 1
-        showunpinnedButton.layer.borderColor = UIColor.lightGrayColor().CGColor
-        showunpinnedButton.setTitle("nearby", forState: UIControlState.Normal)
-        showunpinnedButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        showunpinnedButton.setBackgroundImage(bimage, forState: UIControlState.Normal)
         showunpinnedButton.addTarget(self, action: #selector(EventViewController.showplacespressed), forControlEvents: UIControlEvents.TouchUpInside)
         self.view.addSubview(showunpinnedButton)
         showunpinnedButton.hidden = false
@@ -247,12 +251,39 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
         // 0, (screenHeight/2)+100, screenWidth, 145
-        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+99, screenWidth, 1.0))
-        lineView!.layer.borderWidth = 1.0
-        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+85, screenWidth, 15.0))
+        lineView!.layer.borderWidth = 15.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineView!.layer.borderColor = color2.CGColor
         self.view.addSubview(lineView!)
-        lineView!.hidden = false
+        lineView!.hidden = true
         
+    
+        editButton.backgroundColor = UIColor.whiteColor()
+        editButton.layer.cornerRadius = 5
+        editButton.layer.borderWidth = 1
+        editButton.layer.borderColor = UIColor.lightGrayColor().CGColor
+        editButton.setTitle("invite", forState: UIControlState.Normal)
+        editButton.setTitleColor(UIColor(red: 0, green: 0.6549, blue: 0.9373, alpha: 1.0), forState: UIControlState.Normal)
+        editButton.addTarget(self, action: #selector(EventViewController.editpressed), forControlEvents: UIControlEvents.TouchUpInside)
+        self.view.addSubview(editButton)
+        editButton.hidden = false
+        
+        let notes=NSAttributedString(string: "@gid", attributes: [NSForegroundColorAttributeName : UIColor.grayColor().colorWithAlphaComponent(0.6)])
+        notesTextField.attributedPlaceholder = notes
+        notesTextField.backgroundColor = UIColor.whiteColor()
+        notesTextField.delegate = self
+        self.view.addSubview(notesTextField)
+        notesTextField.hidden = true
+        
+        
+        noticeLabel.textAlignment = NSTextAlignment.Left
+        noticeLabel.text = "test"
+        noticeLabel.textColor = UIColor.whiteColor()
+        noticeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
+        noticeLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.noticeLabel)
+        noticeLabel.hidden = true
         
         findpeople()
         
@@ -409,40 +440,131 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
     }
     
     
+    func editpressed(){
+        if(mode as String == "edit") {
+            self.notesTextField.hidden = false
+            editButton.setTitle("send", forState: UIControlState.Normal)
+            self.mode = "send"
+            // call the update function to save
+            
+        } else {
+            self.notesTextField.hidden = true
+            /*
+            RequestInfo.sharedInstance().postReq("111003")
+            { (success, errorString) -> Void in
+                guard success else {
+                    dispatch_async(dispatch_get_main_queue(), {
+                        print("Unable to save preference")
+                        self.alertMessage("Error", message: "Unable to update.")
+                    })
+                    return
+                }
+                dispatch_async(dispatch_get_main_queue(), {
+                    print("suucssssss")
+                    self.alertMessage("Preference Saved!", message: "")
+                })
+            }
+            */
+            editButton.setTitle("invite", forState: UIControlState.Normal)
+            self.mode = "edit"
+        }
+    }
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        if ((cString.characters.count) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
     func showmemberpressed(){
         self.view_mode = "members"
  
-        showmembersButton.backgroundColor = UIColor.lightGrayColor()
-        showpinnedButton.backgroundColor = UIColor.whiteColor()
-        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        self.showmembersButton.setBackgroundImage(UIImage(named: "people_blue"), forState: UIControlState.Normal)
+        self.showpinnedButton.setBackgroundImage(UIImage(named: "places_gray"), forState: UIControlState.Normal)
+        self.showunpinnedButton.setBackgroundImage(UIImage(named: "nearby_gray"), forState: UIControlState.Normal)
+        
+        var count = 0
+        if(Users.sharedInstance().event_people == nil){
+            count = 0
+        } else {
+            let memb = Users.sharedInstance().event_people as! NSArray
+            count = memb.count
+        }
+        
+        if (count == 1) {
+            noticeLabel.text = "  \(count) member for this event"
+        } else {
+            noticeLabel.text = "  \(count) members for this event"
+        }
+        noticeLabel.hidden = false
+        self.lineView!.hidden = false
         
         self.placesTableView.reloadData()
     }
     
     func showpinnedpressed(){
         self.view_mode = "pinned"
-        showmembersButton.backgroundColor = UIColor.whiteColor()
-        showpinnedButton.backgroundColor = UIColor.lightGrayColor()
-        showunpinnedButton.backgroundColor = UIColor.whiteColor()
+        self.showmembersButton.setBackgroundImage(UIImage(named: "people_gray"), forState: UIControlState.Normal)
+        self.showpinnedButton.setBackgroundImage(UIImage(named: "places_blue"), forState: UIControlState.Normal)
+        self.showunpinnedButton.setBackgroundImage(UIImage(named: "nearby_gray"), forState: UIControlState.Normal)
         self.placesTableView.reloadData()
         for pin in self.pinnedPlaces {
             print(pin.name)
         }
+        var count = self.pinnedPlaces.count
+        
+        if (count == 1) {
+            noticeLabel.text = "  \(count) location pinned by a event member"
+        } else {
+            noticeLabel.text = "  \(count) locations pinned by a event members"
+        }
+        noticeLabel.hidden = false
+        self.lineView!.hidden = false
         //---
         // reload the table and check the mode there
     }
     
     func showplacespressed(){
         self.view_mode = "places"
-        showmembersButton.backgroundColor = UIColor.whiteColor()
-        showpinnedButton.backgroundColor = UIColor.whiteColor()
-        showunpinnedButton.backgroundColor = UIColor.lightGrayColor()
+        self.showmembersButton.setBackgroundImage(UIImage(named: "people_gray"), forState: UIControlState.Normal)
+        self.showpinnedButton.setBackgroundImage(UIImage(named: "places_gray"), forState: UIControlState.Normal)
+        self.showunpinnedButton.setBackgroundImage(UIImage(named: "nearby_blue"), forState: UIControlState.Normal)
         self.placesTableView.reloadData()
+        
+        var count = 0
+        if (Users.sharedInstance().query == nil ){
+            noticeLabel.text = "  please make search to list places"
+        } else {
+            if Users.sharedInstance().places == nil {
+                count = 0
+            } else {
+                count = Users.sharedInstance().places!.count
+            }
+            let quer = Users.sharedInstance().query as! String
+            noticeLabel.text = "  \(count) places found for search \(quer)"
+            noticeLabel.hidden = false
+        }
     }
     
     func searchmade() {
         print ("search made enter")
-        let query = "sushi"
+        let query = searchbar.text! as String
         let eventid = Users.sharedInstance().event_id
         Users.sharedInstance().query = query as String
         //-- clean data of previous search
@@ -473,6 +595,21 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
                 for person in peoplenb {
                     print(person)
                 }
+                var count = 0
+                if(Users.sharedInstance().event_people == nil){
+                    count = 0
+                } else {
+                    let memb = Users.sharedInstance().event_people as! NSArray
+                    count = memb.count
+                }
+                
+                if (count == 1) {
+                    self.noticeLabel.text = "  \(count) member for this event"
+                } else {
+                    self.noticeLabel.text = "  \(count) members for this event"
+                }
+                self.noticeLabel.hidden = false
+                self.lineView!.hidden = false
                 self.placesTableView.reloadData()
             })
         }

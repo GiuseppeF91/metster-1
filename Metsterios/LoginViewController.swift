@@ -281,14 +281,17 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                 return
             }
             print("This user exists")
+            print (Users.sharedInstance().fbid as! String)
             
             QBRequest.logInWithUserLogin(Users.sharedInstance().fbid as! String, password: Users.sharedInstance().fbid as! String, successBlock: { (response:QBResponse, user : QBUUser?) in
                 
                 
                 }, errorBlock: { (response: QBResponse) in
                     let user = QBUUser()
-                    user.password = Users.sharedInstance().fbid as! String
-                    user.login = Users.sharedInstance().fbid as! String
+                    print ("here")
+                    user.password = (Users.sharedInstance().fbid as! String)
+                    user.login = (Users.sharedInstance().fbid as! String)
+                    print (user.login)
                     QBRequest.signUp(user, successBlock: { (response: QBResponse, user :QBUUser?) in
                         
                         
@@ -299,10 +302,8 @@ class LoginViewController: BaseVC, CLLocationManagerDelegate, FBSDKLoginButtonDe
                     
             })
             
-            
-            
-            
             self.registerForRemoteNotification()
+
             self.presentViewController(TabBarViewController(), animated: true, completion: nil)
         }
         print("exit findAccount ----->")

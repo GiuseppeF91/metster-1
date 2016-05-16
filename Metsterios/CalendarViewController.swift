@@ -30,6 +30,7 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     let ref = Firebase(url: "https://metsterios.firebaseio.com")
     
+    var neweventButton = NewEventButton(frame: CGRectMake(screenWidth - 40, (screenHeight/2)-((screenHeight)/16)-40, 40, 40))
     
     let locationManager = CLLocationManager()
     
@@ -55,12 +56,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
         super.viewDidLoad()
         print("====== ENTER Calender View Controller =====")
         Users.sharedInstance().search_mode = "private"
-        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
-    
         
     }
     
@@ -89,6 +88,10 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
                 self.view.addSubview(self.pendingEventsButton)
                 self.pendingEventsClicked()
                
+                self.neweventButton.addTarget(self, action: #selector(self.newevent), forControlEvents: UIControlEvents.TouchUpInside)
+                self.view.addSubview(self.neweventButton)
+                self.neweventButton.hidden = false
+                
                 self.tableView.dataSource = self
                 self.tableView.delegate = self
                 self.tableView.rowHeight = 100
@@ -103,6 +106,15 @@ class CalendarViewController: BaseVC, UITableViewDelegate, UITableViewDataSource
     
     override func viewDidLayoutSubviews() {
         tableView.frame = CGRectMake(0, screenHeight/2, screenWidth, (screenHeight/2)-50)
+    }
+    
+    
+    func newevent(){
+     print("new event")
+     let newev = AddEventViewController()
+     let controller: UIViewController = UIViewController()
+     controller.view.backgroundColor = UIColor.whiteColor()
+     self.presentViewController(newev, animated: true, completion: nil)
     }
     
     func loadEvents(completionHandler: (success: Bool, errorString: String?) -> Void) {

@@ -40,11 +40,11 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        self.viewControllers = [profileVC! , preferencesVC! , mapViewVC!, addEventVC!, calendarVC!]
+        self.viewControllers = [profileVC! , preferencesVC! , mapViewVC!, calendarVC!, addEventVC!]
         
         let profile = UITabBarItem(title: "Profile", image: UIImage(named: "tabar"), tag: 0)
         let pref = UITabBarItem(title: "Preference", image: UIImage(named: "preferenceicon"), tag: 1)
-        let add = UITabBarItem(title: "New Event", image: UIImage(named: "newicon"), tag: 2)
+        let add = UITabBarItem(title: "Connections", image: UIImage(named: "Chat Bubble Dots"), tag: 2)
         let cal = UITabBarItem(title: "Events", image: UIImage(named: "eventicon"), tag: 3)
         let map = UITabBarItem(title: "Map", image: UIImage(named: "mapicon"), tag: 4)
     

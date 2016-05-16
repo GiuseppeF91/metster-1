@@ -22,16 +22,19 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var pinAnnotations = [MGLPointAnnotation]()
     var attndictionary:Dictionary<String, String>?
     var attkdictionary:Dictionary<String, String>?
+    var attyelpdictionary:Dictionary<String, String>?
     let locationManager = CLLocationManager()
     let newValues : NSMutableArray? = [] // holds all places for a given query
     let newValuespeople : NSMutableArray? = [] // we need to update this for a given place.
     
-    var publishSwitch = UISwitch(frame:CGRectMake(2, 40, 40, 40))
-    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-45, 38, 38, 38))
+    var publishSwitch = UISwitch(frame:CGRectMake(2, 25, 32, 32))
+    var submitButton = SearchButton(frame: CGRectMake((screenWidth)-43, 25, 32, 32))
     
     var findpeopleBtn = findpeopleButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
     var findplacesBtn = findplacesButton(frame: CGRectMake((screenWidth)-70, (screenHeight/2)+85, 68, 38))
 
+    var noticeLabel = UILabel(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 12.0))
+    
     var toggle_mode = "places"
     // publish button
 
@@ -45,6 +48,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var dictionary = NSDictionary()
     
     var lineView : UIView?
+    var lineViewBanner : UIView?
     var placesTableView : UITableView = UITableView()
     
     var tap :UITapGestureRecognizer?
@@ -63,29 +67,25 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         //full screen size
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
-        
-        
-        
         //-----
-        /*
-        // Create the navigation bar
-        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 50)) // Offset by 20 pixels vertically to take the status bar into account
         
-        navigationBar.backgroundColor = UIColor.whiteColor()
+        // Create the navigation bar
+        let navigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.size.width, 20)) // Offset by 20 pixels vertically to take the status bar into account
+        
+        let color1 = hexStringToUIColor("#fd5c63")
+        navigationBar.backgroundColor = color1
         //navigationBar.delegate = self
         
         // Create a navigation item with a title
         let navigationItem = UINavigationItem()
-        navigationItem.title = "Search"
-        
-        // Create left and right button for navigation item
-        let leftButton =  UIBarButtonItem(title: "Back", style:   UIBarButtonItemStyle.Plain, target: self, action: #selector(self.searchmade))
-        //let rightButton = UIBarButtonItem(title: "Right", style: UIBarButtonItemStyle.Plain, target: self, action: nil)
-        
-        // Create two buttons for the navigation item
-        navigationItem.leftBarButtonItem = leftButton
-        //navigationItem.rightBarButtonItem = rightButton
-        
+        //navigationItem.title = "Search"
+        /*
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 10, width: 38, height: 38))
+        imageView.contentMode = .ScaleAspectFit
+        let image = UIImage(named: "bannerimg")
+        imageView.image = image
+        navigationItem.titleView = imageView
+        */
         // Assign the navigation item to the navigation bar
         navigationBar.items = [navigationItem]
         
@@ -94,7 +94,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         
         //-----
-        */
+        
         
         //let screenWidth = screenSize.width;
         //let screenHeight = screenSize.height;
@@ -131,11 +131,29 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         publishSwitch.hidden = false
         
         
-        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 1.0))
-        lineView!.layer.borderWidth = 1.0
-        lineView!.layer.borderColor = UIColor.blueColor().CGColor
+        lineView = UIView(frame: CGRectMake(0, (screenHeight/2)+100, screenWidth, 15.0))
+        lineView!.layer.borderWidth = 15.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineView!.layer.borderColor = color2.CGColor
         self.view.addSubview(lineView!)
         lineView!.hidden = true
+        
+        noticeLabel.textAlignment = NSTextAlignment.Left
+        noticeLabel.text = "test"
+        noticeLabel.textColor = UIColor.whiteColor()
+        noticeLabel.font = UIFont(name: "HelveticaNeue-Bold", size: 12)
+        noticeLabel.adjustsFontSizeToFitWidth = true
+        view.addSubview(self.noticeLabel)
+        noticeLabel.hidden = true
+        
+        /*
+        lineViewBanner = UIView(frame: CGRectMake(0, (screenHeight/2)+97, screenWidth, 3.0))
+        lineViewBanner!.layer.borderWidth = 3.0
+        let color2 = hexStringToUIColor("#47D509")
+        lineViewBanner!.layer.borderColor = color2.CGColor
+        self.view.addSubview(lineViewBanner!)
+        lineViewBanner!.hidden = false
+        */
         
         searchbar.placeholder = "search private: e.g sushi, pizza..."
         
@@ -175,6 +193,29 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     }
     
     
+    
+    func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+        
+        if (cString.hasPrefix("#")) {
+            cString = cString.substringFromIndex(cString.startIndex.advancedBy(1))
+        }
+        
+        if ((cString.characters.count) != 6) {
+            return UIColor.grayColor()
+        }
+        
+        var rgbValue:UInt32 = 0
+        NSScanner(string: cString).scanHexInt(&rgbValue)
+        
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
+    
     func findpeoplepressed(sender:UIButton) {
         print ("toggle button pressed")
         
@@ -183,12 +224,31 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
            self.placesTableView.reloadData() // loads places
            self.findplacesBtn.hidden = true
            self.findpeopleBtn.hidden = false
+           let count = Users.sharedInstance().places!.count
+           let quer = Users.sharedInstance().query as! String
+           noticeLabel.text = "  \(count) places found for search \(quer)"
+           noticeLabel.hidden = false
             
         } else {
            self.toggle_mode = "people" // flip
            self.placesTableView.reloadData() // loads people
             self.findplacesBtn.hidden = false
             self.findpeopleBtn.hidden = true
+            var count = 0
+            if(Users.sharedInstance().tryout_people == nil){
+                count = 0
+            } else {
+                let people = Users.sharedInstance().tryout_people as! NSArray
+                count = people.count
+            }
+            
+            let quer = Users.sharedInstance().query as! String
+            if (count == 1) {
+                noticeLabel.text = "  \(count) person nearby interested in \(quer)"
+            } else {
+                noticeLabel.text = "  \(count) people nearby interested in \(quer)"
+            }
+            noticeLabel.hidden = false
         }
         
         // this logic needs to moved
@@ -207,15 +267,15 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         if switchState.on {
             print("The Switch is On")
             Users.sharedInstance().search_mode = "private"
-            self.findplacesBtn.hidden = true
-            self.findpeopleBtn.hidden = false
             searchbar.text = ""
             searchbar.placeholder = "search private: e.g sushi, pizza..."
+            submitButton.setImage(UIImage(named: "privatesearch"), forState: UIControlState.Normal)
         } else {
             print("The Switch is Off")
             Users.sharedInstance().search_mode = "public"
             searchbar.text = ""
             searchbar.placeholder = "search public: e.g sushi, pizza..."
+            submitButton.setImage(UIImage(named: "search"), forState: UIControlState.Normal)
         }
         
     }
@@ -279,13 +339,14 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                     let latitude = value.valueForKey("latitude") as! String
                     let longitude = value.valueForKey("longitude") as! String
                     let name = value.valueForKey("name") as! String
+                    let yelp_url = value.valueForKey("url") as! String
                     
                     let address = value.valueForKey("address") as! String
                     let drivedistance = value.valueForKey("drivedistance") as! String
                     print(latitude)
                     print(longitude)
                     print(drivedistance)
-                    self.add_annot(latitude, lon: longitude, name: name, address: address, dis: drivedistance, placeid: placeid)
+                    self.add_annot(latitude, lon: longitude, name: name, address: address, dis: drivedistance, placeid: placeid, url: yelp_url)
                 }
                 //self.mapView.addAnnotations(self.pinAnnotations)
                 //self.mapView.showAnnotations(self.pinAnnotations, animated: false)
@@ -298,6 +359,10 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
                 self.placesTableView.reloadData()
                 self.placesTableView.bringSubviewToFront(self.view)
                 
+                let count = Users.sharedInstance().places!.count
+                let quer = Users.sharedInstance().query as! String
+                self.noticeLabel.text = "  \(count) places found for search \(quer)"
+                self.noticeLabel.hidden = false
                 
                 self.findpeople()
             }
@@ -346,6 +411,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             }
 
         }
+        attyelpdictionary?.removeAll()
         attndictionary?.removeAll()
         attkdictionary?.removeAll()
         pinAnnotations.removeAll()
@@ -378,7 +444,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
     }
     
-    func add_annot(lat : String, lon : String, name : String, address : String, dis: String, placeid: String){
+    func add_annot(lat : String, lon : String, name : String, address : String, dis: String, placeid: String, url: String){
         let lpoint = MGLPointAnnotation()
         lpoint.coordinate = CLLocationCoordinate2D(latitude: Double(lat)!, longitude: Double(lon)!)
         lpoint.title = name
@@ -399,11 +465,19 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             foofoo[name] = dis
             attndictionary = foofoo
         }
+        
         if (attkdictionary == nil) {
             attkdictionary = [placeid: name]
         } else if var foofoo = attkdictionary {
             foofoo[placeid] = name
             attkdictionary = foofoo
+        }
+        
+        if (attyelpdictionary == nil) {
+            attyelpdictionary = [name: url]
+        } else if var foofoo = attyelpdictionary {
+            foofoo[name] = url
+            attyelpdictionary = foofoo
         }
         
         //attndictionary.
@@ -459,8 +533,24 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         // hide the callout view
         //mapView.deselectAnnotation(annotation, animated: false)
         
-        UIPasteboard.generalPasteboard().string = annotation.subtitle!
+        let url = attyelpdictionary![annotation.title!!]! as String
+        print(url)
         
+        
+        //---
+        
+        print ("yelp")
+        let webfburl : NSURL = NSURL(string: url)!
+        if (UIApplication.sharedApplication().canOpenURL(webfburl)){
+            UIApplication.sharedApplication().openURL(webfburl)
+        } else {
+            UIApplication.sharedApplication().openURL(webfburl)
+        }
+        
+        //----
+        
+        UIPasteboard.generalPasteboard().string = annotation.subtitle!
+    
         let alert = UIAlertController(title: "address copied to clipboard.",
                                       message: " Go to your favorite navigation app and paste the address to navigate.",
                                       preferredStyle: UIAlertControllerStyle.Alert)
@@ -588,6 +678,28 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         }
     }
     
+    
+    func onTapChat(sender:UIButton)
+    {
+        
+        
+        //Users.sharedInstance().event_id = myHostedevents[Int(sender.tag)].eventid
+        let fbid = Users.sharedInstance().event_id!.componentsSeparatedByString("--")
+        let fid = String(fbid[0])
+        print(Users.sharedInstance().event_id)
+        print(Users.sharedInstance().fbid)
+        print(fid)
+        
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        let chatViewController = mainStoryboard.instantiateViewControllerWithIdentifier("ChatViewController") as! ChatViewController
+        chatViewController.groupId = Users.sharedInstance().event_id as! String
+        chatViewController.sender_id = Users.sharedInstance().fbid  as! String
+        chatViewController.username = Users.sharedInstance().name as! String
+        
+        self.presentViewController(chatViewController, animated: true, completion: nil)
+    }
 
     
     func tryout(title : String) {
@@ -742,6 +854,9 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             print (people.count)
             let person = people[indexPath.row]
             print (person["p_name"])
+            if (Users.sharedInstance().gid as? String == person["p_gid"] as? String ) {
+                    // ignore
+            } else {
             let name = person["p_name"] as! String
             cell.itemTitle!.text = name
             cell.itemline1seg1!.text = person["p_gid"] as? String
@@ -769,44 +884,13 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             
             cell.chatButton?.setImage(UIImage(named: "Chat Bubble Dots"), forState: .Normal)
             cell.chatButton?.tag = Int(indexPath.row)
-            cell.chatButton?.addTarget(self, action: #selector(CalendarViewController.onTapChat(_:)), forControlEvents: .TouchUpInside)
-            
+            cell.chatButton?.addTarget(self, action: #selector(MapViewController.onmTapChat(_:)), forControlEvents: .TouchUpInside)
                 
-             /*
-            for key in keys {
+            cell.fbButton?.setImage(UIImage(named: "fbicon"), forState: .Normal)
+            cell.fbButton?.tag = Int(indexPath.row)
+            cell.fbButton?.addTarget(self, action: #selector(MapViewController.onfbTap(_:)), forControlEvents: .TouchUpInside)
                 
-                let payload = people.valueForKey(key as! String)
-                let data: NSData = payload!.dataUsingEncoding(NSUTF8StringEncoding)!
-                
-                do {
-                    let jsonR = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                    print (jsonR.valueForKey("name") as! String)
-                    cell.placeNameLabel!.text = jsonR.valueForKey("name") as? String
-                    
-                    print(jsonR.valueForKey("fb_id") as? String)
-                    
-                    let access = jsonR.valueForKey("fb_id") as! String
-                    let facebookProfileUrl = NSURL(string: "http://graph.facebook.com/\(access)/picture?type=large")
-                    let task = NSURLSession.sharedSession().dataTaskWithURL(facebookProfileUrl!
-                    ) { (responseData, responseUrl, error) -> Void in
-                        if let data = responseData{
-                            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                                cell.placeImage!.image = UIImage(data: data)
-                                //let image : UIImage = UIImage(data: data)!
-                                //cache.set(value: image.asData(), key: "profile_image.jpg")
-                            })
-                        }
-                    }
-                    task.resume()
-
-                    
-                } catch let error as NSError {
-                    print("error: \(error.localizedDescription)")
-                }
-                
-                }
-                
-                */
+            }
         
         }
         
@@ -886,14 +970,19 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
     }
     
-    func onTapChat(sender:UIButton)
+    func onmTapChat(sender:UIButton)
     {
         
         let people = Users.sharedInstance().tryout_people as! NSArray
         //let keys = people.allKeys
         
         print (people.count)
-        let person = people[sender.tag]
+        let person = people[sender.tag] // get tag here.
+        print (person)
+        
+        Users.sharedInstance().from_chat = Users.sharedInstance().fbid as! String
+        Users.sharedInstance().to_chat = person["p_fbid"] as! String
+        Users.sharedInstance().chat_mode = "private"
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         
         
@@ -904,6 +993,32 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         self.presentViewController(chatViewController, animated: true, completion: nil)
     }
+    
+    func onfbTap(sender:UIButton)
+    {
+        
+        print ("fb")
+        let people = Users.sharedInstance().tryout_people as! NSArray
+        //let keys = people.allKeys
+        
+        print (people.count)
+        let person = people[sender.tag] // get tag here.
+        print (person)
+        
+        let pfid = person["p_fbid"] as! String
+        let url = "https://www.facebook.com/\(pfid)"
+        let furl = "fb://profile/\(pfid)"
+        let fbUrl: NSURL = NSURL(string: furl)!
+        let webfburl : NSURL = NSURL(string: url)!
+        if (UIApplication.sharedApplication().canOpenURL(fbUrl)){
+            UIApplication.sharedApplication().openURL(fbUrl)
+        } else {
+            UIApplication.sharedApplication().openURL(webfburl)
+        }
+        
+    }
+    
+    
     /*
     // MARK: - Navigation
 

@@ -60,7 +60,7 @@ class EventTableViewCell: UITableViewCell {
         contentView.addSubview(slideImage!)
         
         chatButton = UIButton()
-        chatButton?.frame = CGRectMake(screenWidth-50, 40, 25, 25)
+        chatButton?.frame = CGRectMake(screenWidth-30, 40, 25, 25)
         contentView.addSubview(chatButton!)
         
         
