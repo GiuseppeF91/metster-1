@@ -56,6 +56,8 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     var popTime = dispatch_time(DISPATCH_TIME_NOW,
                                 Int64(4.0 * Double(NSEC_PER_SEC)))
     
+    let dropDown = DropDown()
+    
     @IBOutlet var loadingact: UIActivityIndicatorView!
     var GlobalMainQueue: dispatch_queue_t {
         return dispatch_get_main_queue()
@@ -189,6 +191,24 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         // Set the delegate property of our map view to self after instantiating it.
         mapView.delegate = self
+        
+        //init drop down
+        dropDown.dataSource = [
+            "American",
+            "Italian",
+            "Chinese",
+            "Japanese",
+            "Indian",
+            "Mexican",
+            "Korean"
+        ]
+        
+        dropDown.selectionAction = { [unowned self] (index, item) in
+            self.searchbar.text = item
+        }
+        
+        dropDown.anchorView = searchbar
+        dropDown.bottomOffset = CGPoint(x: 0, y:searchbar.bounds.height)
         
     }
     

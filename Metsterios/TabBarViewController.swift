@@ -16,6 +16,8 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
     var addEventVC : AddEventViewController?
     var calendarVC : CalendarViewController?
     var mapViewVC : MapViewController?
+    var chatHistoryVC : ChatListViewController?
+    
     //var mapViewVC : Mapbx?
     var saveButton : UIBarButtonItem!
     
@@ -27,11 +29,18 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
         print("====== ENTER TABBAR View Controller =====")
         view.backgroundColor = UIColor.whiteColor()
         
+        let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        
+        
+        
         profileVC = ProfileViewController()
         preferencesVC = PreferencesViewController()
         addEventVC = AddEventViewController()
         calendarVC = CalendarViewController()
         mapViewVC = MapViewController()
+        chatHistoryVC = mainStoryboard.instantiateViewControllerWithIdentifier("ChatListViewController") as? ChatListViewController
+
         //mapViewVC = Mapbx()
         
         // get map updates
@@ -40,21 +49,21 @@ class TabBarViewController: UITabBarController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
         
-        self.viewControllers = [profileVC! , preferencesVC! , mapViewVC!, calendarVC!, addEventVC!]
+        self.viewControllers = [profileVC! , preferencesVC! , mapViewVC!, calendarVC!, chatHistoryVC!]
         
         let profile = UITabBarItem(title: "Profile", image: UIImage(named: "tabar"), tag: 0)
         let pref = UITabBarItem(title: "Preference", image: UIImage(named: "preferenceicon"), tag: 1)
-        let add = UITabBarItem(title: "Connections", image: UIImage(named: "Chat Bubble Dots"), tag: 2)
-        let cal = UITabBarItem(title: "Events", image: UIImage(named: "eventicon"), tag: 3)
         let map = UITabBarItem(title: "Map", image: UIImage(named: "mapicon"), tag: 4)
-    
+        let cal = UITabBarItem(title: "Events", image: UIImage(named: "eventicon"), tag: 3)
+        let connections = UITabBarItem(title: "Connections", image: UIImage(named: "Chat Bubble Dots"), tag: 2)
+        
         self.selectedIndex = 2
        
         profileVC?.tabBarItem = profile
         preferencesVC?.tabBarItem = pref
-        addEventVC?.tabBarItem = add
-        calendarVC?.tabBarItem = cal
         mapViewVC?.tabBarItem = map
+        calendarVC?.tabBarItem = cal
+        chatHistoryVC?.tabBarItem = connections
         
     }
     

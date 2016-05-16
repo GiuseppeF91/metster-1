@@ -28,6 +28,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
     var chatid : String!
     // *** STEP 1: STORE FIREBASE REFERENCES
     var messagesRef: Firebase!
+    var recentRef: Firebase!
     
     @IBOutlet weak var bottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var btnBack: UIButton!
@@ -126,6 +127,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
             
         })
         
+        recentRef = Firebase(url: "https://metster-chat.firebaseio.com/Recent")
         
     }
     func onChatReload()
@@ -145,6 +147,15 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         
         self.textmessage.text = ""
         
+        
+        recentRef.childByAppendingPath(groupId).setValue([
+            "userId":Users.sharedInstance().fbid as! String,
+            "userName":Users.sharedInstance().name as! String,
+            "lastMessage": text,
+            "groupId":groupId,
+            "date": String(format: "%f", NSDate().timeIntervalSince1970)
+            
+        ])
     }
     
     
@@ -216,48 +227,50 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         let messageString = message.text() as NSString
         
         let wrapperView: UIView  = UIView()
-        let textView: UITextView = UITextView()
-        var imageView:UIImageView  = UIImageView()
+        let textMessage: UITextView = UITextView()
+        var imageProfile:UIImageView  = UIImageView()
         let imageBubble:UIImageView = UIImageView()
         
         
         /* Disable scroll and editing */
-        textView.editable = false
-        textView.scrollEnabled = false
+        textMessage.editable = false
+        textMessage.scrollEnabled = false
         
         
         messageString.boundingRectWithSize(constraints, options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: [NSFontAttributeName: UIFont.systemFontOfSize(14)], context: nil)
         
         
-        textView.text = messageString as String
-        textView.textColor = UIColor.blackColor()
+        textMessage.text = messageString as String
+        textMessage.textColor = UIColor.blackColor()
         
-        let sizeMessage:CGSize = textView.sizeThatFits(constraints)
+        let sizeMessage:CGSize = textMessage.sizeThatFits(constraints)
         
         
-        textView.frame = CGRectMake(15,37, sizeMessage.width, sizeMessage.height)
+        textMessage.frame = CGRectMake(15,37, sizeMessage.width, sizeMessage.height)
         imageBubble.frame = CGRectMake(0,0, constraints.width+35, sizeMessage.height+52);
         
         
-        imageView.frame = CGRectMake(15, 10, 10, 10)
-        imageView.layer.borderWidth = 0.3
-        //profImage?.layer.cornerRadius = 5
-        imageView.layer.masksToBounds = false
-        imageView.layer.borderColor = UIColor.blackColor().CGColor
-        imageView.layer.cornerRadius = imageView.frame.width/2
-        imageView.clipsToBounds = true
+        imageProfile.frame = CGRectMake(5, 5, 20, 20)
+        imageProfile.layer.borderWidth = 0.3
+        imageProfile.layer.cornerRadius = 10
+        imageProfile.layer.masksToBounds = false
+        imageProfile.layer.borderColor = UIColor.blackColor().CGColor
+        imageProfile.layer.cornerRadius = imageProfile.frame.width/2
+        imageProfile.clipsToBounds = true
         
         wrapperView.layer.cornerRadius = 5
         wrapperView.clipsToBounds = true
         
-        textView.font = UIFont.systemFontOfSize(14.0)
-        textView.textContainerInset = UIEdgeInsetsZero
-        textView.backgroundColor = UIColor.clearColor()
+        textMessage.font = UIFont.systemFontOfSize(14.0)
+        textMessage.textContainerInset = UIEdgeInsetsZero
+        textMessage.backgroundColor = UIColor.clearColor()
         
         
-        wrapperView.addSubview(imageView)
+        
         wrapperView.addSubview(imageBubble)
-        wrapperView.addSubview(textView)
+        wrapperView.addSubview(textMessage)
+        wrapperView.addSubview(imageProfile)
+        
         
         if message.sender().compare(sender_id) == NSComparisonResult.OrderedSame
         {
@@ -294,7 +307,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
                 if let data = responseData{
                     dispatch_async(dispatch_get_main_queue(), { () -> Void in
                         let image : UIImage = UIImage(data: data)!.resizableImageWithCapInsets(UIEdgeInsetsMake(7, 16, 16, 7))
-                        imageView.image = image
+                        imageProfile.image = image
                         cache.set(value: image.asData(), key: access)
                     })
                 }
@@ -306,7 +319,7 @@ class ChatViewController: UIViewController, UITextFieldDelegate, UITableViewData
         cache.fetch(key: access).onSuccess { data in
             print ("data was found in cache for a friend")
             let image : UIImage = UIImage(data: data)!
-            imageView.image = image
+            imageProfile.image = image
         }
         //imageView.hidden = false
         //-----
