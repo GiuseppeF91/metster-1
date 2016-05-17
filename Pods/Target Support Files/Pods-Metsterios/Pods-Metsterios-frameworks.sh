@@ -84,6 +84,11 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
+  install_framework "Pods-Metsterios/AWSCognito.framework"
+  install_framework "Pods-Metsterios/AWSCore.framework"
+  install_framework "Pods-Metsterios/AWSDynamoDB.framework"
+  install_framework "Pods-Metsterios/AWSS3.framework"
+  install_framework "Pods-Metsterios/AWSSNS.framework"
   install_framework "Pods-Metsterios/Bolts.framework"
   install_framework "Pods-Metsterios/FBSDKCoreKit.framework"
   install_framework "Pods-Metsterios/FBSDKLoginKit.framework"
@@ -93,6 +98,11 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework "${PODS_ROOT}/Mapbox-iOS-SDK/dynamic/Mapbox.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
+  install_framework "Pods-Metsterios/AWSCognito.framework"
+  install_framework "Pods-Metsterios/AWSCore.framework"
+  install_framework "Pods-Metsterios/AWSDynamoDB.framework"
+  install_framework "Pods-Metsterios/AWSS3.framework"
+  install_framework "Pods-Metsterios/AWSSNS.framework"
   install_framework "Pods-Metsterios/Bolts.framework"
   install_framework "Pods-Metsterios/FBSDKCoreKit.framework"
   install_framework "Pods-Metsterios/FBSDKLoginKit.framework"

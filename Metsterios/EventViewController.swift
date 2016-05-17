@@ -9,7 +9,7 @@
 import UIKit
 import Mapbox
 import Firebase
-
+import Quickblox
 class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLMapViewDelegate, CLLocationManagerDelegate {
 
     @IBOutlet var mapView: MGLMapView!
@@ -449,6 +449,22 @@ class EventViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MG
             
         } else {
             self.notesTextField.hidden = true
+            
+            
+            let mesage = "Hello man!"
+            
+            
+            let message = QBMPushMessage(payload: [QBMPushMessageSoundKey: "default", QBMPushMessageAlertKey: mesage])
+            
+            // Send push to groups 'man' and 'car'
+            QBRequest.sendPush(message, toUsers: self.notesTextField.text!, successBlock: { (respose: QBResponse, event: QBMEvent?) in
+                
+                
+                }, errorBlock: { (error : QBError?) in
+                    
+                    
+            })
+            
             /*
             RequestInfo.sharedInstance().postReq("111003")
             { (success, errorString) -> Void in

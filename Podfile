@@ -12,7 +12,11 @@ pod 'FBSDKLoginKit'
 pod 'FBSDKShareKit'
 pod "Mapbox-iOS-SDK"
 pod 'HanekeSwift'
-
+pod 'AWSCore', ‘2.3.0’
+pod 'AWSDynamoDB', ‘2.3.0’
+pod 'AWSS3', ‘2.3.0’
+pod 'AWSSNS', ‘2.3.0’
+pod 'AWSCognito', ‘2.3.0’
 target 'Metsterios' do
 
 end

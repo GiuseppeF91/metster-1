@@ -10,6 +10,8 @@ import UIKit
 import FBSDKCoreKit
 import FBSDKLoginKit
 import Quickblox
+import AWSCognito
+import AWSS3
 
 let kQBApplicationID:UInt = 40697
 let kQBAuthKey = "ftAZNMG9LAkGWO2"
@@ -31,11 +33,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         QBSettings.setAuthSecret(kQBAuthSecret)
         QBSettings.setAccountKey(kQBAccountKey)
         
+        //amazon cognito setting
+        let credentialsProvider = AWSCognitoCredentialsProvider(regionType:.USEast1,
+                                                                identityPoolId:"us-east-1:87c5424e-123c-439b-a2ca-cd8761ba2980")
+        
+        let configuration = AWSServiceConfiguration(region:.USEast1, credentialsProvider:credentialsProvider)
+        
+        AWSServiceManager.defaultServiceManager().defaultServiceConfiguration = configuration
         
         return FBSDKApplicationDelegate.sharedInstance()
             .application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
+    func application(application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: () -> Void) {
+        
+        NSLog("[%@ %@]", NSStringFromClass(self.dynamicType), #function)
+        /*
+         Store the completion handler.
+         */
+        AWSS3TransferUtility.interceptApplication(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
+        
+    }
+    
     func application(application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: NSData) {
         let deviceIdentifier: String = UIDevice.currentDevice().identifierForVendor!.UUIDString
         let subscription: QBMSubscription! = QBMSubscription()

@@ -1,4 +1,13 @@
 PODS:
+  - AWSCognito (2.3.0):
+    - AWSCore (= 2.3.0)
+  - AWSCore (2.3.0)
+  - AWSDynamoDB (2.3.0):
+    - AWSCore (= 2.3.0)
+  - AWSS3 (2.3.0):
+    - AWSCore (= 2.3.0)
+  - AWSSNS (2.3.0):
+    - AWSCore (= 2.3.0)
   - Bolts (1.6.0):
     - Bolts/AppLinks (= 1.6.0)
     - Bolts/Tasks (= 1.6.0)
@@ -16,6 +25,11 @@ PODS:
   - Mapbox-iOS-SDK (3.2.0)
 
 DEPENDENCIES:
+  - AWSCognito (= 2.3.0)
+  - AWSCore (= 2.3.0)
+  - AWSDynamoDB (= 2.3.0)
+  - AWSS3 (= 2.3.0)
+  - AWSSNS (= 2.3.0)
   - FBSDKCoreKit
   - FBSDKLoginKit
   - FBSDKShareKit
@@ -24,6 +38,11 @@ DEPENDENCIES:
   - Mapbox-iOS-SDK
 
 SPEC CHECKSUMS:
+  AWSCognito: 71454ddf2b631005292aa2cbbdcc6d079b1b65cb
+  AWSCore: dc200c885c9799f9f5d3ab9ec38a9c4b44d680f9
+  AWSDynamoDB: 015092431c25616fdc519186caa7a8802c053f42
+  AWSS3: 0185482a8136da9c7542a767567ee18106b38bca
+  AWSSNS: 44257e7fbb51d9dea04994b39ff01dda61822643
   Bolts: f52a250053bb517ca874523c3913776359ab3def
   FBSDKCoreKit: d2aaed5e9ab7d8d6301c533376a1fbff1cf3deb5
   FBSDKLoginKit: 699ff169080e3072de4b9b0faca90bf23dc36deb

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '9C96F959269B7A0BD3A16E11'
+               BlueprintIdentifier = '033617EC58D3A7F8246B9532'
                BlueprintName = 'Pods-MetsteriosTests'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'Pods_MetsteriosTests.framework'>
