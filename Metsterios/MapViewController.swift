@@ -59,6 +59,18 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
     let dropDown = DropDown()
     
     @IBOutlet var loadingact: UIActivityIndicatorView!
+    
+    
+    var wordArray = [
+        "American",
+        "Italian",
+        "Chinese",
+        "Japanese",
+        "Indian",
+        "Mexican",
+        "Korean"
+    ]
+
     var GlobalMainQueue: dispatch_queue_t {
         return dispatch_get_main_queue()
     }
@@ -192,16 +204,7 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         // Set the delegate property of our map view to self after instantiating it.
         mapView.delegate = self
         
-        //init drop down
-        dropDown.dataSource = [
-            "American",
-            "Italian",
-            "Chinese",
-            "Japanese",
-            "Indian",
-            "Mexican",
-            "Korean"
-        ]
+        
         
         dropDown.selectionAction = { [unowned self] (index, item) in
             self.searchbar.text = item
@@ -209,6 +212,10 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
         
         dropDown.anchorView = searchbar
         dropDown.bottomOffset = CGPoint(x: 0, y:searchbar.bounds.height)
+        searchbar.delegate = self
+        
+        searchbar.addTarget(self, action: "textFieldDidChange:", forControlEvents: UIControlEvents.EditingChanged)
+        
         
     }
     
@@ -928,11 +935,23 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             print ("selected.")
             print (item)
         
-        let att = pinAnnotations[indexPath.row]
+            let att = pinAnnotations[indexPath.row]
         
-        update_map_focus(att)
+            update_map_focus(att)
     
-        Users.sharedInstance().publish_place = Users.sharedInstance().place_id as! String
+            Users.sharedInstance().publish_place = Users.sharedInstance().place_id as! String
+            
+            
+            let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            
+            let detailViewController = mainStoryboard.instantiateViewControllerWithIdentifier("DetailViewController") as! DetailViewController
+      
+            
+            self.presentViewController(detailViewController, animated: true, completion: nil)
+            
+            
+            
         } else if (self.toggle_mode == "people") {
             let people = Users.sharedInstance().tryout_people as! NSArray
             let person = people[indexPath.row]
@@ -1036,8 +1055,20 @@ class MapViewController:BaseVC, UITableViewDelegate, UITableViewDataSource, MGLM
             UIApplication.sharedApplication().openURL(webfburl)
         }
         
-    }
+    } 
     
+    func textFieldDidChange(textField: UITextField) {
+        var dropdownArray  : [String] = []
+        for word in wordArray {
+            if word.containsString(textField.text!) {
+                dropdownArray.append(word)
+            }
+        }
+        //init drop down
+        dropDown.dataSource = dropdownArray
+        dropDown.show()
+
+    }
     
     /*
     // MARK: - Navigation

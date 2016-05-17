@@ -51,6 +51,7 @@
 		6AADF07F1CEA4AE3004125A5 /* DropDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AADF0791CEA4AE3004125A5 /* DropDown.swift */; };
 		6AADF0801CEA4AE3004125A5 /* DropDownCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AADF07A1CEA4AE3004125A5 /* DropDownCell.swift */; };
 		6AADF0811CEA4AE3004125A5 /* DropDownCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AADF07B1CEA4AE3004125A5 /* DropDownCell.xib */; };
+		6AADF0831CEA7DBC004125A5 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AADF0821CEA7DBC004125A5 /* DetailViewController.swift */; };
 		6ABCCFA01CE9A0C900B9D72F /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABCCF9F1CE9A0C900B9D72F /* ChatListViewController.swift */; };
 		6ABCCFA21CE9A1FD00B9D72F /* ChatHistoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABCCFA11CE9A1FD00B9D72F /* ChatHistoryTableViewCell.swift */; };
 		6ABCCFA51CE9B13300B9D72F /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ABCCFA41CE9B13300B9D72F /* DateUtil.swift */; };
@@ -136,6 +137,7 @@
 		6AADF0791CEA4AE3004125A5 /* DropDown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDown.swift; sourceTree = "<group>"; };
 		6AADF07A1CEA4AE3004125A5 /* DropDownCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropDownCell.swift; sourceTree = "<group>"; };
 		6AADF07B1CEA4AE3004125A5 /* DropDownCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DropDownCell.xib; sourceTree = "<group>"; };
+		6AADF0821CEA7DBC004125A5 /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		6ABCCF9F1CE9A0C900B9D72F /* ChatListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		6ABCCFA11CE9A1FD00B9D72F /* ChatHistoryTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatHistoryTableViewCell.swift; sourceTree = "<group>"; };
 		6ABCCFA41CE9B13300B9D72F /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				57C3A0AD1CC2D81500D5E335 /* MapViewController.swift */,
 				5747C4A51CCC13720031F541 /* EventViewController.swift */,
 				6ABCCF9F1CE9A0C900B9D72F /* ChatListViewController.swift */,
+				6AADF0821CEA7DBC004125A5 /* DetailViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				5747C4A61CCC13720031F541 /* EventViewController.swift in Sources */,
 				69796BA61CAFBF2300A6378B /* BaseVC.swift in Sources */,
 				570048B21CE5671000CCC971 /* MapviewTableViewCell.swift in Sources */,
+				6AADF0831CEA7DBC004125A5 /* DetailViewController.swift in Sources */,
 				570048B41CE812BA00CCC971 /* NewEventButton.swift in Sources */,
 				6AADF07E1CEA4AE3004125A5 /* DPDUIView+Extension.swift in Sources */,
 				690288751CA87F48009C5B16 /* MainLabel.swift in Sources */,
